@@ -28,8 +28,10 @@ namespace Madeline
 
     public sealed partial class MainPage : Page
     {
+        private const float NODE_WIDTH = 90f;
+        private const float NODE_HEIGHT = 30f;
+
         private Graph graph;
-        private readonly Vector2 NODE_SIZE = new Vector2(90, 30f);
         private Mouse mouse;
         private Vector2 transform;
         private float zoom = 1f;
@@ -47,7 +49,7 @@ namespace Madeline
             foreach ((int nodeId, Node node) in graph.nodes)
             {
                 const float ROUNDING = 10f;
-                Size size = new Size(NODE_SIZE.X, NODE_SIZE.Y);
+                Size size = new Size(NODE_WIDTH, NODE_HEIGHT);
                 Rect rect = new Rect(VecToPt(ViewportPos(node.pos)), size);
                 session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
@@ -67,7 +69,7 @@ namespace Madeline
                 }
                 DrawNodeIO(session, OutputPos(node.pos));
 
-                Vector2 offset = new Vector2(NODE_SIZE.X + 15f, 0f);
+                Vector2 offset = new Vector2(NODE_WIDTH + 15f, 0f);
                 session.DrawText(node.name, ViewportPos(node.pos + offset), Colors.White);
                 offset.Y -= 35f;
                 session.DrawText(plugin.name, ViewportPos(node.pos + offset), Colors.Gray);
@@ -148,7 +150,7 @@ namespace Madeline
             float local = input - (inputs - 1) / 2f;
             Vector2 offset = new Vector2
             {
-                X = NODE_SIZE.X / 2f + local * NODE_SEPARATION,
+                X = NODE_WIDTH / 2f + local * NODE_SEPARATION,
                 Y = 0f,
             };
             return ViewportPos(origin) + offset;
@@ -184,8 +186,8 @@ namespace Madeline
         {
             Vector2 offset = new Vector2
             {
-                X = NODE_SIZE.X / 2f,
-                Y = NODE_SIZE.Y,
+                X = NODE_WIDTH / 2f,
+                Y = NODE_HEIGHT,
             };
             return ViewportPos(origin) + offset;
         }
