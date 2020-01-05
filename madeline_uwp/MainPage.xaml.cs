@@ -53,17 +53,17 @@ namespace Madeline
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
 
                 Plugin plugin = graph.plugins.Get(node.plugin);
+                ListSlice<int> inputs = graph.inputs.Get(nodeId);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
                     Vector2 inPos = InputPos(node.pos, i, plugin.inputs);
-                    DrawNodeIO(session, inPos);
-                    int inputNodeId = node.inputs[i];
-                    if (!graph.nodes.TryGet(inputNodeId, out Node srcNode))
+                    int inputNodeId = inputs.Consume();
+                    if (graph.nodes.TryGet(inputNodeId, out Node srcNode))
                     {
-                        continue;
+                        Vector2 outPos = OutputPos(srcNode.pos);
+                        session.DrawLine(inPos, outPos, Colors.White);
                     }
-                    Vector2 outPos = OutputPos(srcNode.pos);
-                    session.DrawLine(inPos, outPos, Colors.White);
+                    DrawNodeIO(session, inPos);
                 }
                 DrawNodeIO(session, OutputPos(node.pos));
 
