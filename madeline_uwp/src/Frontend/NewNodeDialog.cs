@@ -130,7 +130,7 @@ namespace Madeline
                     if (selection > -1 && selection < found.Count)
                     {
                         (int id, Plugin plugin) pair = found[selection];
-                        graph.nodes.Insert(new Node(origin, pair.plugin, pair.id));
+                        graph.InsertNode(origin, pair.id);
                     }
                     Hide();
                     break;
