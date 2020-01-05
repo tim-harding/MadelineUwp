@@ -8,9 +8,9 @@ namespace Madeline
 {
     internal class NodesDrawer
     {
-        private const float NODE_WIDTH = 90f;
-        private const float NODE_HEIGHT = 30f;
-        private const float ROUNDING = 10f;
+        public const float NODE_WIDTH = 90f;
+        public const float NODE_HEIGHT = 30f;
+        public const float ROUNDING = 10f;
 
         private Viewport viewport;
 
@@ -27,7 +27,8 @@ namespace Madeline
                 var size = new Size(NODE_WIDTH, NODE_HEIGHT);
                 var rect = new Rect(viewport.Into(node.pos).ToPoint(), size);
                 session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
-                session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
+                Color borderColor = nodeId == viewport.graph.active ? Colors.Yellow : Colors.Black;
+                session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, borderColor);
 
                 Plugin plugin = graph.plugins.Get(node.plugin);
                 ListSlice<int> inputs = graph.inputs.Get(nodeId);

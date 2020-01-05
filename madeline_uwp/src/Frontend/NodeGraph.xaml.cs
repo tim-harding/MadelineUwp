@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System.Numerics;
+using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -11,7 +12,6 @@ namespace Madeline
 {
     public sealed partial class NodeGraph : Page
     {
-
         private Viewport viewport = new Viewport();
         private NewNodeDialog dialog;
         private NodesDrawer nodesDrawer;
@@ -53,6 +53,7 @@ namespace Madeline
             {
                 viewport.Move(mouse.Delta);
             }
+            UpdateActiveNode();
             dialog.HandleMouse(mouse);
             canvas.Invalidate();
         }
@@ -75,6 +76,21 @@ namespace Madeline
         {
             dialog.HandleKeyboard(args);
             canvas.Invalidate();
+        }
+
+        private void UpdateActiveNode()
+        {
+            var pos = viewport.From(mouse.current.pos).ToPoint();
+            foreach ((int id, Backend.Node node) pair in viewport.graph.nodes)
+            {
+                var size = new Size(NodesDrawer.NODE_WIDTH, NodesDrawer.NODE_HEIGHT);
+                var rect = new Rect(pair.node.pos.ToPoint(), size);
+                if (rect.Contains(pos))
+                {
+                    viewport.graph.active = pair.id;
+                    return;
+                }
+            }
         }
     }
 }
