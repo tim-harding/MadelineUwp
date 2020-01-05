@@ -16,7 +16,7 @@
                               PointerMoved="Update"
                               PointerPressed="Update"
                               PointerReleased="Update"
-                              PointerWheelChanged="Canvas_PointerWheelChanged"
+                              PointerWheelChanged="HandleScroll"
                               PointerExited="Update" />
     </Grid>
 </Page>

@@ -10,7 +10,7 @@ namespace Madeline
         public Vector2 pos;
     }
 
-    internal struct Mouse
+    internal class Mouse
     {
         public MouseState current;
         public MouseState previous;

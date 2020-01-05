@@ -9,6 +9,7 @@ using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Core;
 
 namespace Madeline
 {
@@ -18,12 +19,16 @@ namespace Madeline
         private const float NODE_HEIGHT = 30f;
 
         private Graph graph = SampleData.DefaultGraph();
-        private Mouse mouse;
+        private Mouse mouse = new Mouse();
         private Vector2 transform;
         private float zoom = 1f;
+        private NewNodeDialog dialog;
 
         public MainPage()
         {
+            dialog = new NewNodeDialog(mouse);
+            Window.Current.CoreWindow.KeyDown += HandleKeypress;
+            Window.Current.CoreWindow.KeyUp += HandleKeypress;
             InitializeComponent();
         }
 
@@ -35,7 +40,7 @@ namespace Madeline
             {
                 const float ROUNDING = 10f;
                 Size size = new Size(NODE_WIDTH, NODE_HEIGHT);
-                Rect rect = new Rect(VecToPt(ViewportPos(node.pos)), size);
+                Rect rect = new Rect(ViewportPos(node.pos).ToPoint(), size);
                 session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
 
@@ -59,6 +64,8 @@ namespace Madeline
                 offset.Y -= 35f;
                 session.DrawText(plugin.name, ViewportPos(node.pos + offset), Colors.Gray);
             }
+
+            dialog.Draw(graph, session);
         }
 
         private void Unload(object sender, RoutedEventArgs e)
@@ -67,7 +74,7 @@ namespace Madeline
             canvas = null;
         }
 
-        private void Canvas_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        private void HandleScroll(object sender, PointerRoutedEventArgs e)
         {
             int wheel = e.GetCurrentPoint(canvas).Properties.MouseWheelDelta;
             float delta = (float)Math.Pow(1.001, wheel);
@@ -79,6 +86,7 @@ namespace Madeline
         private void Update(object sender, PointerRoutedEventArgs e)
         {
             UpdateMouse(e);
+            dialog.HandleMouse(mouse);
             UpdateView();
         }
 
@@ -92,7 +100,7 @@ namespace Madeline
                 left = props.IsLeftButtonPressed,
                 right = props.IsRightButtonPressed,
                 middle = props.IsMiddleButtonPressed,
-                pos = PtToVec(point.Position),
+                pos = point.Position.ToVector2(),
             };
         }
 
@@ -102,7 +110,6 @@ namespace Madeline
             {
                 return;
             }
-
             if (mouse.current.left && mouse.previous.left)
             {
                 Vector2 delta = mouse.current.pos - mouse.previous.pos;
@@ -111,23 +118,6 @@ namespace Madeline
             canvas.Invalidate();
         }
 
-        private Vector2 PtToVec(Point pt)
-        {
-            return new Vector2
-            {
-                X = (float)pt.X,
-                Y = (float)pt.Y,
-            };
-        }
-
-        private Point VecToPt(Vector2 vec)
-        {
-            return new Point
-            {
-                X = vec.X,
-                Y = vec.Y,
-            };
-        }
 
         private Vector2 InputPos(Vector2 origin, int input, int inputs)
         {
@@ -175,6 +165,12 @@ namespace Madeline
                 Y = NODE_HEIGHT,
             };
             return ViewportPos(origin) + offset;
+        }
+
+        private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
+        {
+            dialog.HandleKeyboard(args);
+            canvas.Invalidate();
         }
     }
 }
