@@ -1,5 +1,6 @@
 ﻿using Madeline.Backend;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -16,53 +17,63 @@ namespace Madeline
         private const int HEIGHT = 600;
         private const int LEADING = 25;
 
+        private Mouse mouse;
+        private Graph graph;
+        private List<(int id, Plugin plugin)> found = new List<(int, Plugin)>();
         private string query = "";
         private int selection = 0;
+        private int failPoint;
         private bool display;
         private Vector2 origin;
-        private Mouse mouse;
-        private List<(int id, Plugin plugin)> found = new List<(int, Plugin)>();
 
-        public NewNodeDialog(Mouse mouse)
+        public NewNodeDialog(Graph graph, Mouse mouse)
         {
+            this.graph = graph;
             this.mouse = mouse;
         }
 
-        public void Draw(Graph graph, CanvasDrawingSession session)
+        public void Draw(CanvasDrawingSession session)
         {
             if (!display)
             {
                 return;
             }
 
-            Size size = new Size(WIDTH, HEIGHT);
-            Rect rect = new Rect(origin.ToPoint(), size);
+            var size = new Size(WIDTH, HEIGHT);
+            var rect = new Rect(origin.ToPoint(), size);
             session.FillRectangle(rect, Color.FromArgb(255, 48, 48, 48));
 
-            Vector2 margin = new Vector2(6f, 0f);
+            var margin = new Vector2(6f, 0f);
             Vector2 pos = origin;
             pos.Y += LEADING;
             session.DrawText(query, origin + margin, Colors.White);
-            session.DrawLine(pos, pos + new Vector2(WIDTH, 0f), Colors.White);
 
-            found.Clear();
-            foreach ((int id, Plugin plugin) pair in graph.plugins)
+            if (failPoint != -1)
             {
-                if (query.Length == 0 || pair.plugin.name.Contains(query))
-                {
-                    found.Add(pair);
-                }
+                string valid = query.Substring(0, failPoint);
+                var format = new CanvasTextFormat();
+                var layout = new CanvasTextLayout(session.Device, valid, format, WIDTH, HEIGHT);
+                session.DrawTextLayout(layout, origin + margin, Colors.White);
+                Rect bounds = layout.LayoutBounds;
+                string invalid = query.Substring(failPoint);
+                var offset = new Vector2((float)bounds.Width, 0f);
+                session.DrawText(invalid, origin + margin + offset, Colors.Red);
+            }
+            else
+            {
+                session.DrawText(query, origin + margin, Colors.White);
             }
 
-            selection = Math.Min(selection, found.Count - 1);
-            selection = found.Count > 0 && selection == -1 ? 0 : selection;
+            session.DrawLine(pos, pos + new Vector2(WIDTH, 0f), Colors.White);
+
             if (selection > -1)
             {
-                Vector2 offset = new Vector2(0f, LEADING * selection);
+                var offset = new Vector2(0f, LEADING * selection);
                 size = new Size(WIDTH, LEADING);
                 rect = new Rect((pos + offset).ToPoint(), size);
                 session.FillRectangle(rect, Color.FromArgb(255, 64, 64, 64));
             }
+
 
             int count = Math.Min(found.Count, HEIGHT / LEADING);
             for (int i = 0; i < count; i++)
@@ -92,21 +103,29 @@ namespace Madeline
                         Show();
                     }
                     break;
+
                 case VirtualKey.Escape:
                     Hide();
                     break;
+
                 case VirtualKey.Back:
                     if (query.Length > 0)
                     {
                         query = query.Remove(query.Length - 1);
                     }
+                    UpdateFound();
                     break;
+
                 case VirtualKey.Down:
                     selection += 1;
+                    UpdateSeletion();
                     break;
+
                 case VirtualKey.Up:
                     selection -= 1;
+                    UpdateSeletion();
                     break;
+
                 case VirtualKey.Enter:
                     if (selection > -1 && selection < found.Count)
                     {
@@ -115,24 +134,53 @@ namespace Madeline
                     }
                     Hide();
                     break;
+
                 default:
                     char ascii = (char)key;
                     bool space = ascii == 32;
-                    bool number = ascii > 47 && ascii < 58;
                     bool upper = ascii > 64 && ascii < 91;
                     bool lower = ascii > 96 && ascii < 123;
-                    if (space || number || upper || lower)
+                    bool wanted = space || upper || lower;
+                    if (!wanted)
                     {
-                        query += char.ToLower(ascii);
+                        break;
                     }
+                    query += char.ToLower(ascii);
+                    UpdateFound();
                     break;
             }
+        }
+
+        private void UpdateFound()
+        {
+            int previousCount = found.Count;
+            foreach ((int id, Plugin plugin) pair in graph.plugins)
+            {
+                if (query.Length == 0 || pair.plugin.name.Contains(query))
+                {
+                    found.Add(pair);
+                }
+            }
+
+            bool searchFailure = found.Count == previousCount;
+            if (searchFailure)
+            {
+                failPoint = failPoint > -1 ? failPoint : query.Length - 1;
+            }
+            else
+            {
+                found.RemoveRange(0, previousCount);
+                failPoint = -1;
+            }
+
+            UpdateSeletion();
         }
 
         private void Show()
         {
             display = true;
             origin = mouse.current.pos;
+            UpdateFound();
         }
 
         private void Hide()
@@ -150,7 +198,7 @@ namespace Madeline
             }
 
             MouseState current = mouse.current;
-            Rect bounds = new Rect(origin.ToPoint(), new Size(WIDTH, HEIGHT));
+            var bounds = new Rect(origin.ToPoint(), new Size(WIDTH, HEIGHT));
             bool inBounds = bounds.Contains(current.pos.ToPoint());
             if (inBounds)
             {
@@ -161,6 +209,13 @@ namespace Madeline
             {
                 Hide();
             }
+            UpdateSeletion();
+        }
+
+        private void UpdateSeletion()
+        {
+            selection = Math.Min(selection, found.Count - 1);
+            selection = found.Count > 0 && selection == -1 ? 0 : selection;
         }
     }
 }

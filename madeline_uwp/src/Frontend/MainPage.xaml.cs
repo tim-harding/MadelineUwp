@@ -26,7 +26,7 @@ namespace Madeline
 
         public MainPage()
         {
-            dialog = new NewNodeDialog(mouse);
+            dialog = new NewNodeDialog(graph, mouse);
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
             InitializeComponent();
@@ -65,7 +65,7 @@ namespace Madeline
                 session.DrawText(plugin.name, ViewportPos(node.pos + offset), Colors.Gray);
             }
 
-            dialog.Draw(graph, session);
+            dialog.Draw(session);
         }
 
         private void Unload(object sender, RoutedEventArgs e)
