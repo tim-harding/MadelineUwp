@@ -132,6 +132,8 @@
     </Compile>
     <Compile Include="src\Backend\Node.cs" />
     <Compile Include="src\Backend\Plugin.cs" />
+    <Compile Include="src\Frontend\Mouse.cs" />
+    <Compile Include="src\Frontend\SampleData.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

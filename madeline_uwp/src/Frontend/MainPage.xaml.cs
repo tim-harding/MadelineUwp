@@ -17,7 +17,7 @@ namespace Madeline
         private const float NODE_WIDTH = 90f;
         private const float NODE_HEIGHT = 30f;
 
-        private Graph graph;
+        private Graph graph = SampleData.DefaultGraph();
         private Mouse mouse;
         private Vector2 transform;
         private float zoom = 1f;
@@ -25,7 +25,6 @@ namespace Madeline
         public MainPage()
         {
             InitializeComponent();
-            graph = DefaultGraph();
         }
 
         private void Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -176,26 +175,6 @@ namespace Madeline
                 Y = NODE_HEIGHT,
             };
             return ViewportPos(origin) + offset;
-        }
-
-        private Graph DefaultGraph()
-        {
-            Graph graph = new Graph();
-
-            graph.plugins.Insert(new Plugin { inputs = 0, name = "load" });
-            graph.plugins.Insert(new Plugin { inputs = 2, name = "merge" });
-            graph.plugins.Insert(new Plugin { inputs = 1, name = "shuffle" });
-
-            graph.InsertNode(new Vector2(0, 0), 0);
-            graph.InsertNode(new Vector2(200, 0), 0);
-            graph.InsertNode(new Vector2(100, 100), 1);
-            graph.InsertNode(new Vector2(100, 200), 2);
-
-            graph.Connect(0, 2, 0);
-            graph.Connect(1, 2, 1);
-            graph.Connect(2, 3, 0);
-
-            return graph;
         }
     }
 }
