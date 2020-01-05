@@ -13,10 +13,10 @@
         <canvas:CanvasControl Name="canvas"
                               ClearColor="#222"
                               Draw="Draw"
-                              PointerMoved="Update"
-                              PointerPressed="Update"
-                              PointerReleased="Update"
+                              PointerMoved="HandleMouse"
+                              PointerPressed="HandleMouse"
+                              PointerReleased="HandleMouse"
                               PointerWheelChanged="HandleScroll"
-                              PointerExited="Update" />
+                              PointerExited="HandleMouse" />
     </Grid>
 </Page>
