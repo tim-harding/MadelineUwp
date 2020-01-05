@@ -7,7 +7,7 @@ namespace Madeline
     {
         public static Graph DefaultGraph()
         {
-            Graph graph = new Graph();
+            var graph = new Graph();
 
             graph.plugins.Insert(new Plugin { inputs = 0, name = "load" });
             graph.plugins.Insert(new Plugin { inputs = 2, name = "merge" });

@@ -5,11 +5,11 @@ using System;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Core;
 
 namespace Madeline
 {
@@ -39,8 +39,8 @@ namespace Madeline
             foreach ((int nodeId, Node node) in graph.nodes)
             {
                 const float ROUNDING = 10f;
-                Size size = new Size(NODE_WIDTH, NODE_HEIGHT);
-                Rect rect = new Rect(ViewportPos(node.pos).ToPoint(), size);
+                var size = new Size(NODE_WIDTH, NODE_HEIGHT);
+                var rect = new Rect(ViewportPos(node.pos).ToPoint(), size);
                 session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
 
@@ -59,7 +59,7 @@ namespace Madeline
                 }
                 DrawNodeIO(session, OutputPos(node.pos));
 
-                Vector2 offset = new Vector2(NODE_WIDTH + 15f, 0f);
+                var offset = new Vector2(NODE_WIDTH + 15f, 0f);
                 session.DrawText(node.name, ViewportPos(node.pos + offset), Colors.White);
                 offset.Y -= 35f;
                 session.DrawText(plugin.name, ViewportPos(node.pos + offset), Colors.Gray);
@@ -123,7 +123,7 @@ namespace Madeline
         {
             const float NODE_SEPARATION = 35f;
             float local = input - (inputs - 1) / 2f;
-            Vector2 offset = new Vector2
+            var offset = new Vector2
             {
                 X = NODE_WIDTH / 2f + local * NODE_SEPARATION,
                 Y = 0f,
@@ -149,7 +149,7 @@ namespace Madeline
 
         private Vector2 ViewportCenter()
         {
-            Vector2 center = new Vector2
+            var center = new Vector2
             {
                 X = (float)canvas.Size.Width / 2f,
                 Y = (float)canvas.Size.Height / 2f,
@@ -159,7 +159,7 @@ namespace Madeline
 
         private Vector2 OutputPos(Vector2 origin)
         {
-            Vector2 offset = new Vector2
+            var offset = new Vector2
             {
                 X = NODE_WIDTH / 2f,
                 Y = NODE_HEIGHT,

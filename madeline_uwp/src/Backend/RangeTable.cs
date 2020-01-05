@@ -9,7 +9,7 @@ namespace Madeline.Backend
 
         public void Extend(int count, T template)
         {
-            Range range = new Range(values.Count, values.Count + count);
+            var range = new Range(values.Count, values.Count + count);
             indices.Insert(range);
             for (int i = 0; i < count; i++)
             {
