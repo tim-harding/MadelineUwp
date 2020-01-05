@@ -18,15 +18,13 @@ namespace Madeline
         private const float NODE_WIDTH = 90f;
         private const float NODE_HEIGHT = 30f;
 
-        private Graph graph = SampleData.DefaultGraph();
-        private Mouse mouse = new Mouse();
-        private Vector2 transform;
-        private float zoom = 1f;
+        private Viewport viewport = new Viewport();
         private NewNodeDialog dialog;
+        private Mouse mouse = new Mouse();
 
         public NodeGraph()
         {
-            dialog = new NewNodeDialog(graph, mouse);
+            dialog = new NewNodeDialog(viewport, mouse);
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
             InitializeComponent();
@@ -35,12 +33,12 @@ namespace Madeline
         private void Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             CanvasDrawingSession session = args.DrawingSession;
-
+            Graph graph = viewport.graph;
             foreach ((int nodeId, Node node) in graph.nodes)
             {
                 const float ROUNDING = 10f;
                 var size = new Size(NODE_WIDTH, NODE_HEIGHT);
-                var rect = new Rect(ViewportPos(node.pos).ToPoint(), size);
+                var rect = new Rect(viewport.Into(node.pos).ToPoint(), size);
                 session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
 
@@ -60,11 +58,10 @@ namespace Madeline
                 DrawNodeIO(session, OutputPos(node.pos));
 
                 var offset = new Vector2(NODE_WIDTH + 15f, 0f);
-                session.DrawText(node.name, ViewportPos(node.pos + offset), Colors.White);
-                offset.Y -= 35f;
-                session.DrawText(plugin.name, ViewportPos(node.pos + offset), Colors.Gray);
+                session.DrawText(node.name, viewport.Into(node.pos + offset), Colors.White);
+                offset.Y -= 25f;
+                session.DrawText(plugin.name, viewport.Into(node.pos + offset), Colors.Gray);
             }
-
             dialog.Draw(session);
         }
 
@@ -77,9 +74,7 @@ namespace Madeline
         private void HandleScroll(object sender, PointerRoutedEventArgs e)
         {
             int wheel = e.GetCurrentPoint(canvas).Properties.MouseWheelDelta;
-            float delta = (float)Math.Pow(1.001, wheel);
-            zoom *= delta;
-            transform = GraphPos(ViewportPos(transform) - mouse.current.pos * (delta - 1f));
+            viewport.ZoomAround(mouse.current.pos, wheel);
             canvas.Invalidate();
         }
 
@@ -106,18 +101,15 @@ namespace Madeline
 
         private void UpdateView()
         {
-            if (mouse.current.Equals(mouse.previous))
+            bool dragging = mouse.current.left && mouse.previous.left;
+            if (mouse.current.Equals(mouse.previous) || !dragging)
             {
                 return;
             }
-            if (mouse.current.left && mouse.previous.left)
-            {
-                Vector2 delta = mouse.current.pos - mouse.previous.pos;
-                transform += delta * 1f / zoom;
-            }
+            Vector2 delta = mouse.current.pos - mouse.previous.pos;
+            viewport.Move(delta);
             canvas.Invalidate();
         }
-
 
         private Vector2 InputPos(Vector2 origin, int input, int inputs)
         {
@@ -128,33 +120,13 @@ namespace Madeline
                 X = NODE_WIDTH / 2f + local * NODE_SEPARATION,
                 Y = 0f,
             };
-            return ViewportPos(origin) + offset;
+            return viewport.Into(origin) + offset;
         }
 
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center)
         {
             session.FillCircle(center, 5, Colors.LightGray);
             session.DrawCircle(center, 5, Colors.Black);
-        }
-
-        private Vector2 ViewportPos(Vector2 pos)
-        {
-            return (pos + transform) * zoom;
-        }
-
-        private Vector2 GraphPos(Vector2 pos)
-        {
-            return pos / zoom - transform;
-        }
-
-        private Vector2 ViewportCenter()
-        {
-            var center = new Vector2
-            {
-                X = (float)canvas.Size.Width / 2f,
-                Y = (float)canvas.Size.Height / 2f,
-            };
-            return center;
         }
 
         private Vector2 OutputPos(Vector2 origin)
@@ -164,12 +136,12 @@ namespace Madeline
                 X = NODE_WIDTH / 2f,
                 Y = NODE_HEIGHT,
             };
-            return ViewportPos(origin) + offset;
+            return viewport.Into(origin) + offset;
         }
 
         private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
         {
-            dialog.HandleKeyboard(args, graph);
+            dialog.HandleKeyboard(args);
             canvas.Invalidate();
         }
     }

@@ -18,7 +18,7 @@ namespace Madeline
         private const int LEADING = 25;
 
         private Mouse mouse;
-        private Graph graph;
+        private Viewport viewport;
         private List<(int id, Plugin plugin)> found = new List<(int, Plugin)>();
         private string query = "";
         private int selection = 0;
@@ -26,9 +26,9 @@ namespace Madeline
         private bool display;
         private Vector2 origin;
 
-        public NewNodeDialog(Graph graph, Mouse mouse)
+        public NewNodeDialog(Viewport viewport, Mouse mouse)
         {
-            this.graph = graph;
+            this.viewport = viewport;
             this.mouse = mouse;
         }
 
@@ -74,7 +74,6 @@ namespace Madeline
                 session.FillRectangle(rect, Color.FromArgb(255, 64, 64, 64));
             }
 
-
             int count = Math.Min(found.Count, HEIGHT / LEADING);
             for (int i = 0; i < count; i++)
             {
@@ -83,7 +82,7 @@ namespace Madeline
             }
         }
 
-        public void HandleKeyboard(KeyEventArgs e, Graph graph)
+        public void HandleKeyboard(KeyEventArgs e)
         {
             if (!e.KeyStatus.WasKeyDown)
             {
@@ -130,7 +129,8 @@ namespace Madeline
                     if (selection > -1 && selection < found.Count)
                     {
                         (int id, Plugin plugin) pair = found[selection];
-                        graph.InsertNode(origin, pair.id);
+                        Vector2 pos = viewport.From(origin);
+                        viewport.graph.InsertNode(pos, pair.id);
                     }
                     Hide();
                     break;
@@ -154,7 +154,7 @@ namespace Madeline
         private void UpdateFound()
         {
             int previousCount = found.Count;
-            foreach ((int id, Plugin plugin) pair in graph.plugins)
+            foreach ((int id, Plugin plugin) pair in viewport.graph.plugins)
             {
                 if (query.Length == 0 || pair.plugin.name.Contains(query))
                 {
