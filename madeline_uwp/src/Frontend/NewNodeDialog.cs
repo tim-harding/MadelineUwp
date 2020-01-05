@@ -21,6 +21,7 @@ namespace Madeline
         private bool display;
         private Vector2 origin;
         private Mouse mouse;
+        private List<(int id, Plugin plugin)> found = new List<(int, Plugin)>();
 
         public NewNodeDialog(Mouse mouse)
         {
@@ -44,13 +45,12 @@ namespace Madeline
             session.DrawText(query, origin + margin, Colors.White);
             session.DrawLine(pos, pos + new Vector2(WIDTH, 0f), Colors.White);
 
-
-            List<string> found = new List<string>();
-            foreach ((int id, Plugin plugin) in graph.plugins)
+            found.Clear();
+            foreach ((int id, Plugin plugin) pair in graph.plugins)
             {
-                if (query.Length == 0 || plugin.name.Contains(query))
+                if (query.Length == 0 || pair.plugin.name.Contains(query))
                 {
-                    found.Add(plugin.name);
+                    found.Add(pair);
                 }
             }
 
@@ -67,12 +67,12 @@ namespace Madeline
             int count = Math.Min(found.Count, HEIGHT / LEADING);
             for (int i = 0; i < count; i++)
             {
-                session.DrawText(found[i], pos + margin, Colors.White);
+                session.DrawText(found[i].plugin.name, pos + margin, Colors.White);
                 pos.Y += LEADING;
             }
         }
 
-        public void HandleKeyboard(KeyEventArgs e)
+        public void HandleKeyboard(KeyEventArgs e, Graph graph)
         {
             if (!e.KeyStatus.WasKeyDown)
             {
@@ -83,7 +83,14 @@ namespace Madeline
             switch (key)
             {
                 case VirtualKey.Tab:
-                    Toggle();
+                    if (display)
+                    {
+                        Hide();
+                    }
+                    else
+                    {
+                        Show();
+                    }
                     break;
                 case VirtualKey.Escape:
                     Hide();
@@ -100,6 +107,14 @@ namespace Madeline
                 case VirtualKey.Up:
                     selection -= 1;
                     break;
+                case VirtualKey.Enter:
+                    if (selection > -1 && selection < found.Count)
+                    {
+                        (int id, Plugin plugin) pair = found[selection];
+                        graph.nodes.Insert(new Node(origin, pair.plugin, pair.id));
+                    }
+                    Hide();
+                    break;
                 default:
                     char ascii = (char)key;
                     bool space = ascii == 32;
@@ -111,18 +126,6 @@ namespace Madeline
                         query += char.ToLower(ascii);
                     }
                     break;
-            }
-        }
-
-        private void Toggle()
-        {
-            if (display)
-            {
-                Hide();
-            }
-            else
-            {
-                Show();
             }
         }
 

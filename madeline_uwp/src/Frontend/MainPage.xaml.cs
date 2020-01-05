@@ -169,7 +169,7 @@ namespace Madeline
 
         private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
         {
-            dialog.HandleKeyboard(args);
+            dialog.HandleKeyboard(args, graph);
             canvas.Invalidate();
         }
     }
