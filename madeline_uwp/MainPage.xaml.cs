@@ -2,7 +2,6 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
@@ -54,13 +53,11 @@ namespace Madeline
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
 
                 Plugin plugin = graph.plugins.Get(node.plugin);
-                List<int> inputs = graph.inputs.Get(nodeId);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
                     Vector2 inPos = InputPos(node.pos, i, plugin.inputs);
                     DrawNodeIO(session, inPos);
-
-                    int inputNodeId = inputs[i];
+                    int inputNodeId = node.inputs[i];
                     if (!graph.nodes.TryGet(inputNodeId, out Node srcNode))
                     {
                         continue;

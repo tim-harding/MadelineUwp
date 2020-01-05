@@ -8,6 +8,12 @@ namespace Madeline.Backend
     {
         public string name;
         public int inputs;
+
+        public Plugin(string name, int inputs)
+        {
+            this.name = name;
+            this.inputs = inputs;
+        }
     }
 
     internal struct Node
@@ -15,52 +21,49 @@ namespace Madeline.Backend
         public Vector2 pos;
         public string name;
         public int plugin;
+        public List<int> inputs;
+
+        public Node(Vector2 pos, Plugin plugin, int pluginId)
+        {
+            this.pos = pos;
+            this.plugin = pluginId;
+            name = plugin.name;
+            inputs = new List<int>(plugin.inputs);
+            for (int i = 0; i < plugin.inputs; i++)
+            {
+                inputs.Add(-1);
+            }
+        }
     }
 
     internal class Graph
     {
         public Table<Plugin> plugins = new Table<Plugin>();
         public Table<Node> nodes = new Table<Node>();
-        public Table<List<int>> inputs = new Table<List<int>>();
 
         public void InsertNode(Vector2 pos, int pluginId)
         {
-            if (!plugins.TryGet(pluginId, out Plugin plugin))
+            if (plugins.TryGet(pluginId, out Plugin plugin))
             {
-                return;
+                nodes.Insert(new Node(pos, plugin, pluginId));
             }
-
-            Node node = new Node
-            {
-                pos = pos,
-                plugin = pluginId,
-                name = plugin.name,
-            };
-
-            nodes.Insert(node);
-
-            List<int> inputs = new List<int>(plugin.inputs);
-            for (int i = 0; i < plugin.inputs; i++)
-            {
-                inputs.Add(-1);
-            }
-
-            this.inputs.Insert(inputs);
         }
 
         public void Connect(int output, int input, int slot)
         {
-            if (inputs.TryGet(input, out List<int> slots))
-            {
-                slots[slot] = output;
-            }
+            SetInput(input, slot, output);
         }
 
         public void Disconnect(int input, int slot)
         {
-            if (inputs.TryGet(input, out List<int> slots))
+            SetInput(input, slot, -1);
+        }
+
+        private void SetInput(int input, int slot, int value)
+        {
+            if (nodes.TryGet(input, out Node node) && slot < node.inputs.Count)
             {
-                slots[slot] = -1;
+                node.inputs[slot] = value;
             }
         }
     }
