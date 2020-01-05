@@ -12,20 +12,6 @@ using Windows.UI.Xaml.Input;
 
 namespace Madeline
 {
-    internal struct MouseState
-    {
-        public bool left;
-        public bool middle;
-        public bool right;
-        public Vector2 pos;
-    }
-
-    internal struct Mouse
-    {
-        public MouseState current;
-        public MouseState previous;
-    }
-
     public sealed partial class MainPage : Page
     {
         private const float NODE_WIDTH = 90f;
