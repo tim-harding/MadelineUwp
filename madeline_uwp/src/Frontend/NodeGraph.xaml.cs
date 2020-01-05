@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Madeline
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class NodeGraph : Page
     {
         private const float NODE_WIDTH = 90f;
         private const float NODE_HEIGHT = 30f;
@@ -24,7 +24,7 @@ namespace Madeline
         private float zoom = 1f;
         private NewNodeDialog dialog;
 
-        public MainPage()
+        public NodeGraph()
         {
             dialog = new NewNodeDialog(graph, mouse);
             Window.Current.CoreWindow.KeyDown += HandleKeypress;

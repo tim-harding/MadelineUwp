@@ -127,8 +127,8 @@
     <Compile Include="src\Backend\Range.cs" />
     <Compile Include="src\Backend\RangeTable.cs" />
     <Compile Include="src\Backend\Table.cs" />
-    <Compile Include="src\Frontend\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
+    <Compile Include="src\Frontend\NodeGraph.xaml.cs">
+      <DependentUpon>NodeGraph.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\Backend\Node.cs" />
     <Compile Include="src\Backend\Plugin.cs" />
@@ -170,7 +170,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="src\Frontend\MainPage.xaml">
+    <Page Include="src\Frontend\NodeGraph.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
