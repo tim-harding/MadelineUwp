@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Madeline.Backend;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
@@ -6,39 +7,12 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Input;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml;
 
-namespace madeline_uwp
+namespace Madeline
 {
-    internal struct Plugin
-    {
-        public string name;
-        public int inputs;
-    }
-
-    internal struct Node
-    {
-        public Vector2 pos;
-        public string name;
-        public int plugin;
-    }
-
-    internal struct Wire
-    {
-        public int src;
-        public int dst;
-        public int input;
-    }
-
-    internal class Graph
-    {
-        public List<Plugin> plugins;
-        public List<Node> nodes;
-        public List<Wire> wires;
-    }
-
     internal struct MouseState
     {
         public bool left;
@@ -71,19 +45,7 @@ namespace madeline_uwp
         {
             CanvasDrawingSession session = args.DrawingSession;
 
-            foreach (Wire wire in graph.wires)
-            {
-                Node node = graph.nodes[wire.src];
-                Plugin plugin = graph.plugins[node.plugin];
-                Vector2 src = InputPos(node.pos, wire.input, plugin.inputs);
-
-                node = graph.nodes[wire.dst];
-                Vector2 dst = OutputPos(node.pos);
-
-                session.DrawLine(src, dst, Colors.White);
-            }
-
-            foreach (Node node in graph.nodes)
+            foreach ((int nodeId, Node node) in graph.nodes)
             {
                 const float ROUNDING = 10f;
                 Size size = new Size(NODE_SIZE.X, NODE_SIZE.Y);
@@ -91,10 +53,20 @@ namespace madeline_uwp
                 session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, Colors.Black);
 
-                Plugin plugin = graph.plugins[node.plugin];
+                Plugin plugin = graph.plugins.Get(node.plugin);
+                List<int> inputs = graph.inputs.Get(nodeId);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
-                    DrawNodeIO(session, InputPos(node.pos, i, plugin.inputs));
+                    Vector2 inPos = InputPos(node.pos, i, plugin.inputs);
+                    DrawNodeIO(session, inPos);
+
+                    int inputNodeId = inputs[i];
+                    if (!graph.nodes.TryGet(inputNodeId, out Node srcNode))
+                    {
+                        continue;
+                    }
+                    Vector2 outPos = OutputPos(srcNode.pos);
+                    session.DrawLine(inPos, outPos, Colors.White);
                 }
                 DrawNodeIO(session, OutputPos(node.pos));
 
@@ -203,7 +175,7 @@ namespace madeline_uwp
 
         private Vector2 ViewportCenter()
         {
-            var center =  new Vector2
+            Vector2 center = new Vector2
             {
                 X = (float)canvas.Size.Width / 2f,
                 Y = (float)canvas.Size.Height / 2f,
@@ -223,34 +195,22 @@ namespace madeline_uwp
 
         private Graph DefaultGraph()
         {
-            List<Plugin> plugins = new List<Plugin>
-            {
-                new Plugin { name = "Load", inputs = 0 },
-                new Plugin { name = "Merge", inputs = 2 },
-                new Plugin { name = "Shuffle", inputs = 1 },
-            };
+            Graph graph = new Graph();
 
-            List<Node> nodes = new List<Node>
-            {
-                new Node { name = "Tree", pos = new Vector2(0, 0), plugin = 0 },
-                new Node { name = "Kitty", pos = new Vector2(200, 0), plugin = 0 },
-                new Node { name = "Comp", pos = new Vector2(100, 100), plugin = 1 },
-                new Node { name = "Swizzle", pos = new Vector2(100, 200), plugin = 2 }
-            };
+            graph.plugins.Insert(new Plugin { inputs = 0, name = "load" });
+            graph.plugins.Insert(new Plugin { inputs = 2, name = "merge" });
+            graph.plugins.Insert(new Plugin { inputs = 1, name = "shuffle" });
 
-            List<Wire> wires = new List<Wire>
-            {
-                new Wire { src = 2, dst = 0, input = 0 },
-                new Wire { src = 2, dst = 1, input = 1 },
-                new Wire { src = 3, dst = 2, input = 0 }
-            };
+            graph.InsertNode(new Vector2(0, 0), 0);
+            graph.InsertNode(new Vector2(200, 0), 0);
+            graph.InsertNode(new Vector2(100, 100), 1);
+            graph.InsertNode(new Vector2(100, 200), 2);
 
-            return new Graph
-            {
-                plugins = plugins,
-                nodes = nodes,
-                wires = wires,
-            };
+            graph.Connect(0, 2, 0);
+            graph.Connect(1, 2, 1);
+            graph.Connect(2, 3, 0);
+
+            return graph;
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿<Page x:Class="madeline_uwp.MainPage"
+﻿<Page x:Class="Madeline.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:madeline_uwp"
+      xmlns:local="using:Madeline"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
@@ -17,6 +17,6 @@
                               PointerPressed="Update"
                               PointerReleased="Update"
                               PointerWheelChanged="Canvas_PointerWheelChanged"
-                              PointerExited="Update"/>
+                              PointerExited="Update" />
     </Grid>
 </Page>
