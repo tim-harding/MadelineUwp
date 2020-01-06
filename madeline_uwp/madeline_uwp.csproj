@@ -127,6 +127,7 @@
     <Compile Include="src\Backend\Range.cs" />
     <Compile Include="src\Backend\RangeTable.cs" />
     <Compile Include="src\Backend\Table.cs" />
+    <Compile Include="src\Frontend\NodeCreationDialogDrawer.cs" />
     <Compile Include="src\Frontend\NodeGraph.xaml.cs">
       <DependentUpon>NodeGraph.xaml</DependentUpon>
     </Compile>
@@ -152,7 +153,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Compile Include="src\Frontend\NewNodeDialog.cs" />
+    <Compile Include="src\Frontend\NodeCreationDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

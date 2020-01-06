@@ -10,6 +10,9 @@ namespace Madeline
         public Vector2 transform;
         public float zoom = 1f;
 
+        public Vector2 selectBoxStart;
+        public Vector2 selectBoxEnd;
+
         public void ZoomAround(Vector2 pos, int delta)
         {
             float factor = (float)Math.Pow(1.001, delta);

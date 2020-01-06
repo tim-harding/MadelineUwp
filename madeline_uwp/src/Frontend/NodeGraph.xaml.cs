@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System.Numerics;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -14,7 +15,7 @@ namespace Madeline
     public sealed partial class NodeGraph : Page
     {
         private Viewport viewport = new Viewport();
-        private NewNodeDialog dialog;
+        private NodeCreationDialog dialog;
         private NodesDrawer nodesDrawer;
         private Mouse mouse = new Mouse();
 
@@ -24,7 +25,7 @@ namespace Madeline
 
         public NodeGraph()
         {
-            dialog = new NewNodeDialog(viewport, mouse);
+            dialog = new NodeCreationDialog(viewport, mouse);
             nodesDrawer = new NodesDrawer(viewport);
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
@@ -35,7 +36,7 @@ namespace Madeline
         {
             CanvasDrawingSession session = args.DrawingSession;
             nodesDrawer.Draw(session);
-            dialog.Draw(session);
+            dialog.drawer.Draw(session);
         }
 
         private void Unload(object sender, RoutedEventArgs e)
@@ -68,6 +69,7 @@ namespace Madeline
                 case MouseButton.Down:
                     start = mouse.current.pos;
                     break;
+
                 case MouseButton.Dragging:
                     int delta = (int)(mouse.Delta.X) * 3;
                     viewport.ZoomAround(start, delta);
@@ -78,12 +80,17 @@ namespace Madeline
             {
                 case MouseButton.Down:
                     start = mouse.current.pos;
-                    clickedNode = viewport.graph.active;
-                    dragStarted = false;
+                    clickedNode = -1;
+                    if (viewport.graph.hover > -1)
+                    {
+                        clickedNode = viewport.graph.hover;
+                        dragStarted = false;
+                    }
                     break;
+
                 case MouseButton.Dragging:
                     const float DRAG_START = 16f;
-                    viewport.graph.active = clickedNode;
+                    viewport.graph.hover = clickedNode;
                     dragStarted |= (mouse.current.pos - start).LengthSquared() > DRAG_START;
                     if (!dragStarted)
                     {
@@ -92,18 +99,19 @@ namespace Madeline
 
                     Graph graph = viewport.graph;
                     Table<Node> nodes = graph.nodes;
-                    int active = graph.active;
+                    int active = graph.hover;
                     if (nodes.TryGet(active, out Node node))
                     {
                         node.pos += mouse.Delta / viewport.zoom;
                         nodes.Update(active, node);
                     }
                     break;
+
                 case MouseButton.Up:
-                    viewport.graph.active = clickedNode;
+                    viewport.graph.hover = clickedNode;
                     if (!dragStarted)
                     {
-                        viewport.graph.selection = viewport.graph.active;
+                        viewport.graph.active = viewport.graph.hover;
                     }
                     break;
             }
@@ -128,13 +136,25 @@ namespace Madeline
 
         private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
         {
-            dialog.HandleKeyboard(args);
             canvas.Invalidate();
+            if (dialog.HandleKeyboard(args))
+            {
+                return;
+            }
+
+            switch (args.VirtualKey)
+            {
+                case VirtualKey.Delete:
+                case VirtualKey.Back:
+                    Graph graph = viewport.graph;
+                    graph.DeleteNode(graph.active);
+                    break;
+            }
         }
 
         private void UpdateActiveNode()
         {
-            viewport.graph.active = -1;
+            viewport.graph.hover = -1;
             var pos = viewport.From(mouse.current.pos).ToPoint();
             foreach ((int id, Node node) pair in viewport.graph.nodes)
             {
@@ -142,7 +162,7 @@ namespace Madeline
                 var rect = new Rect(pair.node.pos.ToPoint(), size);
                 if (rect.Contains(pos))
                 {
-                    viewport.graph.active = pair.id;
+                    viewport.graph.hover = pair.id;
                     return;
                 }
             }

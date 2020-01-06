@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Collections.Generic;
 
 namespace Madeline.Backend
 {
@@ -8,8 +9,9 @@ namespace Madeline.Backend
         public Table<Node> nodes = new Table<Node>();
         public RangeTable<int> inputs = new RangeTable<int>();
 
+        public int hover = -1;
         public int active = -1;
-        public int selection = -1;
+        public List<int> selection = new List<int>();
 
         public void InsertNode(Vector2 pos, int pluginId)
         {
@@ -18,6 +20,12 @@ namespace Madeline.Backend
                 nodes.Insert(new Node(pos, plugin, pluginId));
                 inputs.Extend(plugin.inputs, -1);
             }
+        }
+
+        public void DeleteNode(int id)
+        {
+            nodes.Delete(id);
+            inputs.Delete(id);
         }
 
         public void Connect(int output, int input, int slot)
