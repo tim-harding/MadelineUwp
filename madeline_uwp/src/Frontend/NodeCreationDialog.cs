@@ -35,9 +35,8 @@ namespace Madeline
             drawer = new NodeCreationDialogDrawer(this);
         }
 
-        public bool HandleKeyboard(KeyEventArgs e)
+        public bool HandleKeyboard(VirtualKey key)
         {
-            VirtualKey key = e.VirtualKey;
             if (key == VirtualKey.Tab)
             {
                 Toggle();
@@ -51,11 +50,11 @@ namespace Madeline
             return false;
         }
 
-        public void HandleMouse(Mouse mouse)
+        public bool HandleMouse()
         {
             if (!display)
             {
-                return;
+                return false;
             }
             MouseState current = mouse.current;
             var bounds = new Rect(origin.ToPoint(), new Size(WIDTH, HEIGHT));
@@ -70,6 +69,7 @@ namespace Madeline
                 Hide();
             }
             UpdateSeletion();
+            return true;
         }
 
         private void HandleKey(VirtualKey key)

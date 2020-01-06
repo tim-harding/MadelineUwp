@@ -50,7 +50,7 @@ namespace Madeline
 
         private void DrawSeperator()
         {
-            Vector2 line = dialog.Line;
+            Vector2 line = dialog.origin + dialog.Line;
             session.DrawLine(line, line + Vector2.UnitX * dialog.Size.X, Colors.White);
         }
 
@@ -69,7 +69,7 @@ namespace Madeline
         private void DrawLine(int i)
         {
             string name = dialog.found[i].plugin.name;
-            Vector2 pos = dialog.origin + dialog.Line * i;
+            Vector2 pos = dialog.origin + dialog.Line * (i + 1);
             session.DrawText(name, pos + Margin, Colors.White);
         }
 

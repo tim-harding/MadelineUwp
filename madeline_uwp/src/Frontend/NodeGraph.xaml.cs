@@ -17,16 +17,14 @@ namespace Madeline
         private Viewport viewport = new Viewport();
         private NodeCreationDialog dialog;
         private NodesDrawer nodesDrawer;
+        private NodeInteraction nodeInteraction;
         private Mouse mouse = new Mouse();
-
-        private Vector2 start;
-        private int clickedNode = -1;
-        private bool dragStarted;
 
         public NodeGraph()
         {
             dialog = new NodeCreationDialog(viewport, mouse);
             nodesDrawer = new NodesDrawer(viewport);
+            nodeInteraction = new NodeInteraction(mouse, viewport);
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
             InitializeComponent();
@@ -56,68 +54,21 @@ namespace Madeline
         {
             UpdateMouse(e);
             UpdateActiveNode();
-
-            switch (mouse.Middle)
-            {
-                case MouseButton.Dragging:
-                    viewport.Move(mouse.Delta);
-                    break;
-            }
-
-            switch (mouse.Right)
-            {
-                case MouseButton.Down:
-                    start = mouse.current.pos;
-                    break;
-
-                case MouseButton.Dragging:
-                    int delta = (int)(mouse.Delta.X) * 3;
-                    viewport.ZoomAround(start, delta);
-                    break;
-            }
-
-            switch (mouse.Left)
-            {
-                case MouseButton.Down:
-                    start = mouse.current.pos;
-                    clickedNode = -1;
-                    if (viewport.graph.hover > -1)
-                    {
-                        clickedNode = viewport.graph.hover;
-                        dragStarted = false;
-                    }
-                    break;
-
-                case MouseButton.Dragging:
-                    const float DRAG_START = 16f;
-                    viewport.graph.hover = clickedNode;
-                    dragStarted |= (mouse.current.pos - start).LengthSquared() > DRAG_START;
-                    if (!dragStarted)
-                    {
-                        break;
-                    }
-
-                    Graph graph = viewport.graph;
-                    Table<Node> nodes = graph.nodes;
-                    int active = graph.hover;
-                    if (nodes.TryGet(active, out Node node))
-                    {
-                        node.pos += mouse.Delta / viewport.zoom;
-                        nodes.Update(active, node);
-                    }
-                    break;
-
-                case MouseButton.Up:
-                    viewport.graph.hover = clickedNode;
-                    if (!dragStarted)
-                    {
-                        viewport.graph.active = viewport.graph.hover;
-                    }
-                    break;
-            }
-
-            dialog.HandleMouse(mouse);
             canvas.Invalidate();
+            bool _ = dialog.HandleMouse() || nodeInteraction.HandleMouse();
+        }
+
+        private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
+        {
+            VirtualKey key = args.VirtualKey;
+            if (args.KeyStatus.WasKeyDown)
+            {
+                bool handled = dialog.HandleKeyboard(key) || nodeInteraction.HandleKeypress(key);
+                if (handled)
+                {
+                    canvas.Invalidate();
+                }
+            }
         }
 
         private void UpdateMouse(PointerRoutedEventArgs e)
@@ -132,24 +83,6 @@ namespace Madeline
                 middle = props.IsMiddleButtonPressed,
                 pos = point.Position.ToVector2(),
             };
-        }
-
-        private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
-        {
-            canvas.Invalidate();
-            if (dialog.HandleKeyboard(args))
-            {
-                return;
-            }
-
-            switch (args.VirtualKey)
-            {
-                case VirtualKey.Delete:
-                case VirtualKey.Back:
-                    Graph graph = viewport.graph;
-                    graph.DeleteNode(graph.active);
-                    break;
-            }
         }
 
         private void UpdateActiveNode()

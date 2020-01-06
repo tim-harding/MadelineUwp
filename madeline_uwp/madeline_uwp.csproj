@@ -134,6 +134,7 @@
     <Compile Include="src\Backend\Node.cs" />
     <Compile Include="src\Backend\Plugin.cs" />
     <Compile Include="src\Frontend\Mouse.cs" />
+    <Compile Include="src\Frontend\NodeInteraction.cs" />
     <Compile Include="src\Frontend\NodesDrawer.cs" />
     <Compile Include="src\Frontend\SampleData.cs" />
     <Compile Include="src\Frontend\Viewport.cs" />
