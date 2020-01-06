@@ -1,6 +1,8 @@
 ﻿using Madeline.Backend;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
+using System;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
@@ -38,14 +40,48 @@ namespace Madeline
                 ListSlice<int> inputs = graph.inputs.Get(nodeId);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
-                    Vector2 inPos = InputPos(node.pos, i, plugin.inputs);
-                    int inputNodeId = inputs.Consume();
-                    if (graph.nodes.TryGet(inputNodeId, out Node srcNode))
+                    Vector2 iPos = InputPos(node.pos, i, plugin.inputs);
+
+                    if (graph.nodes.TryGet(inputs.Consume(), out Node srcNode))
                     {
-                        Vector2 outPos = OutputPos(srcNode.pos);
-                        session.DrawLine(inPos, outPos, Colors.White);
+                        Vector2 oPos = OutputPos(srcNode.pos);
+
+                        float r = 25f;
+                        Vector2 direction = iPos - oPos;
+                        float l = direction.Length();
+                        var mul = Vector2.Dot(direction / l, -Vector2.UnitY) * 0.5f + 0.5f;
+                        mul = 1f - mul;
+                        mul *= mul;
+                        mul *= mul;
+                        mul = 1f - mul;
+                        r *= mul;
+                        r = Math.Min(r, l / 4f);
+
+                        bool rightward = iPos.X > oPos.X;
+                        var circleOffset = new Vector2(rightward ? r : -r, 0f);
+                        Vector2 c1 = oPos + circleOffset;
+                        Vector2 c2 = iPos - circleOffset;
+                        Vector2 cd = c2 - c1;
+                        float n = (float)Math.Atan2(cd.Y, Math.Abs(cd.X));
+                        float m = (float)Math.Acos(2 * r / cd.Length());
+                        float theta = (float)Math.PI - n - m;
+
+                        var path = new CanvasPathBuilder(session.Device);
+                        path.BeginFigure(oPos);
+
+                        float start = (float)(rightward ? Math.PI : 0f);
+                        float angle = rightward ? theta : -theta;
+                        path.AddArc(c1, r, r, start, -angle);
+
+                        start = (float)(rightward ? 0f : Math.PI);
+                        path.AddArc(c2, r, r, start - angle, angle);
+
+                        path.EndFigure(CanvasFigureLoop.Open);
+                        var geo = CanvasGeometry.CreatePath(path);
+                        session.DrawGeometry(geo, Colors.White);
                     }
-                    DrawNodeIO(session, inPos);
+
+                    DrawNodeIO(session, iPos);
                 }
                 DrawNodeIO(session, OutputPos(node.pos));
 
@@ -56,6 +92,7 @@ namespace Madeline
                 session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.White);
                 offset.Y -= 25f;
                 session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.Gray);
+
             }
         }
 
