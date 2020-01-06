@@ -1,5 +1,6 @@
 ﻿using Madeline.Backend;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Text;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
@@ -10,7 +11,7 @@ namespace Madeline
     {
         public const float NODE_WIDTH = 90f;
         public const float NODE_HEIGHT = 30f;
-        public const float ROUNDING = 10f;
+        public const float ROUNDING = 5f;
 
         private Viewport viewport;
 
@@ -22,14 +23,16 @@ namespace Madeline
         public void Draw(CanvasDrawingSession session)
         {
             Graph graph = viewport.graph;
+            float zoom = viewport.zoom;
+            var size = new Size(NODE_WIDTH * zoom, NODE_HEIGHT * zoom);
+            float rounding = ROUNDING * zoom;
             foreach ((int nodeId, Node node) in graph.nodes)
             {
-                var size = new Size(NODE_WIDTH, NODE_HEIGHT);
                 var rect = new Rect(viewport.Into(node.pos).ToPoint(), size);
-                session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
+                session.FillRoundedRectangle(rect, rounding, rounding, Color.FromArgb(255, 64, 64, 64));
                 Color borderColor = nodeId == viewport.graph.active ? Colors.Yellow : Colors.Black;
                 borderColor = nodeId == viewport.graph.selection ? Colors.Red : borderColor;
-                session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, borderColor);
+                session.DrawRoundedRectangle(rect, rounding, rounding, borderColor);
 
                 Plugin plugin = graph.plugins.Get(node.plugin);
                 ListSlice<int> inputs = graph.inputs.Get(nodeId);
@@ -46,10 +49,13 @@ namespace Madeline
                 }
                 DrawNodeIO(session, OutputPos(node.pos));
 
+                var format = new CanvasTextFormat() { FontSize = 18f * zoom, WordWrapping = CanvasWordWrapping.NoWrap };
+                var layout = new CanvasTextLayout(session.Device, node.name, format, 0f, 0f);
+
                 var offset = new Vector2(NODE_WIDTH + 15f, 0f);
-                session.DrawText(node.name, viewport.Into(node.pos + offset), Colors.White);
+                session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.White);
                 offset.Y -= 25f;
-                session.DrawText(plugin.name, viewport.Into(node.pos + offset), Colors.Gray);
+                session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.Gray);
             }
         }
 
@@ -62,7 +68,7 @@ namespace Madeline
                 X = NODE_WIDTH / 2f + local * NODE_SEPARATION,
                 Y = 0f,
             };
-            return viewport.Into(origin) + offset;
+            return viewport.Into(origin) + offset * viewport.zoom;
         }
 
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center)
@@ -78,7 +84,7 @@ namespace Madeline
                 X = NODE_WIDTH / 2f,
                 Y = NODE_HEIGHT,
             };
-            return viewport.Into(origin) + offset;
+            return viewport.Into(origin) + offset * viewport.zoom;
         }
     }
 }
