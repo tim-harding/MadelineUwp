@@ -8,7 +8,8 @@ namespace Madeline.Backend
         public Table<Node> nodes = new Table<Node>();
         public RangeTable<int> inputs = new RangeTable<int>();
 
-        public int active;
+        public int active = -1;
+        public int selection = -1;
 
         public void InsertNode(Vector2 pos, int pluginId)
         {

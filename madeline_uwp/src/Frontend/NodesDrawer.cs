@@ -28,6 +28,7 @@ namespace Madeline
                 var rect = new Rect(viewport.Into(node.pos).ToPoint(), size);
                 session.FillRoundedRectangle(rect, ROUNDING, ROUNDING, Color.FromArgb(255, 64, 64, 64));
                 Color borderColor = nodeId == viewport.graph.active ? Colors.Yellow : Colors.Black;
+                borderColor = nodeId == viewport.graph.selection ? Colors.Red : borderColor;
                 session.DrawRoundedRectangle(rect, ROUNDING, ROUNDING, borderColor);
 
                 Plugin plugin = graph.plugins.Get(node.plugin);

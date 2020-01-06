@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Madeline.Backend;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System.Numerics;
 using Windows.Foundation;
@@ -16,6 +17,10 @@ namespace Madeline
         private NewNodeDialog dialog;
         private NodesDrawer nodesDrawer;
         private Mouse mouse = new Mouse();
+
+        private Vector2 start;
+        private int clickedNode = -1;
+        private bool dragStarted;
 
         public NodeGraph()
         {
@@ -49,11 +54,60 @@ namespace Madeline
         private void HandleMouse(object sender, PointerRoutedEventArgs e)
         {
             UpdateMouse(e);
-            if (mouse.Left == MouseButton.Dragging)
-            {
-                viewport.Move(mouse.Delta);
-            }
             UpdateActiveNode();
+
+            switch (mouse.Middle)
+            {
+                case MouseButton.Dragging:
+                    viewport.Move(mouse.Delta);
+                    break;
+            }
+
+            switch (mouse.Right)
+            {
+                case MouseButton.Down:
+                    start = mouse.current.pos;
+                    break;
+                case MouseButton.Dragging:
+                    int delta = (int)(mouse.Delta.X) * 3;
+                    viewport.ZoomAround(start, delta);
+                    break;
+            }
+
+            switch (mouse.Left)
+            {
+                case MouseButton.Down:
+                    start = mouse.current.pos;
+                    clickedNode = viewport.graph.active;
+                    dragStarted = false;
+                    break;
+                case MouseButton.Dragging:
+                    const float DRAG_START = 16f;
+                    viewport.graph.active = clickedNode;
+                    dragStarted |= (mouse.current.pos - start).LengthSquared() > DRAG_START;
+                    if (!dragStarted)
+                    {
+                        break;
+                    }
+
+                    Graph graph = viewport.graph;
+                    Table<Node> nodes = graph.nodes;
+                    int active = graph.active;
+                    if (nodes.TryGet(active, out Node node))
+                    {
+                        node.pos += mouse.Delta / viewport.zoom;
+                        nodes.Update(active, node);
+                    }
+                    break;
+                case MouseButton.Up:
+                    viewport.graph.active = clickedNode;
+                    if (!dragStarted)
+                    {
+                        viewport.graph.selection = viewport.graph.active;
+                    }
+                    break;
+            }
+
             dialog.HandleMouse(mouse);
             canvas.Invalidate();
         }
@@ -80,8 +134,9 @@ namespace Madeline
 
         private void UpdateActiveNode()
         {
+            viewport.graph.active = -1;
             var pos = viewport.From(mouse.current.pos).ToPoint();
-            foreach ((int id, Backend.Node node) pair in viewport.graph.nodes)
+            foreach ((int id, Node node) pair in viewport.graph.nodes)
             {
                 var size = new Size(NodesDrawer.NODE_WIDTH, NodesDrawer.NODE_HEIGHT);
                 var rect = new Rect(pair.node.pos.ToPoint(), size);
