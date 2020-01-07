@@ -57,11 +57,12 @@ namespace Madeline.Frontend
         private void DrawSelection()
         {
             int selection = dialog.selection;
-            if (selection > 0)
+            if (selection > -1)
             {
                 float line = selection + 1f;
                 Vector2 upperLeft = dialog.origin + Vector2.UnitY * dialog.Line * line;
-                var rect = new Rect(upperLeft.ToPoint(), dialog.Size.ToSize());
+                Vector2 size = dialog.Line + Vector2.UnitX * dialog.Size.X;
+                var rect = new Rect(upperLeft.ToPoint(), size.ToSize());
                 session.FillRectangle(rect, Color.FromArgb(255, 64, 64, 64));
             }
         }
