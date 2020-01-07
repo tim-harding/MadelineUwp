@@ -2,7 +2,7 @@
 using System.Numerics;
 using Madeline.Backend;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal class Viewport
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal struct MouseState
     {

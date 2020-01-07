@@ -2,7 +2,7 @@
 using System.Numerics;
 using Windows.Foundation;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal class Hover : MouseHandler
     {

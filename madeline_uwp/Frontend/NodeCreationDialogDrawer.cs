@@ -5,7 +5,7 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal class NodeCreationDialogDrawer : Drawer
     {

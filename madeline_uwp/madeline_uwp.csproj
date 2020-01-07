@@ -122,28 +122,29 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Backend\Graph.cs" />
-    <Compile Include="src\Backend\ListSlice.cs" />
-    <Compile Include="src\Backend\Range.cs" />
-    <Compile Include="src\Backend\RangeTable.cs" />
-    <Compile Include="src\Backend\Table.cs" />
-    <Compile Include="src\Backend\TableRow.cs" />
-    <Compile Include="src\Frontend\DragSelect.cs" />
-    <Compile Include="src\Frontend\GraphComponents.cs" />
-    <Compile Include="src\Frontend\Hover.cs" />
-    <Compile Include="src\Frontend\NodeCreationDialogDrawer.cs" />
-    <Compile Include="src\Frontend\NodeGraph.xaml.cs">
+    <Compile Include="Backend\Graph.cs" />
+    <Compile Include="Backend\ListSlice.cs" />
+    <Compile Include="Backend\Range.cs" />
+    <Compile Include="Backend\RangeTable.cs" />
+    <Compile Include="Backend\Table.cs" />
+    <Compile Include="Backend\TableRow.cs" />
+    <Compile Include="Frontend\DragSelect.cs" />
+    <Compile Include="Frontend\Handlers.cs" />
+    <Compile Include="Frontend\GraphComponents.cs" />
+    <Compile Include="Frontend\Hover.cs" />
+    <Compile Include="Frontend\NodeCreationDialogDrawer.cs" />
+    <Compile Include="NodeGraph.xaml.cs">
       <DependentUpon>NodeGraph.xaml</DependentUpon>
     </Compile>
-    <Compile Include="src\Backend\Node.cs" />
-    <Compile Include="src\Backend\Plugin.cs" />
-    <Compile Include="src\Frontend\Mouse.cs" />
-    <Compile Include="src\Frontend\NodeInteraction.cs" />
-    <Compile Include="src\Frontend\NodesDrawer.cs" />
-    <Compile Include="src\Frontend\SampleData.cs" />
-    <Compile Include="src\Frontend\SelectDrawer.cs" />
-    <Compile Include="src\Frontend\Slot.cs" />
-    <Compile Include="src\Frontend\Viewport.cs" />
+    <Compile Include="Backend\Node.cs" />
+    <Compile Include="Backend\Plugin.cs" />
+    <Compile Include="Frontend\Mouse.cs" />
+    <Compile Include="Frontend\NodeInteraction.cs" />
+    <Compile Include="Frontend\NodesDrawer.cs" />
+    <Compile Include="Frontend\SampleData.cs" />
+    <Compile Include="Frontend\DragSelectDrawer.cs" />
+    <Compile Include="Frontend\Slot.cs" />
+    <Compile Include="Frontend\Viewport.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -160,7 +161,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Compile Include="src\Frontend\NodeCreationDialog.cs" />
+    <Compile Include="Frontend\NodeCreationDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -180,7 +181,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="src\Frontend\NodeGraph.xaml">
+    <Page Include="NodeGraph.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

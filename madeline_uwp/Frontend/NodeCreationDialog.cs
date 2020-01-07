@@ -5,7 +5,7 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.System;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal class NodeCreationDialog : MouseHandler, KeypressHandler
     {

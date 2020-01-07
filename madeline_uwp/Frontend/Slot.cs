@@ -1,4 +1,4 @@
-﻿namespace Madeline
+﻿namespace Madeline.Frontend
 {
     internal struct Slot
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Madeline.Backend
+namespace Madeline.Frontend
 {
     internal class GraphComponentsSingle
     {

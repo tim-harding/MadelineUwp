@@ -2,7 +2,7 @@
 using System.Numerics;
 using Windows.System;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal class NodeInteraction : MouseHandler, KeypressHandler
     {

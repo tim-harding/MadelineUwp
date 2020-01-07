@@ -1,7 +1,7 @@
 ﻿using Madeline.Backend;
 using System.Numerics;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal class SampleData
     {

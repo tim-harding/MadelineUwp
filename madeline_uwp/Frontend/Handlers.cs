@@ -1,7 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Windows.System;
 
-namespace Madeline
+namespace Madeline.Frontend
 {
     internal interface Drawer
     {
