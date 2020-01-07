@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.902
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "madeline_uwp", "madeline_uwp\madeline_uwp.csproj", "{6D4C9DC9-C692-4565-93E0-FA84CCC88B96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MadelineUwp", "MadelineUwp\MadelineUwp.csproj", "{6D4C9DC9-C692-4565-93E0-FA84CCC88B96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

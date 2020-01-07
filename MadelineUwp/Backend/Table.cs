@@ -39,7 +39,7 @@ namespace Madeline.Backend
         {
             int index = ids.BinarySearch(id);
             bool success = index >= 0;
-            value = success ? values[index] : default;
+            value = success ? values[index] : default(T);
             return success;
         }
 
