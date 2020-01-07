@@ -1,5 +1,4 @@
-﻿using Madeline.Backend;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System.Numerics;
 using Windows.System;
@@ -14,18 +13,26 @@ namespace Madeline
     public sealed partial class NodeGraph : Page
     {
         private Viewport viewport = new Viewport();
-        private NodeCreationDialog dialog;
-        private NodesDrawer nodesDrawer;
-        private NodeInteraction nodeInteraction;
-        private Hover hover;
         private Mouse mouse = new Mouse();
+
+        private NodeCreationDialog dialog;
+        private NodeInteraction nodeInteraction;
+        private DragSelect dragSelect;
+        private Hover hover;
+
+        private NodeCreationDialogDrawer dialogDrawer;
+        private NodesDrawer nodesDrawer;
+        private SelectDrawer selectDrawer;
 
         public NodeGraph()
         {
             dialog = new NodeCreationDialog(viewport, mouse);
+            dialogDrawer = new NodeCreationDialogDrawer(dialog);
             nodesDrawer = new NodesDrawer(viewport);
             nodeInteraction = new NodeInteraction(mouse, viewport);
             hover = new Hover(mouse, viewport);
+            selectDrawer = new SelectDrawer(viewport);
+            dragSelect = new DragSelect(mouse, viewport);
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
             InitializeComponent();
@@ -35,7 +42,8 @@ namespace Madeline
         {
             CanvasDrawingSession session = args.DrawingSession;
             nodesDrawer.Draw(session);
-            dialog.drawer.Draw(session);
+            dialogDrawer.Draw(session);
+            selectDrawer.Draw(session);
         }
 
         private void Unload(object sender, RoutedEventArgs e)
@@ -56,7 +64,9 @@ namespace Madeline
             UpdateMouse(e);
             canvas.Invalidate();
             hover.HandleMouse();
-            bool _ = dialog.HandleMouse() || nodeInteraction.HandleMouse();
+            bool handled = dialog.HandleMouse();
+            handled |= nodeInteraction.HandleMouse();
+            handled |= dragSelect.HandleMouse();
         }
 
         private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
@@ -64,7 +74,8 @@ namespace Madeline
             VirtualKey key = args.VirtualKey;
             if (args.KeyStatus.WasKeyDown)
             {
-                bool handled = dialog.HandleKeyboard(key) || nodeInteraction.HandleKeypress(key);
+                bool handled = dialog.HandleKeyboard(key);
+                handled |= nodeInteraction.HandleKeypress(key);
                 if (handled)
                 {
                     canvas.Invalidate();

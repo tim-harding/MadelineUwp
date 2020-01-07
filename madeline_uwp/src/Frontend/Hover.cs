@@ -17,20 +17,16 @@ namespace Madeline
 
         public void HandleMouse()
         {
-            Graph graph = viewport.graph;
-            graph.hoverNode = -1;
-            graph.hoverSlot = new Slot(-1, -1);
-            graph.hoverWire = new Slot(-1, -1);
-
+            viewport.hover.Clear();
             var pos = viewport.From(mouse.current.pos).ToPoint();
-            foreach ((int id, Node value) node in viewport.graph.nodes)
+            foreach (TableRow<Node> node in viewport.graph.nodes)
             {
                 TrySetNode(node);
                 UpdateActiveSlot(node);
             }
         }
 
-        private void UpdateActiveSlot((int id, Node value) node)
+        private void UpdateActiveSlot(TableRow<Node> node)
         {
             Graph graph = viewport.graph;
             Plugin plugin = graph.plugins.Get(node.value.plugin);
@@ -46,13 +42,13 @@ namespace Madeline
             TrySetSlot(node.id, node.value.OutputPos(), -1);
         }
 
-        private void TrySetNode((int id, Node value) node)
+        private void TrySetNode(TableRow<Node> node)
         {
             var rect = new Rect(node.value.pos.ToPoint(), Node.Size.ToSize());
             var pos = viewport.From(mouse.current.pos).ToPoint();
             if (rect.Contains(pos))
             {
-                viewport.graph.hoverNode = node.id;
+                viewport.hover.node = node.id;
             }
         }
 
@@ -61,15 +57,14 @@ namespace Madeline
             const float SLOT_SELECT_RANGE = 256f;
             if (Vector2.DistanceSquared(viewport.Into(pos), mouse.current.pos) < SLOT_SELECT_RANGE)
             {
-                viewport.graph.hoverSlot = new Slot(nodeId, slot);
+                viewport.hover.slot = new Slot(nodeId, slot);
             }
         }
 
         private void UpdateActiveWire(Vector2 iPos, int oNodeId, int iNodeId, int slot)
         {
-            Graph graph = viewport.graph;
             const float WIRE_SELECT_RANGE = 256f;
-            if (!graph.nodes.TryGet(oNodeId, out Node oNode))
+            if (!viewport.graph.nodes.TryGet(oNodeId, out Node oNode))
             {
                 return;
             }
@@ -88,7 +83,7 @@ namespace Madeline
             bool onSegment = t < len && t > 0;
             if (inRange && onSegment)
             {
-                graph.hoverWire = new Slot(iNodeId, slot);
+                viewport.hover.wire = new Slot(iNodeId, slot);
             }
         }
     }

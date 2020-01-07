@@ -10,6 +10,11 @@ namespace Madeline
         public Vector2 transform;
         public float zoom = 1f;
 
+        public GraphComponentsSingle hover = new GraphComponentsSingle();
+        public GraphComponentsSingle active = new GraphComponentsSingle();
+        public GraphComponentsMulti selectionCandidates = new GraphComponentsMulti();
+        public GraphComponentsMulti selection = new GraphComponentsMulti();
+
         public Vector2 selectBoxStart;
         public Vector2 selectBoxEnd;
 

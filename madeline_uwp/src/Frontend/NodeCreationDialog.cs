@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Core;
 
 namespace Madeline
 {
@@ -16,7 +15,7 @@ namespace Madeline
 
         public Mouse mouse;
         public Viewport viewport;
-        public List<(int id, Plugin plugin)> found = new List<(int, Plugin)>();
+        public List<TableRow<Plugin>> found = new List<TableRow<Plugin>>();
         public NodeCreationDialogDrawer drawer;
 
         public string query = "";
@@ -32,7 +31,6 @@ namespace Madeline
         {
             this.viewport = viewport;
             this.mouse = mouse;
-            drawer = new NodeCreationDialogDrawer(this);
         }
 
         public bool HandleKeyboard(VirtualKey key)
@@ -129,9 +127,8 @@ namespace Madeline
         {
             if (selection > -1 && selection < found.Count)
             {
-                (int id, Plugin plugin) pair = found[selection];
                 Vector2 pos = viewport.From(origin);
-                viewport.graph.InsertNode(pos, pair.id);
+                viewport.graph.InsertNode(pos, found[selection].id);
             }
             Hide();
         }
@@ -154,13 +151,13 @@ namespace Madeline
         private void UpdateFound()
         {
             int previousCount = found.Count;
-            foreach ((int id, Plugin plugin) pair in viewport.graph.plugins)
+            foreach (TableRow<Plugin> plugin in viewport.graph.plugins)
             {
                 bool alwaysMatch = query.Length == 0;
-                bool matchQuery = pair.plugin.name.Contains(query);
+                bool matchQuery = plugin.value.name.Contains(query);
                 if (alwaysMatch || matchQuery)
                 {
-                    found.Add(pair);
+                    found.Add(plugin);
                 }
             }
 

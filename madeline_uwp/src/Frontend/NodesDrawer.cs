@@ -21,8 +21,8 @@ namespace Madeline
         public void Draw(CanvasDrawingSession session)
         {
             Graph graph = viewport.graph;
-            Slot slot = graph.hoverSlot;
-            foreach ((int id, Node value) node in graph.nodes)
+            Slot slot = viewport.hover.slot;
+            foreach (TableRow<Node> node in graph.nodes)
             {
                 DrawNodeBody(node, session);
                 Plugin plugin = graph.plugins.Get(node.value.plugin);
@@ -34,7 +34,7 @@ namespace Madeline
                     if (graph.nodes.TryGet(inputs.Consume(), out Node upstream))
                     {
                         Vector2 oPos = viewport.Into(upstream.OutputPos());
-                        DrawWire(session, iPos, oPos, graph.hoverWire.Match(node.id, i));
+                        DrawWire(session, iPos, oPos, viewport.hover.wire.Match(node.id, i));
                     }
 
                     DrawNodeIO(session, iPos, slot.Match(node.id, i));
@@ -44,7 +44,7 @@ namespace Madeline
             }
         }
 
-        private void DrawNodeBody((int id, Node value) node, CanvasDrawingSession session)
+        private void DrawNodeBody(TableRow<Node> node, CanvasDrawingSession session)
         {
             Graph graph = viewport.graph;
             float zoom = viewport.zoom;
@@ -53,8 +53,8 @@ namespace Madeline
             var size = (Node.Size * zoom).ToSize();
             var upperLeft = viewport.Into(node.value.pos).ToPoint();
             var rect = new Rect(upperLeft, size);
-            Color borderColor = node.id == graph.hoverNode ? Colors.Yellow : Colors.Black;
-            borderColor = node.id == graph.activeNode ? Colors.Red : borderColor;
+            Color borderColor = node.id == viewport.hover.node ? Colors.Yellow : Colors.Black;
+            borderColor = node.id == viewport.active.node ? Colors.Red : borderColor;
             session.FillRoundedRectangle(rect, rounding, rounding, Color.FromArgb(255, 64, 64, 64));
             session.DrawRoundedRectangle(rect, rounding, rounding, borderColor);
         }

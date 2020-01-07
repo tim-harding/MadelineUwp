@@ -127,6 +127,9 @@
     <Compile Include="src\Backend\Range.cs" />
     <Compile Include="src\Backend\RangeTable.cs" />
     <Compile Include="src\Backend\Table.cs" />
+    <Compile Include="src\Backend\TableRow.cs" />
+    <Compile Include="src\Frontend\DragSelect.cs" />
+    <Compile Include="src\Frontend\GraphComponents.cs" />
     <Compile Include="src\Frontend\Hover.cs" />
     <Compile Include="src\Frontend\NodeCreationDialogDrawer.cs" />
     <Compile Include="src\Frontend\NodeGraph.xaml.cs">
@@ -138,6 +141,7 @@
     <Compile Include="src\Frontend\NodeInteraction.cs" />
     <Compile Include="src\Frontend\NodesDrawer.cs" />
     <Compile Include="src\Frontend\SampleData.cs" />
+    <Compile Include="src\Frontend\SelectDrawer.cs" />
     <Compile Include="src\Frontend\Slot.cs" />
     <Compile Include="src\Frontend\Viewport.cs" />
   </ItemGroup>

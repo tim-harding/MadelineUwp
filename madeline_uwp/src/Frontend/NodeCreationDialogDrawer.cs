@@ -68,9 +68,9 @@ namespace Madeline
 
         private void DrawLine(int i)
         {
-            string name = dialog.found[i].plugin.name;
+            Backend.Plugin plugin = dialog.found[i].value;
             Vector2 pos = dialog.origin + dialog.Line * (i + 1);
-            session.DrawText(name, pos + Margin, Colors.White);
+            session.DrawText(plugin.name, pos + Margin, Colors.White);
         }
 
         private void DrawQuery()

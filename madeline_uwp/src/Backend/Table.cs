@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Madeline.Backend
 {
-    internal class Table<T> : IEnumerable<(int, T)>
+    internal class Table<T> : IEnumerable<TableRow<T>>
     {
         private int next;
         private List<int> ids = new List<int>();
@@ -49,11 +49,11 @@ namespace Madeline.Backend
             return values[index];
         }
 
-        public IEnumerator<(int, T)> GetEnumerator()
+        public IEnumerator<TableRow<T>> GetEnumerator()
         {
             for (int i = 0; i < ids.Count; i++)
             {
-                yield return (ids[i], values[i]);
+                yield return new TableRow<T>(ids[i], values[i]);
             }
         }
 
