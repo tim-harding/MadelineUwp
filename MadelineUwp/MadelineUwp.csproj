@@ -121,6 +121,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frontend\Palette.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\Graph.cs" />
     <Compile Include="Backend\ListSlice.cs" />
