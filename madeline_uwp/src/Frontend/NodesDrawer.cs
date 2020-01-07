@@ -11,10 +11,6 @@ namespace Madeline
 {
     internal class NodesDrawer
     {
-        public const float NODE_WIDTH = 90f;
-        public const float NODE_HEIGHT = 30f;
-        public const float ROUNDING = 5f;
-
         private Viewport viewport;
 
         public NodesDrawer(Viewport viewport)
@@ -25,6 +21,7 @@ namespace Madeline
         public void Draw(CanvasDrawingSession session)
         {
             Graph graph = viewport.graph;
+            Slot slot = graph.hoverSlot;
             foreach ((int id, Node value) node in graph.nodes)
             {
                 DrawNodeBody(node, session);
@@ -32,15 +29,17 @@ namespace Madeline
                 ListSlice<int> inputs = graph.inputs.Get(node.id);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
-                    Vector2 iPos = InputPos(node.value.pos, i, plugin.inputs);
+                    Vector2 iPos = node.value.InputPos(i, plugin.inputs);
+                    iPos = viewport.Into(iPos);
                     if (graph.nodes.TryGet(inputs.Consume(), out Node upstream))
                     {
-                        Vector2 oPos = OutputPos(upstream.pos);
-                        DrawWire(session, iPos, oPos);
+                        Vector2 oPos = viewport.Into(upstream.OutputPos());
+                        DrawWire(session, iPos, oPos, graph.hoverWire.Match(node.id, i));
                     }
-                    DrawNodeIO(session, iPos);
+
+                    DrawNodeIO(session, iPos, slot.Match(node.id, i));
                 }
-                DrawNodeIO(session, OutputPos(node.value.pos));
+                DrawNodeIO(session, viewport.Into(node.value.OutputPos()), slot.Match(node.id, -1));
                 DrawNodeLabel(session, node.value);
             }
         }
@@ -49,17 +48,18 @@ namespace Madeline
         {
             Graph graph = viewport.graph;
             float zoom = viewport.zoom;
+            const float ROUNDING = 5f;
             float rounding = ROUNDING * zoom;
-            var size = new Size(NODE_WIDTH * zoom, NODE_HEIGHT * zoom);
+            var size = (Node.Size * zoom).ToSize();
             var upperLeft = viewport.Into(node.value.pos).ToPoint();
             var rect = new Rect(upperLeft, size);
-            Color borderColor = node.id == graph.hover ? Colors.Yellow : Colors.Black;
-            borderColor = node.id == graph.active ? Colors.Red : borderColor;
+            Color borderColor = node.id == graph.hoverNode ? Colors.Yellow : Colors.Black;
+            borderColor = node.id == graph.activeNode ? Colors.Red : borderColor;
             session.FillRoundedRectangle(rect, rounding, rounding, Color.FromArgb(255, 64, 64, 64));
             session.DrawRoundedRectangle(rect, rounding, rounding, borderColor);
         }
 
-        private void DrawWire(CanvasDrawingSession session, Vector2 iPos, Vector2 oPos)
+        private void DrawWire(CanvasDrawingSession session, Vector2 iPos, Vector2 oPos, bool hover)
         {
             float r = 25f;
             Vector2 dir = iPos - oPos;
@@ -95,7 +95,8 @@ namespace Madeline
 
             path.EndFigure(CanvasFigureLoop.Open);
             var geo = CanvasGeometry.CreatePath(path);
-            session.DrawGeometry(geo, Colors.White);
+            Color color = hover ? Colors.Red : Colors.White;
+            session.DrawGeometry(geo, color);
         }
 
         private void DrawNodeLabel(CanvasDrawingSession session, Node node)
@@ -107,38 +108,17 @@ namespace Madeline
             };
             var layout = new CanvasTextLayout(session.Device, node.name, format, 0f, 0f);
 
-            var offset = new Vector2(NODE_WIDTH + 15f, 0f);
+            var offset = new Vector2(Node.Size.X + 15f, 0f);
             session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.White);
             offset.Y -= 25f;
             session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.Gray);
         }
 
-        private void DrawNodeIO(CanvasDrawingSession session, Vector2 center)
+        private void DrawNodeIO(CanvasDrawingSession session, Vector2 center, bool hover)
         {
-            session.FillCircle(center, 5, Colors.LightGray);
+            Color color = hover ? Colors.Red : Colors.White;
+            session.FillCircle(center, 5, color);
             session.DrawCircle(center, 5, Colors.Black);
-        }
-
-        private Vector2 InputPos(Vector2 origin, int input, int inputs)
-        {
-            const float NODE_SEPARATION = 35f;
-            float local = input - (inputs - 1) / 2f;
-            var offset = new Vector2
-            {
-                X = NODE_WIDTH / 2f + local * NODE_SEPARATION,
-                Y = 0f,
-            };
-            return viewport.Into(origin) + offset * viewport.zoom;
-        }
-
-        private Vector2 OutputPos(Vector2 origin)
-        {
-            var offset = new Vector2
-            {
-                X = NODE_WIDTH / 2f,
-                Y = NODE_HEIGHT,
-            };
-            return viewport.Into(origin) + offset * viewport.zoom;
         }
     }
 }

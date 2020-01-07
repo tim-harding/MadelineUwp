@@ -9,8 +9,10 @@ namespace Madeline.Backend
         public Table<Node> nodes = new Table<Node>();
         public RangeTable<int> inputs = new RangeTable<int>();
 
-        public int hover = -1;
-        public int active = -1;
+        public int hoverNode = -1;
+        public Slot hoverSlot = new Slot(-1, -1);
+        public Slot hoverWire = new Slot(-1, 0);
+        public int activeNode = -1;
         public List<int> selection = new List<int>();
 
         public void InsertNode(Vector2 pos, int pluginId)

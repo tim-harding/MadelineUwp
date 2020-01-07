@@ -19,6 +19,11 @@ namespace Madeline.Backend
             return values[range.start++];
         }
 
+        public T At(int i)
+        {
+            return values[range.start + i];
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             for (int i = range.start; i < range.end; i++)

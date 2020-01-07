@@ -2,7 +2,6 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System.Numerics;
-using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Input;
@@ -18,6 +17,7 @@ namespace Madeline
         private NodeCreationDialog dialog;
         private NodesDrawer nodesDrawer;
         private NodeInteraction nodeInteraction;
+        private Hover hover;
         private Mouse mouse = new Mouse();
 
         public NodeGraph()
@@ -25,6 +25,7 @@ namespace Madeline
             dialog = new NodeCreationDialog(viewport, mouse);
             nodesDrawer = new NodesDrawer(viewport);
             nodeInteraction = new NodeInteraction(mouse, viewport);
+            hover = new Hover(mouse, viewport);
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
             InitializeComponent();
@@ -53,8 +54,8 @@ namespace Madeline
         private void HandleMouse(object sender, PointerRoutedEventArgs e)
         {
             UpdateMouse(e);
-            UpdateActiveNode();
             canvas.Invalidate();
+            hover.HandleMouse();
             bool _ = dialog.HandleMouse() || nodeInteraction.HandleMouse();
         }
 
@@ -83,22 +84,6 @@ namespace Madeline
                 middle = props.IsMiddleButtonPressed,
                 pos = point.Position.ToVector2(),
             };
-        }
-
-        private void UpdateActiveNode()
-        {
-            viewport.graph.hover = -1;
-            var pos = viewport.From(mouse.current.pos).ToPoint();
-            foreach ((int id, Node node) pair in viewport.graph.nodes)
-            {
-                var size = new Size(NodesDrawer.NODE_WIDTH, NodesDrawer.NODE_HEIGHT);
-                var rect = new Rect(pair.node.pos.ToPoint(), size);
-                if (rect.Contains(pos))
-                {
-                    viewport.graph.hover = pair.id;
-                    return;
-                }
-            }
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Madeline
                 case VirtualKey.Delete:
                 case VirtualKey.Back:
                     Graph graph = viewport.graph;
-                    graph.DeleteNode(graph.active);
+                    graph.DeleteNode(graph.activeNode);
                     return true;
             }
             return false;
@@ -87,9 +87,9 @@ namespace Madeline
         {
             start = mouse.current.pos;
             clickedNode = -1;
-            if (viewport.graph.hover > -1)
+            if (viewport.graph.hoverNode > -1)
             {
-                clickedNode = viewport.graph.hover;
+                clickedNode = viewport.graph.hoverNode;
                 dragStarted = false;
             }
         }
@@ -105,17 +105,17 @@ namespace Madeline
 
         private void CommitLmbInteration()
         {
-            viewport.graph.hover = clickedNode;
+            viewport.graph.hoverNode = clickedNode;
             if (!dragStarted)
             {
-                viewport.graph.active = viewport.graph.hover;
+                viewport.graph.activeNode = viewport.graph.hoverNode;
             }
         }
 
         private void CheckDragStarted()
         {
             const float DRAG_START = 16f;
-            viewport.graph.hover = clickedNode;
+            viewport.graph.hoverNode = clickedNode;
             Vector2 delta = mouse.current.pos - start;
             dragStarted |= delta.LengthSquared() > DRAG_START;
         }
@@ -124,7 +124,7 @@ namespace Madeline
         {
             Graph graph = viewport.graph;
             Table<Node> nodes = graph.nodes;
-            int active = graph.hover;
+            int active = graph.hoverNode;
             if (nodes.TryGet(active, out Node node))
             {
                 node.pos += mouse.Delta / viewport.zoom;
