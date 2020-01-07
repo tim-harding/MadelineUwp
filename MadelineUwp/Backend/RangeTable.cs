@@ -36,8 +36,19 @@ namespace Madeline.Backend
         {
             if (indices.TryGet(id, out Range range))
             {
-                values.RemoveRange(range.start, range.Count());
+                int count = range.Count();
+                values.RemoveRange(range.start, count);
                 indices.Delete(id);
+                foreach (TableRow<Range> row in indices)
+                {
+                    if (row.id > id)
+                    {
+                        Range update = row.value;
+                        update.start -= count;
+                        update.end -= count;
+                        indices.Update(row.id, update);
+                    }
+                }
             }
         }
 
