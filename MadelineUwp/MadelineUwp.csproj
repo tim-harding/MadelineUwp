@@ -128,18 +128,18 @@
     <Compile Include="Backend\RangeTable.cs" />
     <Compile Include="Backend\Table.cs" />
     <Compile Include="Backend\TableRow.cs" />
-    <Compile Include="Frontend\DragSelect.cs" />
+    <Compile Include="Frontend\DragSelectHandler.cs" />
     <Compile Include="Frontend\Handlers.cs" />
     <Compile Include="Frontend\GraphComponents.cs" />
     <Compile Include="Frontend\Hover.cs" />
-    <Compile Include="Frontend\NodeCreationDialogDrawer.cs" />
+    <Compile Include="Frontend\CreationDialogDrawer.cs" />
     <Compile Include="NodeGraph.xaml.cs">
       <DependentUpon>NodeGraph.xaml</DependentUpon>
     </Compile>
     <Compile Include="Backend\Node.cs" />
     <Compile Include="Backend\Plugin.cs" />
     <Compile Include="Frontend\Mouse.cs" />
-    <Compile Include="Frontend\NodeInteraction.cs" />
+    <Compile Include="Frontend\NodesHandler.cs" />
     <Compile Include="Frontend\NodesDrawer.cs" />
     <Compile Include="Frontend\SampleData.cs" />
     <Compile Include="Frontend\DragSelectDrawer.cs" />
@@ -160,7 +160,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Compile Include="Frontend\NodeCreationDialog.cs" />
+    <Compile Include="Frontend\CreationDialogHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

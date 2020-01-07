@@ -4,7 +4,7 @@ using Windows.System;
 
 namespace Madeline.Frontend
 {
-    internal class NodeInteraction : MouseHandler, KeypressHandler
+    internal class NodesHandler : MouseHandler, KeypressHandler
     {
         private Mouse mouse;
         private Viewport viewport;
@@ -13,7 +13,7 @@ namespace Madeline.Frontend
         private int clickedNode = -1;
         private bool dragStarted;
 
-        public NodeInteraction(Mouse mouse, Viewport viewport)
+        public NodesHandler(Mouse mouse, Viewport viewport)
         {
             this.mouse = mouse;
             this.viewport = viewport;

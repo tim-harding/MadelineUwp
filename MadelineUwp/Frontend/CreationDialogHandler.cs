@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace Madeline.Frontend
 {
-    internal class NodeCreationDialog : MouseHandler, KeypressHandler
+    internal class CreationDialogHandler : MouseHandler, KeypressHandler
     {
         public const int WIDTH = 150;
         public const int HEIGHT = 600;
@@ -26,7 +26,7 @@ namespace Madeline.Frontend
         public Vector2 Size => new Vector2(WIDTH, HEIGHT);
         public Vector2 Line => Vector2.UnitY * LEADING;
 
-        public NodeCreationDialog(Viewport viewport, Mouse mouse)
+        public CreationDialogHandler(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

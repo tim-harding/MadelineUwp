@@ -5,14 +5,14 @@ using Windows.Foundation;
 
 namespace Madeline.Frontend
 {
-    internal class DragSelect : MouseHandler
+    internal class DragSelectHandler : MouseHandler
     {
         private Mouse mouse;
         private Viewport viewport;
 
         private bool dragging = false;
 
-        public DragSelect(Mouse mouse, Viewport viewport)
+        public DragSelectHandler(Mouse mouse, Viewport viewport)
         {
             this.mouse = mouse;
             this.viewport = viewport;
