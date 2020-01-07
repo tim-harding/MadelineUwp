@@ -11,9 +11,6 @@
             this.end = end;
         }
 
-        public int Count()
-        {
-            return end - start;
-        }
+        public int Count => end - start;
     }
 }
