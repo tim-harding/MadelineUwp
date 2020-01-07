@@ -68,48 +68,57 @@ namespace Madeline.Frontend
             switch (mouse.Left)
             {
                 case MouseButton.Down:
-                    BeginLmbInteration();
-                    return true;
+                    return BeginLmbInteration();
 
                 case MouseButton.Dragging:
-                    AdvanceLmbInteration();
-                    return true;
+                    return AdvanceLmbInteration();
 
                 case MouseButton.Up:
-                    CommitLmbInteration();
-                    return true;
+                    return CommitLmbInteration();
             }
             return false;
         }
 
-        private void BeginLmbInteration()
+        private bool BeginLmbInteration()
         {
             start = mouse.current.pos;
             clickedNode = -1;
             int hover = viewport.hover.node;
-            if (hover > -1)
+            bool hasHover = hover > -1;
+            if (hasHover)
             {
                 clickedNode = hover;
                 dragStarted = false;
             }
+            return hasHover;
         }
 
-        private void AdvanceLmbInteration()
+        private bool AdvanceLmbInteration()
         {
-            CheckDragStarted();
-            if (dragStarted)
+            bool handling = clickedNode > -1;
+            if (handling)
             {
-                DragNode();
+                CheckDragStarted();
+                if (dragStarted)
+                {
+                    DragNode();
+                }
             }
+            return handling;
         }
 
-        private void CommitLmbInteration()
+        private bool CommitLmbInteration()
         {
-            viewport.hover.node = clickedNode;
-            if (!dragStarted)
+            bool handling = clickedNode > -1;
+            if (handling)
             {
-                viewport.active.node = viewport.hover.node;
+                if (!dragStarted)
+                {
+                    viewport.active.node = clickedNode;
+                }
+                clickedNode = -1;
             }
+            return handling;
         }
 
         private void CheckDragStarted()

@@ -36,10 +36,6 @@ namespace Madeline.Frontend
 
         private bool BeginSelect()
         {
-            if (viewport.hover.node != -1)
-            {
-                return false;
-            }
             viewport.selectBoxStart = mouse.current.pos;
             viewport.selectBoxEnd = mouse.current.pos;
             dragging = true;
@@ -48,23 +44,21 @@ namespace Madeline.Frontend
 
         private bool AdvanceSelect()
         {
-            if (!dragging)
+            if (dragging)
             {
-                return false;
+                viewport.selectBoxEnd = mouse.current.pos;
             }
-            viewport.selectBoxEnd = mouse.current.pos;
-            return true;
+            return dragging;
         }
 
         private bool CommitSelect()
         {
-            if (!dragging)
+            if (dragging)
             {
-                return false;
+                dragging = false;
+                viewport.selectBoxStart = viewport.selectBoxEnd;
             }
-            dragging = false;
-            viewport.selectBoxStart = viewport.selectBoxEnd;
-            return true;
+            return dragging;
         }
 
         private List<int> MatchingNodes()
