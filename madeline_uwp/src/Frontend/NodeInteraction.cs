@@ -4,7 +4,7 @@ using Windows.System;
 
 namespace Madeline
 {
-    internal class NodeInteraction
+    internal class NodeInteraction : MouseHandler, KeypressHandler
     {
         private Mouse mouse;
         private Viewport viewport;

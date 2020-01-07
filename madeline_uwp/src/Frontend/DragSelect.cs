@@ -5,7 +5,7 @@ using Windows.Foundation;
 
 namespace Madeline
 {
-    internal class DragSelect
+    internal class DragSelect : MouseHandler
     {
         private Mouse mouse;
         private Viewport viewport;

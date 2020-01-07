@@ -5,11 +5,11 @@ using Windows.UI;
 
 namespace Madeline
 {
-    internal class SelectDrawer
+    internal class DragSelectDrawer : Drawer
     {
         private Viewport viewport;
 
-        public SelectDrawer(Viewport viewport)
+        public DragSelectDrawer(Viewport viewport)
         {
             this.viewport = viewport;
         }

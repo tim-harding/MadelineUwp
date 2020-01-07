@@ -4,7 +4,7 @@ using Windows.Foundation;
 
 namespace Madeline
 {
-    internal class Hover
+    internal class Hover : MouseHandler
     {
         private Mouse mouse;
         private Viewport viewport;
@@ -15,7 +15,7 @@ namespace Madeline
             this.viewport = viewport;
         }
 
-        public void HandleMouse()
+        public bool HandleMouse()
         {
             viewport.hover.Clear();
             var pos = viewport.From(mouse.current.pos).ToPoint();
@@ -24,6 +24,7 @@ namespace Madeline
                 TrySetNode(node);
                 UpdateActiveSlot(node);
             }
+            return false;
         }
 
         private void UpdateActiveSlot(TableRow<Node> node)

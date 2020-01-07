@@ -9,7 +9,7 @@ using Windows.UI;
 
 namespace Madeline
 {
-    internal class NodesDrawer
+    internal class NodesDrawer : Drawer
     {
         private Viewport viewport;
 

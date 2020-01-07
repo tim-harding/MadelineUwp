@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace Madeline
 {
-    internal class NodeCreationDialog
+    internal class NodeCreationDialog : MouseHandler, KeypressHandler
     {
         public const int WIDTH = 150;
         public const int HEIGHT = 600;
@@ -16,7 +16,6 @@ namespace Madeline
         public Mouse mouse;
         public Viewport viewport;
         public List<TableRow<Plugin>> found = new List<TableRow<Plugin>>();
-        public NodeCreationDialogDrawer drawer;
 
         public string query = "";
         public int selection = 0;
@@ -33,7 +32,7 @@ namespace Madeline
             this.mouse = mouse;
         }
 
-        public bool HandleKeyboard(VirtualKey key)
+        public bool HandleKeypress(VirtualKey key)
         {
             if (key == VirtualKey.Tab)
             {

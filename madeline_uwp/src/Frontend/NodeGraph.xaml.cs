@@ -20,19 +20,38 @@ namespace Madeline
         private DragSelect dragSelect;
         private Hover hover;
 
-        private NodeCreationDialogDrawer dialogDrawer;
-        private NodesDrawer nodesDrawer;
-        private SelectDrawer selectDrawer;
+        private Drawer[] drawers;
+        private MouseHandler[] mouseHandlers;
+        private KeypressHandler[] keypressHandlers;
 
         public NodeGraph()
         {
-            dialog = new NodeCreationDialog(viewport, mouse);
-            dialogDrawer = new NodeCreationDialogDrawer(dialog);
-            nodesDrawer = new NodesDrawer(viewport);
-            nodeInteraction = new NodeInteraction(mouse, viewport);
             hover = new Hover(mouse, viewport);
-            selectDrawer = new SelectDrawer(viewport);
+            dialog = new NodeCreationDialog(viewport, mouse);
+            nodeInteraction = new NodeInteraction(mouse, viewport);
             dragSelect = new DragSelect(mouse, viewport);
+
+            mouseHandlers = new MouseHandler[]
+            {
+                hover,
+                dialog,
+                nodeInteraction,
+                dragSelect,
+            };
+
+            keypressHandlers = new KeypressHandler[]
+            {
+                dialog,
+                nodeInteraction,
+            };
+
+            drawers = new Drawer[]
+            {
+                new NodeCreationDialogDrawer(dialog),
+                new NodesDrawer(viewport),
+                new DragSelectDrawer(viewport),
+            };
+
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
             InitializeComponent();
@@ -41,9 +60,10 @@ namespace Madeline
         private void Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             CanvasDrawingSession session = args.DrawingSession;
-            nodesDrawer.Draw(session);
-            dialogDrawer.Draw(session);
-            selectDrawer.Draw(session);
+            foreach (Drawer drawer in drawers)
+            {
+                drawer.Draw(session);
+            }
         }
 
         private void Unload(object sender, RoutedEventArgs e)
@@ -63,22 +83,27 @@ namespace Madeline
         {
             UpdateMouse(e);
             canvas.Invalidate();
-            hover.HandleMouse();
-            bool handled = dialog.HandleMouse();
-            handled |= nodeInteraction.HandleMouse();
-            handled |= dragSelect.HandleMouse();
+            foreach (MouseHandler handler in mouseHandlers)
+            {
+                if (handler.HandleMouse())
+                {
+                    break;
+                }
+            }
         }
 
         private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
         {
             VirtualKey key = args.VirtualKey;
+            canvas.Invalidate();
             if (args.KeyStatus.WasKeyDown)
             {
-                bool handled = dialog.HandleKeyboard(key);
-                handled |= nodeInteraction.HandleKeypress(key);
-                if (handled)
+                foreach (KeypressHandler handler in keypressHandlers)
                 {
-                    canvas.Invalidate();
+                    if (handler.HandleKeypress(key))
+                    {
+                        break;
+                    }
                 }
             }
         }
