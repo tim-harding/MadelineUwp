@@ -16,9 +16,9 @@ namespace Madeline
         private Viewport viewport = new Viewport();
         private Mouse mouse = new Mouse();
 
-        private NodeCreationDialog dialog;
-        private NodeInteraction nodeInteraction;
-        private DragSelect dragSelect;
+        private CreationDialogHandler dialog;
+        private NodesHandler nodeInteraction;
+        private DragSelectHandler dragSelect;
         private Hover hover;
 
         private Drawer[] drawers;
@@ -28,9 +28,9 @@ namespace Madeline
         public NodeGraph()
         {
             hover = new Hover(mouse, viewport);
-            dialog = new NodeCreationDialog(viewport, mouse);
-            nodeInteraction = new NodeInteraction(mouse, viewport);
-            dragSelect = new DragSelect(mouse, viewport);
+            dialog = new CreationDialogHandler(viewport, mouse);
+            nodeInteraction = new NodesHandler(mouse, viewport);
+            dragSelect = new DragSelectHandler(mouse, viewport);
 
             mouseHandlers = new MouseHandler[]
             {
@@ -48,7 +48,7 @@ namespace Madeline
 
             drawers = new Drawer[]
             {
-                new NodeCreationDialogDrawer(dialog),
+                new CreationDialogDrawer(dialog),
                 new NodesDrawer(viewport),
                 new DragSelectDrawer(viewport),
             };

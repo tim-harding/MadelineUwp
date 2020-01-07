@@ -7,16 +7,16 @@ using Windows.UI;
 
 namespace Madeline.Frontend
 {
-    internal class NodeCreationDialogDrawer : Drawer
+    internal class CreationDialogDrawer : Drawer
     {
         private const int MARGIN = 6;
 
         private Vector2 Margin = Vector2.UnitX * MARGIN;
 
-        private NodeCreationDialog dialog;
+        private CreationDialogHandler dialog;
         private CanvasDrawingSession session;
 
-        public NodeCreationDialogDrawer(NodeCreationDialog dialog)
+        public CreationDialogDrawer(CreationDialogHandler dialog)
         {
             this.dialog = dialog;
         }
@@ -34,7 +34,7 @@ namespace Madeline.Frontend
             DrawSeperator();
             DrawSelection();
 
-            int maxCount = NodeCreationDialog.HEIGHT / NodeCreationDialog.LEADING;
+            int maxCount = CreationDialogHandler.HEIGHT / CreationDialogHandler.LEADING;
             int count = Math.Min(dialog.found.Count, maxCount);
             for (int i = 0; i < count; i++)
             {
