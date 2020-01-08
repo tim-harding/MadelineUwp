@@ -32,16 +32,15 @@ namespace Madeline.Frontend
                 for (int i = 0; i < plugin.inputs; i++)
                 {
                     Vector2 iPos = node.value.InputPos(i, plugin.inputs);
-                    iPos = viewport.Into(iPos);
                     if (graph.nodes.TryGet(inputs.Consume(), out Node upstream))
                     {
-                        Vector2 oPos = viewport.Into(upstream.OutputPos());
+                        Vector2 oPos = upstream.OutputPos();
                         DrawWire(session, iPos, oPos, viewport.hover.wire.Match(node.id, i));
                     }
 
                     DrawNodeIO(session, iPos, slot.Match(node.id, i));
                 }
-                DrawNodeIO(session, viewport.Into(node.value.OutputPos()), slot.Match(node.id, -1));
+                DrawNodeIO(session, node.value.OutputPos(), slot.Match(node.id, -1));
                 DrawNodeLabel(session, node.value);
             }
         }
@@ -54,35 +53,53 @@ namespace Madeline.Frontend
             var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
             const float ROUNDING = 5f;
             var body = CanvasGeometry.CreateRoundedRectangle(session.Device, rect, ROUNDING, ROUNDING);
+            var bgFillShapeRect = new Rect((-Vector2.One * 4f).ToPoint(), (Node.Size + Vector2.One * 4f).ToPoint());
+            var bgFillShape = CanvasGeometry.CreateRectangle(session.Device, bgFillShapeRect);
 
             var size = new Vector2(20f, 60f);
             rect = new Rect((-size).ToPoint(), size.ToPoint());
             var verticalCenter = Matrix3x2.CreateTranslation(0f, Node.Size.Y / 2f);
             var rotate = Matrix3x2.CreateRotation(0.2f);
-            var button = CanvasGeometry.CreateRectangle(session.Device, rect);
-            button = button.Transform(rotate * verticalCenter);
-            CanvasGeometry disable = button.CombineWith(body, Matrix3x2.Identity, CanvasGeometryCombine.Intersect);
+            var disable = CanvasGeometry.CreateRectangle(session.Device, rect);
+            disable = disable.Transform(rotate * verticalCenter);
             var farSideTx = Matrix3x2.CreateTranslation(Node.Size.X, 0f);
-            CanvasGeometry view = button.Transform(farSideTx);
-            view = view.CombineWith(body, Matrix3x2.Identity, CanvasGeometryCombine.Intersect);
+            CanvasGeometry view = disable.Transform(farSideTx);
 
             body = body.Transform(tx);
             disable = disable.Transform(tx);
             view = view.Transform(tx);
+            bgFillShape = bgFillShape.Transform(tx);
 
-            Color fill = node.id == viewport.hover.node ? plugin.colors.hover : plugin.colors.body;
-            session.FillGeometry(body, fill);
-            if (!node.value.enabled)
+            bool active = node.id == viewport.active.node;
+            bool enabled = node.value.enabled;
+            if (active)
             {
-                session.FillGeometry(disable, Palette.Yellow5);
+                session.DrawGeometry(body, Palette.Red5, 6f);
             }
-            session.DrawGeometry(disable, Palette.Tone8);
-            if (viewport.viewing == node.id)
+
+            Color color = active || !enabled ? Palette.Black : Palette.Gray2;
+            session.DrawGeometry(body, color, 2f);
+            using (session.CreateLayer(1f, body))
             {
-                session.FillGeometry(view, Palette.Blue5);
+                bool hover = viewport.hover.node == node.id;
+                color = hover ? plugin.colors.hover : plugin.colors.body;
+                color = enabled ? color : (hover ? Palette.Tone6 : Palette.Tone5);
+                session.FillGeometry(bgFillShape, color);
+
+                if (!enabled)
+                {
+                    session.FillGeometry(disable, Palette.Yellow5);
+                }
+
+                if (viewport.viewing == node.id)
+                {
+                    session.FillGeometry(view, Palette.Blue5);
+                }
+
+                color = enabled ? Palette.Tone7 : Palette.Black;
+                session.DrawGeometry(disable, color);
+                session.DrawGeometry(view, color);
             }
-            session.DrawGeometry(view, Palette.Tone8);
-            session.DrawGeometry(body, Palette.Gray2);
         }
 
         private void DrawWire(CanvasDrawingSession session, Vector2 iPos, Vector2 oPos, bool hover)
@@ -90,6 +107,8 @@ namespace Madeline.Frontend
             Vector2 slotEnd = Vector2.UnitY * IO_RADIUS;
             oPos += slotEnd;
             iPos -= slotEnd;
+            iPos = viewport.Into(iPos);
+            oPos = viewport.Into(oPos);
 
             float r = 25f;
             Vector2 dir = iPos - oPos;
@@ -162,7 +181,7 @@ namespace Madeline.Frontend
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center, bool hover)
         {
             Color color = hover ? Palette.White : Palette.Gray4;
-            session.FillCircle(center, IO_RADIUS * viewport.zoom, color);
+            session.FillCircle(viewport.Into(center), IO_RADIUS * viewport.zoom, color);
         }
     }
 }
