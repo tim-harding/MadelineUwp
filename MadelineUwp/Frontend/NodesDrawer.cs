@@ -47,7 +47,7 @@ namespace Madeline.Frontend
         private void DrawNodeBody(TableRow<Node> node, CanvasDrawingSession session, Plugin plugin)
         {
             Vector2 upperLeft = viewport.Into(node.value.pos);
-            Matrix3x2 tx = Matrix3x2.CreateTranslation(upperLeft) * Matrix3x2.CreateScale(viewport.zoom);
+            Matrix3x2 tx = Matrix3x2.CreateScale(viewport.zoom) * Matrix3x2.CreateTranslation(upperLeft) ;
 
             var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
             const float ROUNDING = 5f;
@@ -96,6 +96,7 @@ namespace Madeline.Frontend
             mul = 1f - mul;
             r *= mul;
             r = Math.Min(r, len / 4f);
+            r *= viewport.zoom;
 
             float rightward = Convert.ToInt32(iPos.X > oPos.X);
             float sign = rightward * 2f - 1f;
@@ -120,7 +121,7 @@ namespace Madeline.Frontend
             path.EndFigure(CanvasFigureLoop.Open);
             var geo = CanvasGeometry.CreatePath(path);
             Color color = hover ? Palette.Indigo2 : Palette.Indigo4;
-            session.DrawGeometry(geo, color);
+            session.DrawGeometry(geo, color, 2f);
         }
 
         private void DrawNodeLabel(CanvasDrawingSession session, Node node)
@@ -141,7 +142,7 @@ namespace Madeline.Frontend
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center, bool hover)
         {
             Color color = hover ? Palette.White : Palette.Gray4;
-            session.FillCircle(center, 4.5f, color);
+            session.FillCircle(center, 4.5f * viewport.zoom, color);
         }
     }
 }

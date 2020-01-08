@@ -10,7 +10,7 @@
 
     <Grid>
         <canvas:CanvasControl Name="canvas"
-                              ClearColor="#222"
+                              ClearColor="#343434"
                               Draw="Draw"
                               PointerMoved="HandleMouse"
                               PointerPressed="HandleMouse"
