@@ -117,7 +117,7 @@ namespace Madeline.Frontend
             oPos = viewport.Into(oPos);
 
             Color color = hover ? Palette.Indigo2 : Palette.Indigo4;
-            WireDrawer.DrawWire(session, iPos, oPos, color, viewport.zoom, false);
+            WireDrawer.DrawWire(session, iPos, oPos, color, viewport.zoom, true);
         }
 
         private void DrawNodeLabel(CanvasDrawingSession session, Node node)

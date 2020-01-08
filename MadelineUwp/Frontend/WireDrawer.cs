@@ -8,13 +8,61 @@ namespace Madeline.Frontend
 {
     internal class WireDrawer
     {
+        private const float PI = (float)Math.PI;
+
+        private static Vector2 iPos;
+        private static Vector2 oPos;
+
         public static void DrawWire(
             CanvasDrawingSession session,
             Vector2 iPos,
             Vector2 oPos,
             Color color,
             float zoom,
-            bool closed)
+            bool rounded)
+        {
+            WireDrawer.iPos = iPos;
+            WireDrawer.oPos = oPos;
+
+            float r = BaseRadius() * zoom;
+            r = rounded ? FlattenedRadius(r) : r;
+            float theta = Theta(iPos, (iPos + oPos) / 2f, r);
+
+            var path = new CanvasPathBuilder(session.Device);
+            path.BeginFigure(oPos);
+
+            float start = Rightward * PI;
+            Vector2 circleOffset = CircleOffset(r);
+            Vector2 c1 = oPos + circleOffset;
+            path.AddArc(c1, r, r, start, -theta);
+            if (rounded)
+            {
+                start = PI - start;
+                Vector2 c2 = iPos - circleOffset;
+                path.AddArc(c2, r, r, start - theta, theta);
+            }
+            else
+            {
+                path.AddLine(iPos);
+            }
+
+            path.EndFigure(CanvasFigureLoop.Open);
+            var geo = CanvasGeometry.CreatePath(path);
+            session.DrawGeometry(geo, color, 2f);
+        }
+
+        private static float Theta(Vector2 to, Vector2 from, float r)
+        {
+            Vector2 c = from + CircleOffset(r);
+            Vector2 d = to - c;
+            float n = (float)Math.Atan2(d.Y, Math.Abs(d.X));
+            float m = (float)Math.Acos(r / d.Length());
+            float theta = PI - n - m;
+            theta *= Sign;
+            return theta;
+        }
+
+        private static float BaseRadius()
         {
             float r = 25f;
             Vector2 dir = iPos - oPos;
@@ -27,8 +75,11 @@ namespace Madeline.Frontend
             mul = 1f - mul;
             r *= mul;
             r = Math.Min(r, len / 4f);
-            r *= zoom;
+            return r;
+        }
 
+        private static float FlattenedRadius(float r)
+        {
             float dist = iPos.Y - oPos.Y;
             if (dist < r * 2f / 3f)
             {
@@ -42,32 +93,16 @@ namespace Madeline.Frontend
             {
                 r = (iPos.Y - oPos.Y) / 2;
             }
+            return r;
+        }
 
-            float rightward = Convert.ToInt32(iPos.X > oPos.X);
-            float sign = rightward * 2f - 1f;
-            var circleOffset = new Vector2(r * sign, 0f);
-            Vector2 c1 = oPos + circleOffset;
-            Vector2 c2 = iPos - circleOffset;
-            Vector2 cd = c2 - c1;
-            float n = (float)Math.Atan2(cd.Y, Math.Abs(cd.X));
-            float m = (float)Math.Acos(2f * r / cd.Length());
-            float pi = (float)Math.PI;
-            float theta = pi - n - m;
-            theta *= sign;
+        private static float Rightward => Convert.ToInt32(iPos.X > oPos.X);
 
-            var path = new CanvasPathBuilder(session.Device);
-            path.BeginFigure(oPos);
+        private static float Sign => Rightward * 2f - 1f;
 
-            float start = rightward * pi;
-            path.AddArc(c1, r, r, start, -theta);
-            start = pi - start;
-            path.AddArc(c2, r, r, start - theta, theta);
-
-            path.EndFigure(CanvasFigureLoop.Open);
-            var geo = CanvasGeometry.CreatePath(path);
-            session.DrawGeometry(geo, color, 2f);
-
-            // Use closed
+        private static Vector2 CircleOffset(float r)
+        {
+            return Vector2.UnitX * r * Sign;
         }
     }
 }
