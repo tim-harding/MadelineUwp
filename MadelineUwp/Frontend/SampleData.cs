@@ -9,9 +9,9 @@ namespace Madeline.Frontend
         {
             var graph = new Graph();
 
-            graph.plugins.Insert(new Plugin { inputs = 0, name = "load" });
-            graph.plugins.Insert(new Plugin { inputs = 2, name = "merge" });
-            graph.plugins.Insert(new Plugin { inputs = 1, name = "shuffle" });
+            graph.plugins.Insert(new Plugin("load", 0, new Plugin.ColorScheme(Palette.Gray4, Palette.White)));
+            graph.plugins.Insert(new Plugin("merge", 2, new Plugin.ColorScheme(Palette.Green3, Palette.Green2)));
+            graph.plugins.Insert(new Plugin("shuffle", 1, new Plugin.ColorScheme(Palette.Indigo3, Palette.Indigo2)));
 
             graph.InsertNode(new Vector2(0, 0), 0);
             graph.InsertNode(new Vector2(200, 0), 0);

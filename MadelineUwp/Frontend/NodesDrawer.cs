@@ -24,8 +24,8 @@ namespace Madeline.Frontend
             Slot slot = viewport.hover.slot;
             foreach (TableRow<Node> node in graph.nodes)
             {
-                DrawNodeBody(node, session);
                 Plugin plugin = graph.plugins.Get(node.value.plugin);
+                DrawNodeBody(node, session, plugin);
                 ListSlice<int> inputs = graph.inputs.Get(node.id);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
@@ -44,19 +44,43 @@ namespace Madeline.Frontend
             }
         }
 
-        private void DrawNodeBody(TableRow<Node> node, CanvasDrawingSession session)
+        private void DrawNodeBody(TableRow<Node> node, CanvasDrawingSession session, Plugin plugin)
         {
-            Graph graph = viewport.graph;
-            float zoom = viewport.zoom;
+            Vector2 upperLeft = viewport.Into(node.value.pos);
+            Matrix3x2 tx = Matrix3x2.CreateTranslation(upperLeft) * Matrix3x2.CreateScale(viewport.zoom);
+
+            var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
             const float ROUNDING = 5f;
-            float rounding = ROUNDING * zoom;
-            var size = (Node.Size * zoom).ToSize();
-            var upperLeft = viewport.Into(node.value.pos).ToPoint();
-            var rect = new Rect(upperLeft, size);
-            Color borderColor = node.id == viewport.hover.node ? Colors.Yellow : Colors.Black;
-            borderColor = node.id == viewport.active.node ? Colors.Red : borderColor;
-            session.FillRoundedRectangle(rect, rounding, rounding, Color.FromArgb(255, 64, 64, 64));
-            session.DrawRoundedRectangle(rect, rounding, rounding, borderColor);
+            var body = CanvasGeometry.CreateRoundedRectangle(session.Device, rect, ROUNDING, ROUNDING);
+
+            var size = new Vector2(20f, 60f);
+            rect = new Rect((-size).ToPoint(), size.ToPoint());
+            var verticalCenter = Matrix3x2.CreateTranslation(0f, Node.Size.Y / 2f);
+            var rotate = Matrix3x2.CreateRotation(0.2f);
+            var button = CanvasGeometry.CreateRectangle(session.Device, rect);
+            button = button.Transform(rotate * verticalCenter);
+            CanvasGeometry disable = button.CombineWith(body, Matrix3x2.Identity, CanvasGeometryCombine.Intersect);
+            var farSideTx = Matrix3x2.CreateTranslation(Node.Size.X, 0f);
+            CanvasGeometry view = button.Transform(farSideTx);
+            view = view.CombineWith(body, Matrix3x2.Identity, CanvasGeometryCombine.Intersect);
+
+            body = body.Transform(tx);
+            disable = disable.Transform(tx);
+            view = view.Transform(tx);
+
+            Color fill = node.id == viewport.hover.node ? plugin.colors.hover : plugin.colors.body;
+            session.FillGeometry(body, fill);
+            if (!node.value.enabled)
+            {
+                session.FillGeometry(disable, Palette.Yellow5);
+            }
+            session.DrawGeometry(disable, Palette.Tone8);
+            if (viewport.viewing == node.id)
+            {
+                session.FillGeometry(view, Palette.Blue5);
+            }
+            session.DrawGeometry(view, Palette.Tone8);
+            session.DrawGeometry(body, Palette.Gray2);
         }
 
         private void DrawWire(CanvasDrawingSession session, Vector2 iPos, Vector2 oPos, bool hover)
@@ -95,7 +119,7 @@ namespace Madeline.Frontend
 
             path.EndFigure(CanvasFigureLoop.Open);
             var geo = CanvasGeometry.CreatePath(path);
-            Color color = hover ? Colors.Red : Colors.White;
+            Color color = hover ? Palette.Indigo2 : Palette.Indigo4;
             session.DrawGeometry(geo, color);
         }
 
@@ -116,9 +140,8 @@ namespace Madeline.Frontend
 
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center, bool hover)
         {
-            Color color = hover ? Colors.Red : Colors.White;
-            session.FillCircle(center, 5, color);
-            session.DrawCircle(center, 5, Colors.Black);
+            Color color = hover ? Palette.White : Palette.Gray4;
+            session.FillCircle(center, 4.5f, color);
         }
     }
 }

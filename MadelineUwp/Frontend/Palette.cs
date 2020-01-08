@@ -9,7 +9,7 @@ namespace Madeline.Frontend
         public static Color FromHex(uint code)
         {
             byte[] bytes = BitConverter.GetBytes(code);
-            return Color.FromArgb(bytes[0], bytes[1], bytes[2], bytes[3]);
+            return Color.FromArgb(bytes[3], bytes[2], bytes[1], bytes[0]);
         }
 
         public static Color Black = FromHex(0xFF000000);

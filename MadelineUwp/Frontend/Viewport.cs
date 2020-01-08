@@ -7,9 +7,10 @@ namespace Madeline.Frontend
     internal class Viewport
     {
         public Graph graph = SampleData.DefaultGraph();
-        public Vector2 transform;
+        public Vector2 transform = new Vector2(400, 300);
         public float zoom = 1f;
 
+        public int viewing = -1;
         public GraphComponentsSingle hover = new GraphComponentsSingle();
         public GraphComponentsSingle active = new GraphComponentsSingle();
         public GraphComponentsMulti selectionCandidates = new GraphComponentsMulti();

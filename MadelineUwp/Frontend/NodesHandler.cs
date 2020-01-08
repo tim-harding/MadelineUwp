@@ -32,6 +32,14 @@ namespace Madeline.Frontend
                 case VirtualKey.Back:
                     viewport.graph.DeleteNode(viewport.active.node);
                     return true;
+
+                case VirtualKey.R:
+                    viewport.viewing = viewport.active.node;
+                    break;
+
+                case VirtualKey.Q:
+                    DisableNodes();
+                    break;
             }
             return false;
         }
@@ -138,6 +146,15 @@ namespace Madeline.Frontend
             {
                 node.pos += mouse.Delta / viewport.zoom;
                 nodes.Update(active, node);
+            }
+        }
+
+        private void DisableNodes()
+        {
+            if (viewport.graph.nodes.TryGet(viewport.active.node, out Node node))
+            {
+                node.enabled = !node.enabled;
+                viewport.graph.nodes.Update(viewport.active.node, node);
             }
         }
     }
