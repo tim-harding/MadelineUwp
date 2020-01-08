@@ -11,6 +11,8 @@ namespace Madeline.Frontend
 {
     internal class NodesDrawer : Drawer
     {
+        private const float IO_RADIUS = 4.5f;
+
         private Viewport viewport;
 
         public NodesDrawer(Viewport viewport)
@@ -47,7 +49,7 @@ namespace Madeline.Frontend
         private void DrawNodeBody(TableRow<Node> node, CanvasDrawingSession session, Plugin plugin)
         {
             Vector2 upperLeft = viewport.Into(node.value.pos);
-            Matrix3x2 tx = Matrix3x2.CreateScale(viewport.zoom) * Matrix3x2.CreateTranslation(upperLeft) ;
+            Matrix3x2 tx = Matrix3x2.CreateScale(viewport.zoom) * Matrix3x2.CreateTranslation(upperLeft);
 
             var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
             const float ROUNDING = 5f;
@@ -85,6 +87,10 @@ namespace Madeline.Frontend
 
         private void DrawWire(CanvasDrawingSession session, Vector2 iPos, Vector2 oPos, bool hover)
         {
+            Vector2 slotEnd = Vector2.UnitY * IO_RADIUS;
+            oPos += slotEnd;
+            iPos -= slotEnd;
+
             float r = 25f;
             Vector2 dir = iPos - oPos;
             float len = dir.Length();
@@ -97,6 +103,20 @@ namespace Madeline.Frontend
             r *= mul;
             r = Math.Min(r, len / 4f);
             r *= viewport.zoom;
+
+            float dist = iPos.Y - oPos.Y;
+            if (dist < r * 2f / 3f)
+            {
+                float remap = Math.Clamp((-dist - 20f) / 40f, 0f, 1f);
+                float rcp = 1f - remap;
+                remap = rcp * remap * remap + remap * (1f - rcp * rcp);
+                remap = remap * 2f / 3f + 1f / 3f;
+                r *= remap;
+            }
+            else if (dist < 2f * r)
+            {
+                r = (iPos.Y - oPos.Y) / 2;
+            }
 
             float rightward = Convert.ToInt32(iPos.X > oPos.X);
             float sign = rightward * 2f - 1f;
@@ -142,7 +162,7 @@ namespace Madeline.Frontend
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center, bool hover)
         {
             Color color = hover ? Palette.White : Palette.Gray4;
-            session.FillCircle(center, 4.5f * viewport.zoom, color);
+            session.FillCircle(center, IO_RADIUS * viewport.zoom, color);
         }
     }
 }
