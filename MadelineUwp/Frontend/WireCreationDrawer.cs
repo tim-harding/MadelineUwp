@@ -36,6 +36,8 @@ namespace Madeline.Frontend
                 System.Diagnostics.Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
             }
             Vector2 srcPos = viewport.Into(srcNode.SlotPos(viewport.wireSrc.slot, srcPlugin.inputs));
+
+            bool up = viewport.wireSrc.slot > -1;
             if (graph.nodes.TryGet(viewport.wireDst.node, out Node dstNode))
             {
                 if (!graph.plugins.TryGet(dstNode.plugin, out Plugin dstPlugin))
@@ -43,13 +45,29 @@ namespace Madeline.Frontend
                     System.Diagnostics.Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
                 }
                 Vector2 dstPos = viewport.Into(dstNode.SlotPos(viewport.wireDst.slot, dstPlugin.inputs));
-                WireDrawer.DrawWire(session, srcPos, dstPos, Palette.Indigo2, viewport.zoom, true);
+                if (!up)
+                {
+                    Swap(ref srcPos, ref dstPos);
+                }
+                WireDrawer.DrawWire(session, srcPos, dstPos, Palette.Indigo2, viewport.zoom, WireKind.DoubleEnded);
             }
             else
             {
                 Vector2 dstPos = mouse.current.pos;
-                WireDrawer.DrawWire(session, dstPos, srcPos, Palette.Indigo2, viewport.zoom, false);
+                WireKind kind = up ? WireKind.Up : WireKind.Down;
+                if (up)
+                {
+                    Swap(ref srcPos, ref dstPos);
+                }
+                WireDrawer.DrawWire(session, dstPos, srcPos, Palette.Indigo2, viewport.zoom, kind);
             }
+        }
+
+        private void Swap(ref Vector2 lhs, ref Vector2 rhs)
+        {
+            Vector2 tmp = lhs;
+            lhs = rhs;
+            rhs = tmp;
         }
     }
 }

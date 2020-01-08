@@ -6,6 +6,13 @@ using Windows.UI;
 
 namespace Madeline.Frontend
 {
+    internal enum WireKind
+    {
+        DoubleEnded,
+        Down,
+        Up,
+    }
+
     internal class WireDrawer
     {
         private const float PI = (float)Math.PI;
@@ -19,11 +26,12 @@ namespace Madeline.Frontend
             Vector2 oPos,
             Color color,
             float zoom,
-            bool rounded)
+            WireKind kind)
         {
             WireDrawer.iPos = iPos;
             WireDrawer.oPos = oPos;
 
+            bool rounded = kind == WireKind.DoubleEnded;
             float r = BaseRadius(rounded) * zoom;
             r = rounded ? FlattenedRadius(r) : r;
             Vector2 target = rounded ? (iPos + oPos) / 2f : oPos;
@@ -32,24 +40,41 @@ namespace Madeline.Frontend
             var path = new CanvasPathBuilder(session.Device);
             path.BeginFigure(oPos);
 
-            float start = Rightward * PI;
-            Vector2 circleOffset = CircleOffset(r);
-            Vector2 c1 = oPos + circleOffset;
-            path.AddArc(c1, r, r, start, -theta);
-            if (rounded)
+            switch (kind)
             {
-                start = PI - start;
-                Vector2 c2 = iPos - circleOffset;
-                path.AddArc(c2, r, r, start - theta, theta);
-            }
-            else
-            {
-                path.AddLine(iPos);
+                case WireKind.DoubleEnded:
+                    UpperArc(path, r, theta);
+                    LowerArc(path, r, theta);
+                    break;
+
+                case WireKind.Down:
+                    UpperArc(path, r, theta);
+                    path.AddLine(iPos);
+                    break;
+
+                case WireKind.Up:
+                    path.AddLine(oPos);
+                    LowerArc(path, r, theta);
+                    break;
             }
 
             path.EndFigure(CanvasFigureLoop.Open);
             var geo = CanvasGeometry.CreatePath(path);
             session.DrawGeometry(geo, color, 2f);
+        }
+
+        private static void UpperArc(CanvasPathBuilder path, float r, float theta)
+        {
+            float start = Rightward * PI;
+            Vector2 c1 = oPos + CircleOffset(r);
+            path.AddArc(c1, r, r, start, -theta);
+        }
+
+        private static void LowerArc(CanvasPathBuilder path, float r, float theta)
+        {
+            float start = (1f - Rightward) * PI;
+            Vector2 c2 = iPos - CircleOffset(r);
+            path.AddArc(c2, r, r, start - theta, theta);
         }
 
         private static float Theta(Vector2 to, Vector2 from, float r)
