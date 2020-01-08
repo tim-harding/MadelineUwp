@@ -36,7 +36,6 @@ namespace Madeline.Frontend
                 System.Diagnostics.Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
             }
             Vector2 srcPos = viewport.Into(srcNode.SlotPos(viewport.wireSrc.slot, srcPlugin.inputs));
-            /*
             if (graph.nodes.TryGet(viewport.wireDst.node, out Node dstNode))
             {
                 if (!graph.plugins.TryGet(dstNode.plugin, out Plugin dstPlugin))
@@ -48,10 +47,9 @@ namespace Madeline.Frontend
             }
             else
             {
-            */
                 Vector2 dstPos = mouse.current.pos;
                 WireDrawer.DrawWire(session, dstPos, srcPos, Palette.Indigo2, viewport.zoom, false);
-            // }
+            }
         }
     }
 }

@@ -51,6 +51,8 @@ namespace Madeline.Frontend
                 return false;
             }
 
+            Vector2 cursor = viewport.From(mouse.current.pos);
+
             float nearest = float.MaxValue;
             viewport.wireDst = new Slot(-1, -1);
             foreach (TableEntry<Node> node in graph.nodes)
@@ -70,13 +72,13 @@ namespace Madeline.Frontend
                     for (int i = 0; i < plugin.inputs; i++)
                     {
                         Vector2 iPos = node.value.InputPos(i, plugin.inputs);
-                        SetNearest(srcNode.pos, iPos, new Slot(node.id, i), ref nearest);
+                        SetNearest(cursor, iPos, new Slot(node.id, i), ref nearest);
                     }
                 }
                 else
                 {
                     Vector2 oPos = node.value.OutputPos();
-                    SetNearest(srcNode.pos, oPos, new Slot(node.id, -1), ref nearest);
+                    SetNearest(cursor, oPos, new Slot(node.id, -1), ref nearest);
                 }
             }
 
