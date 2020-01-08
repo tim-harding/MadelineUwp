@@ -6,17 +6,17 @@ namespace Madeline.Frontend
 {
     internal class NodesHandler : MouseHandler, KeypressHandler
     {
-        private Mouse mouse;
         private Viewport viewport;
+        private Mouse mouse;
 
         private Vector2 start;
         private int clickedNode = -1;
         private bool dragStarted;
 
-        public NodesHandler(Mouse mouse, Viewport viewport)
+        public NodesHandler(Viewport viewport, Mouse mouse)
         {
-            this.mouse = mouse;
             this.viewport = viewport;
+            this.mouse = mouse;
         }
 
         public bool HandleMouse()

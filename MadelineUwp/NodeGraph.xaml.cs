@@ -16,34 +16,31 @@ namespace Madeline
         private Viewport viewport = new Viewport();
         private Mouse mouse = new Mouse();
 
-        private CreationDialogHandler dialog;
-        private NodesHandler nodeInteraction;
-        private DragSelectHandler dragSelect;
-        private Hover hover;
-
         private Drawer[] drawers;
         private MouseHandler[] mouseHandlers;
         private KeypressHandler[] keypressHandlers;
 
         public NodeGraph()
         {
-            hover = new Hover(mouse, viewport);
-            dialog = new CreationDialogHandler(viewport, mouse);
-            nodeInteraction = new NodesHandler(mouse, viewport);
-            dragSelect = new DragSelectHandler(mouse, viewport);
+            var hover = new Hover(viewport, mouse);
+            var dialog = new CreationDialogHandler(viewport, mouse);
+            var nodes = new NodesHandler(viewport, mouse);
+            var dragSelect = new DragSelectHandler(viewport, mouse);
+            var wireCreation = new WireCreationHandler(viewport, mouse);
 
             mouseHandlers = new MouseHandler[]
             {
                 hover,
                 dialog,
-                nodeInteraction,
+                nodes,
+                wireCreation,
                 dragSelect,
             };
 
             keypressHandlers = new KeypressHandler[]
             {
                 dialog,
-                nodeInteraction,
+                nodes,
             };
 
             drawers = new Drawer[]
@@ -51,6 +48,7 @@ namespace Madeline
                 new CreationDialogDrawer(dialog),
                 new NodesDrawer(viewport),
                 new DragSelectDrawer(viewport),
+                new WireCreationDrawer(viewport, mouse),
             };
 
             Window.Current.CoreWindow.KeyDown += HandleKeypress;

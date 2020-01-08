@@ -19,6 +19,9 @@ namespace Madeline.Frontend
         public Vector2 selectBoxStart;
         public Vector2 selectBoxEnd;
 
+        public Slot wireSrc;
+        public Slot wireDst;
+
         public void ZoomAround(Vector2 pos, int delta)
         {
             float factor = (float)Math.Pow(1.001, delta);

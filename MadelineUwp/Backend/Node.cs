@@ -24,6 +24,18 @@ namespace Madeline.Backend
             enabled = true;
         }
 
+        public Vector2 SlotPos(int slot, int inputs)
+        {
+            if (slot < 0)
+            {
+                return OutputPos();
+            }
+            else
+            {
+                return InputPos(slot, inputs);
+            }
+        }
+
         public Vector2 InputPos(int input, int inputs)
         {
             float local = input - (inputs - 1) / 2f;

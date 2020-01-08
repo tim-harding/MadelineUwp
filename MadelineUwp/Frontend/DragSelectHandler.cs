@@ -7,15 +7,15 @@ namespace Madeline.Frontend
 {
     internal class DragSelectHandler : MouseHandler
     {
-        private Mouse mouse;
         private Viewport viewport;
+        private Mouse mouse;
 
         private bool dragging = false;
 
-        public DragSelectHandler(Mouse mouse, Viewport viewport)
+        public DragSelectHandler(Viewport viewport, Mouse mouse)
         {
-            this.mouse = mouse;
             this.viewport = viewport;
+            this.mouse = mouse;
         }
 
         public bool HandleMouse()
