@@ -34,20 +34,24 @@ namespace Madeline.Backend
             }
         }
 
+        public void UpdateAtRow(int row, int offset, T value)
+        {
+            values[row + offset] = value;
+        }
+
         public void Delete(int id)
         {
-            int index = ids.BinarySearch(id);
-            if (index > -1)
+            if (TryGetRowForId(id, out int row))
             {
-                int start = starts[index];
-                int end = index < starts.Count - 1 ? starts[index + 1] : values.Count;
+                int start = starts[row];
+                int end = row < starts.Count - 1 ? starts[row + 1] : values.Count;
                 int count = end - start;
-                for (int i = index; i < starts.Count; i++)
+                for (int i = row; i < starts.Count; i++)
                 {
                     starts[i] -= count;
                 }
-                ids.RemoveAt(index);
-                starts.RemoveAt(index);
+                ids.RemoveAt(row);
+                starts.RemoveAt(row);
                 values.RemoveRange(start, count);
             }
         }
@@ -63,13 +67,15 @@ namespace Madeline.Backend
             return false;
         }
 
-        public ListSlice<T> Get(int id)
+        public bool TryGetRowForId(int id, out int row)
         {
-            if (TryGetRange(id, out Range range))
-            {
-                return new ListSlice<T>(values, range);
-            }
-            return new ListSlice<T>(values, new Range(0, 0));
+            row = ids.BinarySearch(id);
+            return row > -1;
+        }
+
+        public ListSlice<T> GetAtRow(int row)
+        {
+            return new ListSlice<T>(values, RangeForIndex(row));
         }
 
         private bool TryGetRange(int id, out Range range)
@@ -77,13 +83,18 @@ namespace Madeline.Backend
             int index = ids.BinarySearch(id);
             if (index > -1)
             {
-                int start = starts[index];
-                int end = index < starts.Count - 1 ? starts[index + 1] : starts.Count;
-                range = new Range(start, end);
+                range = RangeForIndex(index);
                 return true;
             }
             range = default;
             return false;
+        }
+
+        private Range RangeForIndex(int index)
+        {
+            int start = starts[index];
+            int end = index < starts.Count - 1 ? starts[index + 1] : starts.Count;
+            return new Range(start, end);
         }
     }
 }

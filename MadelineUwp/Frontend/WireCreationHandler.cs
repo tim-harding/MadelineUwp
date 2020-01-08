@@ -44,20 +44,18 @@ namespace Madeline.Frontend
 
         private bool AdvancePull()
         {
-            if (viewport.wireSrc.node < 0)
+            Graph graph = viewport.graph;
+            int srcId = viewport.wireSrc.node;
+            if (!graph.nodes.TryGet(srcId, out Node srcNode))
             {
                 return false;
             }
 
-            Graph graph = viewport.graph;
-            int srcNode = viewport.wireSrc.node;
-            Vector2 srcPos = graph.nodes.Get(srcNode).pos;
-
             float nearest = float.MaxValue;
             viewport.wireDst = new Slot(-1, -1);
-            foreach (TableRow<Node> node in graph.nodes)
+            foreach (TableEntry<Node> node in graph.nodes)
             {
-                if (node.id == srcNode)
+                if (node.id == srcId)
                 {
                     continue;
                 }
@@ -65,17 +63,20 @@ namespace Madeline.Frontend
                 bool srcIsOutput = viewport.wireSrc.slot < 0;
                 if (srcIsOutput)
                 {
-                    Plugin plugin = graph.plugins.Get(node.value.plugin);
+                    if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
+                    {
+                        continue;
+                    }
                     for (int i = 0; i < plugin.inputs; i++)
                     {
                         Vector2 iPos = node.value.InputPos(i, plugin.inputs);
-                        SetNearest(srcPos, iPos, new Slot(node.id, i), ref nearest);
+                        SetNearest(srcNode.pos, iPos, new Slot(node.id, i), ref nearest);
                     }
                 }
                 else
                 {
                     Vector2 oPos = node.value.OutputPos();
-                    SetNearest(srcPos, oPos, new Slot(node.id, -1), ref nearest);
+                    SetNearest(srcNode.pos, oPos, new Slot(node.id, -1), ref nearest);
                 }
             }
 

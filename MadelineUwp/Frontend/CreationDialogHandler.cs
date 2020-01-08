@@ -15,7 +15,7 @@ namespace Madeline.Frontend
 
         public Mouse mouse;
         public Viewport viewport;
-        public List<TableRow<Plugin>> found = new List<TableRow<Plugin>>();
+        public List<TableEntry<Plugin>> found = new List<TableEntry<Plugin>>();
 
         public string query = "";
         public int selection = 0;
@@ -150,7 +150,7 @@ namespace Madeline.Frontend
         private void UpdateFound()
         {
             int previousCount = found.Count;
-            foreach (TableRow<Plugin> plugin in viewport.graph.plugins)
+            foreach (TableEntry<Plugin> plugin in viewport.graph.plugins)
             {
                 bool alwaysMatch = query.Length == 0;
                 bool matchQuery = plugin.value.name.Contains(query);

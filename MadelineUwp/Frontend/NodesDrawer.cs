@@ -23,11 +23,14 @@ namespace Madeline.Frontend
         {
             Graph graph = viewport.graph;
             Slot slot = viewport.hover.slot;
-            foreach (TableRow<Node> node in graph.nodes)
+            foreach (TableEntry<Node> node in graph.nodes)
             {
-                Plugin plugin = graph.plugins.Get(node.value.plugin);
+                if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
+                {
+                    System.Diagnostics.Debug.Assert(false, "Incomplete handling for missing plugins.");
+                }
                 DrawNodeBody(node, session, plugin);
-                ListSlice<int> inputs = graph.inputs.Get(node.id);
+                ListSlice<int> inputs = graph.inputs.GetAtRow(node.row);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
                     Vector2 iPos = node.value.InputPos(i, plugin.inputs);
@@ -44,7 +47,7 @@ namespace Madeline.Frontend
             }
         }
 
-        private void DrawNodeBody(TableRow<Node> node, CanvasDrawingSession session, Plugin plugin)
+        private void DrawNodeBody(TableEntry<Node> node, CanvasDrawingSession session, Plugin plugin)
         {
             Vector2 upperLeft = viewport.Into(node.value.pos);
             Matrix3x2 tx = Matrix3x2.CreateScale(viewport.zoom) * Matrix3x2.CreateTranslation(upperLeft);

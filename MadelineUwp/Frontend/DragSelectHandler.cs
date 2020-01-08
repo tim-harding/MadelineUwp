@@ -69,7 +69,7 @@ namespace Madeline.Frontend
         private List<int> MatchingNodes()
         {
             var nodes = new List<int>();
-            foreach (TableRow<Node> node in viewport.graph.nodes)
+            foreach (TableEntry<Node> node in viewport.graph.nodes)
             {
                 if (Includes(node.value.pos))
                 {

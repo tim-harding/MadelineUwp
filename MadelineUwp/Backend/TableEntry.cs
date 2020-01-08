@@ -1,13 +1,15 @@
 ﻿namespace Madeline
 {
-    internal struct TableRow<T>
+    internal struct TableEntry<T>
     {
         public int id;
+        public int row;
         public T value;
 
-        public TableRow(int id, T value)
+        public TableEntry(int id, int row, T value)
         {
             this.id = id;
+            this.row = row;
             this.value = value;
         }
     }

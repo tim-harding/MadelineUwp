@@ -19,7 +19,7 @@ namespace Madeline.Frontend
         {
             viewport.hover.Clear();
             var pos = viewport.From(mouse.current.pos).ToPoint();
-            foreach (TableRow<Node> node in viewport.graph.nodes)
+            foreach (TableEntry<Node> node in viewport.graph.nodes)
             {
                 TrySetNode(node);
                 UpdateActiveSlot(node);
@@ -27,12 +27,15 @@ namespace Madeline.Frontend
             return false;
         }
 
-        private void UpdateActiveSlot(TableRow<Node> node)
+        private void UpdateActiveSlot(TableEntry<Node> node)
         {
             Graph graph = viewport.graph;
-            Plugin plugin = graph.plugins.Get(node.value.plugin);
+            if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
+            {
+                return;
+            }
 
-            ListSlice<int> inputs = graph.inputs.Get(node.id);
+            ListSlice<int> inputs = graph.inputs.GetAtRow(node.row);
             for (int i = 0; i < plugin.inputs; i++)
             {
                 Vector2 iPos = node.value.InputPos(i, plugin.inputs);
@@ -43,7 +46,7 @@ namespace Madeline.Frontend
             TrySetSlot(node.id, node.value.OutputPos(), -1);
         }
 
-        private void TrySetNode(TableRow<Node> node)
+        private void TrySetNode(TableEntry<Node> node)
         {
             var rect = new Rect(node.value.pos.ToPoint(), Node.Size.ToSize());
             var pos = viewport.From(mouse.current.pos).ToPoint();
