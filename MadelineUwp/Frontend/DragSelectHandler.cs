@@ -39,6 +39,7 @@ namespace Madeline.Frontend
             viewport.selectBoxStart = mouse.current.pos;
             viewport.selectBoxEnd = mouse.current.pos;
             viewport.active.Clear();
+            viewport.selection.Clear();
             dragging = true;
             return true;
         }
@@ -49,11 +50,14 @@ namespace Madeline.Frontend
             {
                 viewport.selectBoxEnd = mouse.current.pos;
             }
+            viewport.selectionCandidates.nodes = MatchingNodes();
             return dragging;
         }
 
         private bool CommitSelect()
         {
+            viewport.selectionCandidates.Clear();
+            viewport.selection.nodes = MatchingNodes();
             if (dragging)
             {
                 dragging = false;
@@ -89,7 +93,9 @@ namespace Madeline.Frontend
 
         private bool Includes(Vector2 nodePos)
         {
-            var selectRect = new Rect(viewport.selectBoxStart.ToPoint(), viewport.selectBoxEnd.ToPoint());
+            Vector2 start = viewport.From(viewport.selectBoxStart);
+            Vector2 end = viewport.From(viewport.selectBoxEnd);
+            var selectRect = new Rect(start.ToPoint(), end.ToPoint());
             var nodeRect = new Rect(nodePos.ToPoint(), Node.Size.ToSize());
             selectRect.Intersect(nodeRect);
             return !selectRect.IsEmpty;

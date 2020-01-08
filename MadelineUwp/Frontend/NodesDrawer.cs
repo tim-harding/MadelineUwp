@@ -72,7 +72,8 @@ namespace Madeline.Frontend
 
             bool active = node.id == viewport.active.node;
             bool enabled = node.value.enabled;
-            if (active)
+            bool selected = viewport.selection.nodes.Contains(node.id);
+            if (selected)
             {
                 session.DrawGeometry(body, Palette.Red5, 6f);
             }
@@ -82,8 +83,10 @@ namespace Madeline.Frontend
             using (session.CreateLayer(1f, body))
             {
                 bool hover = viewport.hover.node == node.id;
-                color = hover ? plugin.colors.hover : plugin.colors.body;
-                color = enabled ? color : (hover ? Palette.Tone6 : Palette.Tone5);
+                bool candidate = viewport.selectionCandidates.nodes.Contains(node.id);
+                bool accent = hover || candidate;
+                color = accent ? plugin.colors.hover : plugin.colors.body;
+                color = enabled ? color : (accent ? Palette.Tone6 : Palette.Tone5);
                 session.FillGeometry(bgFillShape, color);
 
                 if (!enabled)
