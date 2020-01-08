@@ -107,7 +107,6 @@ namespace Madeline.Frontend
             }
         }
 
-
         private void DrawWire(CanvasDrawingSession session, Vector2 iPos, Vector2 oPos, bool hover)
         {
             Vector2 slotEnd = Vector2.UnitY * IO_RADIUS;

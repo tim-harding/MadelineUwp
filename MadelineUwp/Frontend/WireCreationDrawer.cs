@@ -50,7 +50,7 @@ namespace Madeline.Frontend
             {
             */
                 Vector2 dstPos = mouse.current.pos;
-                WireDrawer.DrawWire(session, srcPos, dstPos, Palette.Indigo2, viewport.zoom, false);
+                WireDrawer.DrawWire(session, dstPos, srcPos, Palette.Indigo2, viewport.zoom, false);
             // }
         }
     }

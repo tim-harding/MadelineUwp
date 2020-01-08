@@ -24,9 +24,10 @@ namespace Madeline.Frontend
             WireDrawer.iPos = iPos;
             WireDrawer.oPos = oPos;
 
-            float r = BaseRadius() * zoom;
+            float r = BaseRadius(rounded) * zoom;
             r = rounded ? FlattenedRadius(r) : r;
-            float theta = Theta(iPos, (iPos + oPos) / 2f, r);
+            Vector2 target = rounded ? (iPos + oPos) / 2f : oPos;
+            float theta = Theta(iPos, target, r);
 
             var path = new CanvasPathBuilder(session.Device);
             path.BeginFigure(oPos);
@@ -62,7 +63,7 @@ namespace Madeline.Frontend
             return theta;
         }
 
-        private static float BaseRadius()
+        private static float BaseRadius(bool rounded)
         {
             float r = 25f;
             Vector2 dir = iPos - oPos;
@@ -74,7 +75,8 @@ namespace Madeline.Frontend
             mul *= mul;
             mul = 1f - mul;
             r *= mul;
-            r = Math.Min(r, len / 4f);
+            len /= rounded ? 4f : 2f;
+            r = Math.Min(r, len);
             return r;
         }
 
