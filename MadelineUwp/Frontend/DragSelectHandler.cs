@@ -38,6 +38,7 @@ namespace Madeline.Frontend
         {
             viewport.selectBoxStart = mouse.current.pos;
             viewport.selectBoxEnd = mouse.current.pos;
+            viewport.active.Clear();
             dragging = true;
             return true;
         }
