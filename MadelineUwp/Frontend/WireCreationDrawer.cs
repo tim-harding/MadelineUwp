@@ -44,17 +44,19 @@ namespace Madeline.Frontend
                 {
                     Swap(ref srcPos, ref dstPos);
                 }
-                WireDrawer.DrawWire(session, srcPos, dstPos, Palette.Indigo2, viewport.zoom, WireKind.DoubleEnded);
+                var wire = new Wire(srcPos, dstPos);
+                WireDrawer.DrawWire(session, wire, Palette.Indigo2, viewport.zoom, WireKind.DoubleEnded);
             }
             else
             {
                 Vector2 dstPos = mouse.current.pos;
                 WireKind kind = up ? WireKind.Up : WireKind.Down;
-                if (up)
+                if (!up)
                 {
                     Swap(ref srcPos, ref dstPos);
                 }
-                WireDrawer.DrawWire(session, dstPos, srcPos, Palette.Indigo2, viewport.zoom, kind);
+                var wire = new Wire(srcPos, dstPos);
+                WireDrawer.DrawWire(session, wire, Palette.Indigo2, viewport.zoom, kind);
             }
         }
 

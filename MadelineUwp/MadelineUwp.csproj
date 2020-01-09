@@ -122,6 +122,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frontend\Palette.cs" />
+    <Compile Include="Frontend\Wire.cs" />
     <Compile Include="Frontend\WireCreationDrawer.cs" />
     <Compile Include="Frontend\WireCreationHandler.cs" />
     <Compile Include="Frontend\WireDrawer.cs" />
