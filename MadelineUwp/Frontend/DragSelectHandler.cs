@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
+using Windows.System;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace Madeline.Frontend
 {
@@ -39,7 +42,6 @@ namespace Madeline.Frontend
             SelectionInfo select = viewport.selection;
             select.box.start = mouse.current.pos;
             select.box.end = mouse.current.pos;
-            select.active.Clear();
             dragging = true;
             return true;
         }
@@ -57,15 +59,46 @@ namespace Madeline.Frontend
 
         private bool CommitSelect()
         {
-            if (dragging)
+            if (!dragging) { return false; }
+
+            bool ctrl = IsDown(VirtualKey.Control);
+            bool shift = IsDown(VirtualKey.Shift);
+
+            SelectionInfo select = viewport.selection;
+            List<int> nodes = MatchingNodes();
+            if (ctrl)
             {
-                SelectionInfo select = viewport.selection;
-                select.candidates.Clear();
-                select.active.nodes = MatchingNodes();
-                dragging = false;
-                select.box.start = select.box.end;
+                foreach (int node in nodes)
+                {
+                    select.active.nodes.Remove(node);
+                }
             }
-            return dragging;
+            else if (shift)
+            {
+                foreach (int node in nodes)
+                {
+                    if (!select.active.nodes.Contains(node))
+                    {
+                        select.active.nodes.Add(node);
+                    }
+                }
+            }
+            else
+            {
+                select.active.nodes = nodes;
+            }
+
+            select.candidates.Clear();
+            dragging = false;
+            select.box.start = select.box.end;
+            return true;
+        }
+
+        private bool IsDown(VirtualKey key)
+        {
+            CoreWindow window = Window.Current.CoreWindow;
+            CoreVirtualKeyStates state = window.GetKeyState(key);
+            return state.HasFlag(CoreVirtualKeyStates.Down);
         }
 
         private List<int> MatchingNodes()
