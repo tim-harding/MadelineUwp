@@ -10,19 +10,19 @@ namespace Madeline.Frontend
 {
     internal class NodesDrawer : Drawer
     {
-        private const float IO_RADIUS = 4.5f;
 
         private Viewport viewport;
 
         public NodesDrawer(Viewport viewport)
         {
             this.viewport = viewport;
+            WireDrawer.viewport = viewport;
         }
 
         public void Draw(CanvasDrawingSession session)
         {
             Graph graph = viewport.graph;
-            Slot slot = viewport.hover.slot.target;
+            Slot slot = viewport.hover.slot.Hover();
             foreach (TableEntry<Node> node in graph.nodes)
             {
                 if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
@@ -37,7 +37,7 @@ namespace Madeline.Frontend
                     if (graph.nodes.TryGet(inputs.Consume(), out Node upstream))
                     {
                         Vector2 oPos = upstream.OutputPos();
-                        DrawWire(session, iPos, oPos, viewport.hover.wire.target.Equals(new Slot(node.id, i)));
+                        DrawWire(session, iPos, oPos, viewport.hover.wire.Hover().Equals(new Slot(node.id, i)));
                     }
 
                     DrawNodeIO(session, iPos, slot.Equals(new Slot(node.id, i)));
@@ -109,15 +109,9 @@ namespace Madeline.Frontend
 
         private void DrawWire(CanvasDrawingSession session, Vector2 iPos, Vector2 oPos, bool hover)
         {
-            Vector2 slotEnd = Vector2.UnitY * IO_RADIUS;
-            oPos += slotEnd;
-            iPos -= slotEnd;
-            iPos = viewport.Into(iPos);
-            oPos = viewport.Into(oPos);
-
             Color color = hover ? Palette.Indigo2 : Palette.Indigo4;
             var wire = new Wire(iPos, oPos);
-            WireDrawer.DrawWire(session, wire, color, viewport.zoom, WireKind.DoubleEnded);
+            WireDrawer.DrawWire(session, wire, color, WireKind.DoubleEnded);
         }
 
         private void DrawNodeLabel(CanvasDrawingSession session, Node node)
@@ -138,7 +132,7 @@ namespace Madeline.Frontend
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center, bool hover)
         {
             Color color = hover ? Palette.White : Palette.Gray4;
-            session.FillCircle(viewport.Into(center), IO_RADIUS * viewport.zoom, color);
+            session.FillCircle(viewport.Into(center), Slot.DISPLAY_RADIUS * viewport.zoom, color);
         }
     }
 }

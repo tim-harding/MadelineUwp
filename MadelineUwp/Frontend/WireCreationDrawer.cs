@@ -18,6 +18,7 @@ namespace Madeline.Frontend
         {
             this.viewport = viewport;
             this.mouse = mouse;
+            WireDrawer.viewport = viewport;
         }
 
         public void Draw(CanvasDrawingSession session)
@@ -30,7 +31,7 @@ namespace Madeline.Frontend
             {
                 Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
             }
-            Vector2 srcPos = viewport.Into(srcNode.SlotPos(viewport.rewiring.src.slot, srcPlugin.inputs));
+            Vector2 srcPos = srcNode.SlotPos(viewport.rewiring.src.slot, srcPlugin.inputs);
 
             bool up = viewport.rewiring.src.slot > -1;
             if (graph.nodes.TryGet(viewport.rewiring.dst.node, out Node dstNode))
@@ -39,24 +40,24 @@ namespace Madeline.Frontend
                 {
                     Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
                 }
-                Vector2 dstPos = viewport.Into(dstNode.SlotPos(viewport.rewiring.dst.slot, dstPlugin.inputs));
+                Vector2 dstPos = dstNode.SlotPos(viewport.rewiring.dst.slot, dstPlugin.inputs);
                 if (!up)
                 {
                     Swap(ref srcPos, ref dstPos);
                 }
                 var wire = new Wire(srcPos, dstPos);
-                WireDrawer.DrawWire(session, wire, Palette.Indigo2, viewport.zoom, WireKind.DoubleEnded);
+                WireDrawer.DrawWire(session, wire, Palette.Indigo2, WireKind.DoubleEnded);
             }
             else
             {
-                Vector2 dstPos = mouse.current.pos;
+                Vector2 dstPos = viewport.From(mouse.current.pos);
                 WireKind kind = up ? WireKind.Up : WireKind.Down;
                 if (!up)
                 {
                     Swap(ref srcPos, ref dstPos);
                 }
                 var wire = new Wire(srcPos, dstPos);
-                WireDrawer.DrawWire(session, wire, Palette.Indigo2, viewport.zoom, kind);
+                WireDrawer.DrawWire(session, wire, Palette.Indigo2, kind);
             }
         }
 

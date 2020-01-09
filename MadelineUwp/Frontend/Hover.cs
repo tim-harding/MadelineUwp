@@ -37,7 +37,7 @@ namespace Madeline.Frontend
             {
                 Vector2 iPos = node.value.InputPos(i, plugin.inputs);
                 TrySetSlot(node.id, iPos, i);
-                UpdateActiveWire(iPos, inputs.Consume(), node.id, i);
+                TrySetWire(iPos, inputs.Consume(), node.id, i);
             }
 
             TrySetSlot(node.id, node.value.OutputPos(), -1);
@@ -57,7 +57,7 @@ namespace Madeline.Frontend
 
         private void TrySetSlot(int nodeId, Vector2 pos, int slot)
         {
-            float distance = Vector2.DistanceSquared(viewport.Into(pos), mouse.current.pos);
+            float distance = Vector2.Distance(pos, viewport.From(mouse.current.pos));
             if (distance < viewport.hover.slot.distance)
             {
                 viewport.hover.slot.target = new Slot(nodeId, slot);
@@ -65,26 +65,16 @@ namespace Madeline.Frontend
             }
         }
 
-        private void UpdateActiveWire(Vector2 iPos, int oNodeId, int iNodeId, int slot)
+        private void TrySetWire(Vector2 iPos, int oNodeId, int iNodeId, int slot)
         {
             if (!viewport.graph.nodes.TryGet(oNodeId, out Node oNode)) { return; }
-
-            Vector2 oPos = oNode.OutputPos();
-            Vector2 start = viewport.Into(iPos);
-            Vector2 end = viewport.Into(oPos);
-            Vector2 dir = end - start;
-            float len = dir.Length();
-            dir /= len;
-
-            float t = Vector2.Dot(mouse.current.pos - start, dir);
-            Vector2 proj = t * dir + start;
-            float distance = Vector2.DistanceSquared(mouse.current.pos, proj);
-            bool inRange = distance < viewport.hover.wire.distance;
-            bool onSegment = t < len && t > 0;
-            if (inRange && onSegment)
+            var wire = new Wire(iPos, oNode.OutputPos());
+            float distance = wire.Distance(viewport.From(mouse.current.pos));
+            HoverInfo hover = viewport.hover;
+            if (distance < hover.wire.distance)
             {
-                viewport.hover.wire.target = new Slot(iNodeId, slot);
-                viewport.hover.wire.distance = distance;
+                hover.wire.target = new Slot(iNodeId, slot);
+                hover.wire.distance = distance;
             }
         }
     }

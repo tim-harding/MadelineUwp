@@ -15,17 +15,18 @@ namespace Madeline.Frontend
 
     internal class WireDrawer
     {
+        public static Viewport viewport;
+
         private const float PI = (float)Math.PI;
 
         public static void DrawWire(
             CanvasDrawingSession session,
             Wire wire,
             Color color,
-            float zoom,
             WireKind kind)
         {
             bool rounded = kind == WireKind.DoubleEnded;
-            float r = wire.BaseRadius(rounded) * zoom;
+            float r = wire.BaseRadius(rounded);
             r = rounded ? wire.FlattenedRadius(r) : r;
             Vector2 target = rounded ? (wire.iPos + wire.oPos) / 2f : wire.oPos;
             float theta = wire.Theta(wire.iPos, target, r);
@@ -53,6 +54,7 @@ namespace Madeline.Frontend
 
             path.EndFigure(CanvasFigureLoop.Open);
             var geo = CanvasGeometry.CreatePath(path);
+            geo = geo.Transform(viewport.Into());
             session.DrawGeometry(geo, color, 2f);
         }
 
@@ -69,6 +71,5 @@ namespace Madeline.Frontend
             Vector2 c2 = wire.iPos - wire.CircleOffset(r);
             path.AddArc(c2, r, r, start - theta, theta);
         }
-
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 
 namespace Madeline.Frontend
@@ -18,10 +18,7 @@ namespace Madeline.Frontend
         {
             Vector2 dir = end - start;
             float len = dir.Length();
-            if (len > 0f)
-            {
-                dir /= len;
-            }
+            dir /= len;
             Vector2 local = pos - start;
             float t = Vector2.Dot(local, dir);
             Vector2 proj = dir * t;
@@ -29,7 +26,6 @@ namespace Madeline.Frontend
             float dist = Vector2.Distance(proj, local);
             if (t < 0 || t > len)
             {
-                dist = float.MaxValue;
                 float distToStart = Vector2.Distance(pos, start);
                 float distToEnd = Vector2.Distance(pos, end);
                 dist = Math.Min(distToStart, distToEnd);
@@ -44,14 +40,13 @@ namespace Madeline.Frontend
         public Vector2 iPos;
         public Vector2 oPos;
 
+        private const float PI = (float)Math.PI;
+
         public Wire(Vector2 iPos, Vector2 oPos)
         {
-            Vector2 slotEnd = Vector2.UnitY * Slot.DISPLAY_RADIUS;
-            this.oPos = oPos + slotEnd;
-            this.iPos = iPos - slotEnd;
+            this.iPos = iPos;
+            this.oPos = oPos;
         }
-
-        private const float PI = (float)Math.PI;
 
         public float Theta(Vector2 to, Vector2 from, float r)
         {
@@ -110,30 +105,32 @@ namespace Madeline.Frontend
 
         public float Distance(Vector2 pos)
         {
-            if (iPos.X == oPos.X)
-            {
-                var a = 1;
-            }
             float r = BaseRadius(true);
-            r = FlattenedRadius(r);
             Vector2 c1 = oPos + CircleOffset(r);
             Vector2 c2 = iPos - CircleOffset(r);
+            float dist1 = Vector2.Distance(c1, pos);
+            dist1 = Math.Abs(dist1 - r);
+            float dist2 = Vector2.Distance(c2, pos);
+            dist2 = Math.Abs(dist2 - r);
 
-            float theta = Theta(iPos, (iPos + oPos) / 2f, r);
+            float theta = Theta(oPos, (iPos + oPos) / 2f, r);
             LineSegment line = BetweenArcs(c1, c2, theta, r);
-            float dist = line.Distance(pos);
-            dist = Math.Min(dist, new LineSegment(iPos, line.end).Distance(pos));
-            dist = Math.Min(dist, new LineSegment(oPos, line.start).Distance(pos));
-            return dist;
+
+            float dist = Math.Min(dist1, dist2);
+            dist = Math.Min(dist, line.Distance(pos));
+
+            // return dist;
+            return line.Distance(pos);
         }
 
-        public LineSegment BetweenArcs(Vector2 c1, Vector2 c2, float theta, float r)
+        private LineSegment BetweenArcs(Vector2 c1, Vector2 c2, float theta, float r)
         {
-            float angle = -theta;
-            var startRot = Matrix3x2.CreateRotation(angle, c1);
+            float startAngle = Rightward * PI;
+            var startRot = Matrix3x2.CreateRotation(startAngle - theta, c1);
             var start = Vector2.Transform(oPos, startRot);
 
-            var endRot = Matrix3x2.CreateRotation(angle, c2);
+            startAngle = (1f - Rightward) * PI;
+            var endRot = Matrix3x2.CreateRotation(-theta, c2);
             var end = Vector2.Transform(iPos, endRot);
 
             return new LineSegment(start, end);

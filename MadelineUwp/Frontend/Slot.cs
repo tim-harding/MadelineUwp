@@ -2,6 +2,8 @@
 {
     internal struct Slot
     {
+        public const float DISPLAY_RADIUS = 4.5f;
+
         // -1 is output
         // 0.. is input
         public int slot;

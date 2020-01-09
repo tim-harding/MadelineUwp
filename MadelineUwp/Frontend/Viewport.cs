@@ -19,7 +19,7 @@ namespace Madeline.Frontend
 
         public Slot Hover()
         {
-            return distance < 64f ? target : Slot.Empty;
+            return distance < 16f ? target : Slot.Empty;
         }
     }
 
@@ -170,6 +170,16 @@ namespace Madeline.Frontend
             box.start = From(box.start);
             box.end = From(box.end);
             return box;
+        }
+
+        public Matrix3x2 Into()
+        {
+            return  Matrix3x2.CreateTranslation(translate) * Matrix3x2.CreateScale(zoom);
+        }
+
+        public Matrix3x2 From()
+        {
+            return Matrix3x2.CreateScale(1f / zoom) * Matrix3x2.CreateTranslation(-translate);
         }
     }
 }
