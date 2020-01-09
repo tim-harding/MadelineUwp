@@ -30,11 +30,11 @@ namespace Madeline.Frontend
             {
                 case VirtualKey.Delete:
                 case VirtualKey.Back:
-                    viewport.graph.DeleteNode(viewport.active.node);
+                    viewport.graph.DeleteNode(viewport.selection.ActiveNode);
                     return true;
 
                 case VirtualKey.R:
-                    viewport.viewing = viewport.active.node;
+                    viewport.viewing = viewport.selection.ActiveNode;
                     break;
 
                 case VirtualKey.Q:
@@ -122,7 +122,7 @@ namespace Madeline.Frontend
             {
                 if (!dragStarted)
                 {
-                    viewport.active.node = clickedNode;
+                    viewport.selection.ActiveNode = clickedNode;
                 }
                 clickedNode = -1;
             }
@@ -153,7 +153,7 @@ namespace Madeline.Frontend
         private void DisableNodes()
         {
             Graph graph = viewport.graph;
-            if (graph.nodes.TryGetRowForId(viewport.active.node, out int row))
+            if (graph.nodes.TryGetRowForId(viewport.selection.ActiveNode, out int row))
             {
                 Node node = graph.nodes.GetAtRow(row);
                 node.enabled = !node.enabled;

@@ -7,15 +7,12 @@
         public int slot;
         public int node;
 
+        public static Slot Empty => new Slot(-1, -1);
+
         public Slot(int node, int slot)
         {
             this.node = node;
             this.slot = slot;
-        }
-
-        public bool Match(int node, int slot)
-        {
-            return this.node == node && this.slot == slot;
         }
     }
 }

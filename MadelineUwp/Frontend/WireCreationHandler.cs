@@ -33,11 +33,11 @@ namespace Madeline.Frontend
 
         private bool BeginPull()
         {
-            Slot slot = viewport.hover.slot;
+            Slot slot = viewport.hover.slot.Hover();
             bool valid = slot.node > -1;
             if (valid)
             {
-                viewport.wireSrc = slot;
+                viewport.rewiring.src = slot;
             }
             return valid;
         }
@@ -45,24 +45,18 @@ namespace Madeline.Frontend
         private bool AdvancePull()
         {
             Graph graph = viewport.graph;
-            int srcId = viewport.wireSrc.node;
-            if (!graph.nodes.TryGet(srcId, out Node srcNode))
-            {
-                return false;
-            }
+            int srcId = viewport.rewiring.src.node;
+            if (!graph.nodes.TryGet(srcId, out Node srcNode)) { return false; }
 
+            RewiringInfo rewiring = viewport.rewiring;
             Vector2 cursor = viewport.From(mouse.current.pos);
-
             float nearest = float.MaxValue;
-            viewport.wireDst = new Slot(-1, -1);
+            rewiring.dst = new Slot(-1, -1);
             foreach (TableEntry<Node> node in graph.nodes)
             {
-                if (node.id == srcId)
-                {
-                    continue;
-                }
+                if (node.id == srcId) { continue; }
 
-                bool srcIsOutput = viewport.wireSrc.slot < 0;
+                bool srcIsOutput = rewiring.src.slot < 0;
                 if (srcIsOutput)
                 {
                     if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
@@ -83,7 +77,7 @@ namespace Madeline.Frontend
             }
 
             const float SNAP_RADIUS = 1024f;
-            viewport.wireDst = nearest < SNAP_RADIUS ? viewport.wireDst : new Slot(-1, -1);
+            rewiring.dst = nearest < SNAP_RADIUS ? rewiring.dst : Slot.Empty;
             return true;
         }
 
@@ -93,24 +87,23 @@ namespace Madeline.Frontend
             if (distance < nearest)
             {
                 nearest = distance;
-                viewport.wireDst = slot;
+                viewport.rewiring.dst = slot;
             }
         }
 
         private bool CommitPull()
         {
-            if (viewport.wireSrc.node < 0)
-            {
-                return false;
-            }
-            Slot src = viewport.wireSrc;
-            Slot dst = viewport.wireDst;
+            RewiringInfo rewiring = viewport.rewiring;
+            if (rewiring.src.node < 0) { return false; }
+
+            Slot src = rewiring.src;
+            Slot dst = rewiring.dst;
             bool srcIsOutput = src.slot < 0;
             int i = srcIsOutput ? dst.node : src.node;
             int o = srcIsOutput ? src.node : dst.node;
             int slot = Math.Max(src.slot, dst.slot);
             viewport.graph.Connect(o, i, slot);
-            viewport.wireSrc = new Slot(-1, -1);
+            rewiring.src = new Slot(-1, -1);
             return true;
         }
     }

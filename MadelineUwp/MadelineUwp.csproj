@@ -134,7 +134,6 @@
     <Compile Include="Backend\TableEntry.cs" />
     <Compile Include="Frontend\DragSelectHandler.cs" />
     <Compile Include="Frontend\Handlers.cs" />
-    <Compile Include="Frontend\GraphComponents.cs" />
     <Compile Include="Frontend\Hover.cs" />
     <Compile Include="Frontend\CreationDialogDrawer.cs" />
     <Compile Include="NodeGraph.xaml.cs">

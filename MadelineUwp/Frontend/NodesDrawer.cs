@@ -22,7 +22,7 @@ namespace Madeline.Frontend
         public void Draw(CanvasDrawingSession session)
         {
             Graph graph = viewport.graph;
-            Slot slot = viewport.hover.slot;
+            Slot slot = viewport.hover.slot.target;
             foreach (TableEntry<Node> node in graph.nodes)
             {
                 if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
@@ -37,12 +37,12 @@ namespace Madeline.Frontend
                     if (graph.nodes.TryGet(inputs.Consume(), out Node upstream))
                     {
                         Vector2 oPos = upstream.OutputPos();
-                        DrawWire(session, iPos, oPos, viewport.hover.wire.Match(node.id, i));
+                        DrawWire(session, iPos, oPos, viewport.hover.wire.target.Equals(new Slot(node.id, i)));
                     }
 
-                    DrawNodeIO(session, iPos, slot.Match(node.id, i));
+                    DrawNodeIO(session, iPos, slot.Equals(new Slot(node.id, i)));
                 }
-                DrawNodeIO(session, node.value.OutputPos(), slot.Match(node.id, -1));
+                DrawNodeIO(session, node.value.OutputPos(), slot.Equals(new Slot(node.id, -1)));
                 DrawNodeLabel(session, node.value);
             }
         }
@@ -72,9 +72,9 @@ namespace Madeline.Frontend
             view = view.Transform(tx);
             bgFillShape = bgFillShape.Transform(tx);
 
-            bool active = node.id == viewport.active.node;
+            bool active = node.id == viewport.selection.ActiveNode;
             bool enabled = node.value.enabled;
-            bool selected = viewport.selection.nodes.Contains(node.id);
+            bool selected = viewport.selection.active.nodes.Contains(node.id);
             if (selected)
             {
                 session.DrawGeometry(body, Palette.Red5, 6f);
@@ -85,7 +85,7 @@ namespace Madeline.Frontend
             using (session.CreateLayer(1f, body))
             {
                 bool hover = viewport.hover.node == node.id;
-                bool candidate = viewport.selectionCandidates.nodes.Contains(node.id);
+                bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
                 bool accent = hover || candidate;
                 color = accent ? plugin.colors.hover : plugin.colors.body;
                 color = enabled ? color : (accent ? Palette.Tone6 : Palette.Tone5);

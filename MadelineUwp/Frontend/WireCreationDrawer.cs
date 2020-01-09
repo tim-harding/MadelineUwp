@@ -1,5 +1,6 @@
 ﻿using Madeline.Backend;
 using Microsoft.Graphics.Canvas;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Madeline.Frontend
@@ -22,29 +23,23 @@ namespace Madeline.Frontend
         public void Draw(CanvasDrawingSession session)
         {
             Graph graph = viewport.graph;
-            if (viewport.wireSrc.node < 0)
-            {
-                return;
-            }
-            if (!graph.nodes.TryGet(viewport.wireSrc.node, out Node srcNode))
-            {
-                return;
-            }
+            if (viewport.rewiring.src.node < 0) { return; }
+            if (!graph.nodes.TryGet(viewport.rewiring.src.node, out Node srcNode)) { return; }
 
             if (!graph.plugins.TryGet(srcNode.plugin, out Plugin srcPlugin))
             {
-                System.Diagnostics.Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
+                Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
             }
-            Vector2 srcPos = viewport.Into(srcNode.SlotPos(viewport.wireSrc.slot, srcPlugin.inputs));
+            Vector2 srcPos = viewport.Into(srcNode.SlotPos(viewport.rewiring.src.slot, srcPlugin.inputs));
 
-            bool up = viewport.wireSrc.slot > -1;
-            if (graph.nodes.TryGet(viewport.wireDst.node, out Node dstNode))
+            bool up = viewport.rewiring.src.slot > -1;
+            if (graph.nodes.TryGet(viewport.rewiring.dst.node, out Node dstNode))
             {
                 if (!graph.plugins.TryGet(dstNode.plugin, out Plugin dstPlugin))
                 {
-                    System.Diagnostics.Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
+                    Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
                 }
-                Vector2 dstPos = viewport.Into(dstNode.SlotPos(viewport.wireDst.slot, dstPlugin.inputs));
+                Vector2 dstPos = viewport.Into(dstNode.SlotPos(viewport.rewiring.dst.slot, dstPlugin.inputs));
                 if (!up)
                 {
                     Swap(ref srcPos, ref dstPos);

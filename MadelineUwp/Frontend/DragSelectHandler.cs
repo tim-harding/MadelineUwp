@@ -36,10 +36,10 @@ namespace Madeline.Frontend
 
         private bool BeginSelect()
         {
-            viewport.selectBoxStart = mouse.current.pos;
-            viewport.selectBoxEnd = mouse.current.pos;
-            viewport.active.Clear();
-            viewport.selection.Clear();
+            SelectionInfo select = viewport.selection;
+            select.box.start = mouse.current.pos;
+            select.box.end = mouse.current.pos;
+            select.active.Clear();
             dragging = true;
             return true;
         }
@@ -48,20 +48,22 @@ namespace Madeline.Frontend
         {
             if (dragging)
             {
-                viewport.selectBoxEnd = mouse.current.pos;
+                SelectionInfo select = viewport.selection;
+                select.box.end = mouse.current.pos;
+                select.candidates.nodes = MatchingNodes();
             }
-            viewport.selectionCandidates.nodes = MatchingNodes();
             return dragging;
         }
 
         private bool CommitSelect()
         {
-            viewport.selectionCandidates.Clear();
-            viewport.selection.nodes = MatchingNodes();
             if (dragging)
             {
+                SelectionInfo select = viewport.selection;
+                select.candidates.Clear();
+                select.active.nodes = MatchingNodes();
                 dragging = false;
-                viewport.selectBoxStart = viewport.selectBoxEnd;
+                select.box.start = select.box.end;
             }
             return dragging;
         }
@@ -93,9 +95,7 @@ namespace Madeline.Frontend
 
         private bool Includes(Vector2 nodePos)
         {
-            Vector2 start = viewport.From(viewport.selectBoxStart);
-            Vector2 end = viewport.From(viewport.selectBoxEnd);
-            var selectRect = new Rect(start.ToPoint(), end.ToPoint());
+            var selectRect = viewport.From(viewport.selection.box).ToRect();
             var nodeRect = new Rect(nodePos.ToPoint(), Node.Size.ToSize());
             selectRect.Intersect(nodeRect);
             return !selectRect.IsEmpty;

@@ -1,6 +1,4 @@
 ﻿using Microsoft.Graphics.Canvas;
-using System.Numerics;
-using Windows.Foundation;
 using Windows.UI;
 
 namespace Madeline.Frontend
@@ -16,14 +14,11 @@ namespace Madeline.Frontend
 
         public void Draw(CanvasDrawingSession session)
         {
-            bool dragging = viewport.selectBoxStart != viewport.selectBoxEnd;
-            if (!dragging)
-            {
-                return;
-            }
-            var start = viewport.selectBoxStart.ToPoint();
-            var end = viewport.selectBoxEnd.ToPoint();
-            var rect = new Rect(start, end);
+            SelectionInfo select = viewport.selection;
+            bool dragging = select.box.start != select.box.end;
+            if (!dragging) { return; }
+
+            var rect = select.box.ToRect();
             var color = Color.FromArgb(64, 255, 255, 255);
             session.FillRectangle(rect, color);
             session.DrawRectangle(rect, color);
