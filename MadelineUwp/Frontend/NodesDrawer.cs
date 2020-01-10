@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
+using System.Diagnostics;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
@@ -10,26 +11,71 @@ namespace Madeline.Frontend
 {
     internal class NodesDrawer : Drawer
     {
+        private struct Context
+        {
+            public CanvasDrawingSession session;
+
+            public CanvasCommandList wires;
+            public CanvasCommandList bodies;
+            public CanvasCommandList texts;
+
+            public NodeGeo nodeGeo;
+
+            public Context(CanvasDrawingSession session)
+            {
+                this.session = session;
+                CanvasDevice device = session.Device;
+                wires = new CanvasCommandList(device);
+                bodies = new CanvasCommandList(device);
+                texts = new CanvasCommandList(device);
+                nodeGeo = new NodeGeo(device);
+            }
+        }
+
+        private struct NodeGeo
+        {
+            public CanvasGeometry disable;
+            public CanvasGeometry clipper;
+            public CanvasGeometry viewing;
+
+            public NodeGeo(ICanvasResourceCreator device)
+            {
+                var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
+                const float ROUNDING = 5f;
+                clipper = CanvasGeometry.CreateRoundedRectangle(device, rect, ROUNDING, ROUNDING);
+
+                var size = new Vector2(20f, 60f);
+                rect = new Rect((-size).ToPoint(), size.ToPoint());
+                var verticalCenter = Matrix3x2.CreateTranslation(0f, Node.Size.Y / 2f);
+                var rotate = Matrix3x2.CreateRotation(0.2f);
+                disable = CanvasGeometry.CreateRectangle(device, rect);
+                disable = disable.Transform(rotate * verticalCenter);
+                var farSideTx = Matrix3x2.CreateTranslation(Node.Size.X, 0f);
+                viewing = disable.Transform(farSideTx);
+            }
+        }
 
         private Viewport viewport;
 
         public NodesDrawer(Viewport viewport)
         {
             this.viewport = viewport;
-            WireDrawer.viewport = viewport;
         }
 
         public void Draw(CanvasDrawingSession session)
         {
+            var ctx = new Context(session);
+            session.Transform = viewport.Into();
+
             Graph graph = viewport.graph;
             Slot slot = viewport.hover.slot.Hover();
             foreach (TableEntry<Node> node in graph.nodes)
             {
                 if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
                 {
-                    System.Diagnostics.Debug.Assert(false, "Incomplete handling for missing plugins.");
+                    Debug.Assert(false, "Incomplete handling for missing plugins.");
                 }
-                DrawNodeBody(node, session, plugin);
+                DrawNodeBody(node, ctx, plugin);
                 ListSlice<int> inputs = graph.inputs.GetAtRow(node.row);
                 for (int i = 0; i < plugin.inputs; i++)
                 {
@@ -45,33 +91,20 @@ namespace Madeline.Frontend
                 DrawNodeIO(session, node.value.OutputPos(), slot.Equals(new Slot(node.id, -1)));
                 DrawNodeLabel(session, node.value);
             }
+
+            session.DrawImage(ctx.wires);
+            session.DrawImage(ctx.bodies);
+            session.DrawImage(ctx.texts);
         }
 
-        private void DrawNodeBody(TableEntry<Node> node, CanvasDrawingSession session, Plugin plugin)
+        private void DrawNodeBody(TableEntry<Node> node, Context ctx, Plugin plugin)
         {
-            Vector2 upperLeft = viewport.Into(node.value.pos);
-            Matrix3x2 tx = Matrix3x2.CreateScale(viewport.zoom) * Matrix3x2.CreateTranslation(upperLeft);
+            var tx = Matrix3x2.CreateTranslation(node.value.pos);
+            CanvasGeometry body = ctx.nodeGeo.clipper.Transform(tx);
+            CanvasGeometry disable = ctx.nodeGeo.disable.Transform(tx);
+            CanvasGeometry view = ctx.nodeGeo.viewing.Transform(tx);
 
-            var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
-            const float ROUNDING = 5f;
-            var body = CanvasGeometry.CreateRoundedRectangle(session.Device, rect, ROUNDING, ROUNDING);
-            var bgFillShapeRect = new Rect((-Vector2.One * 4f).ToPoint(), (Node.Size + Vector2.One * 4f).ToPoint());
-            var bgFillShape = CanvasGeometry.CreateRectangle(session.Device, bgFillShapeRect);
-
-            var size = new Vector2(20f, 60f);
-            rect = new Rect((-size).ToPoint(), size.ToPoint());
-            var verticalCenter = Matrix3x2.CreateTranslation(0f, Node.Size.Y / 2f);
-            var rotate = Matrix3x2.CreateRotation(0.2f);
-            var disable = CanvasGeometry.CreateRectangle(session.Device, rect);
-            disable = disable.Transform(rotate * verticalCenter);
-            var farSideTx = Matrix3x2.CreateTranslation(Node.Size.X, 0f);
-            CanvasGeometry view = disable.Transform(farSideTx);
-
-            body = body.Transform(tx);
-            disable = disable.Transform(tx);
-            view = view.Transform(tx);
-            bgFillShape = bgFillShape.Transform(tx);
-
+            CanvasDrawingSession session = ctx.session;
             bool active = node.id == viewport.selection.ActiveNode;
             bool enabled = node.value.enabled;
             bool selected = viewport.selection.active.nodes.Contains(node.id);
@@ -89,7 +122,7 @@ namespace Madeline.Frontend
                 bool accent = hover || candidate;
                 color = accent ? plugin.colors.hover : plugin.colors.body;
                 color = enabled ? color : (accent ? Palette.Tone6 : Palette.Tone5);
-                session.FillGeometry(bgFillShape, color);
+                session.Clear(color);
 
                 if (!enabled)
                 {
@@ -118,21 +151,21 @@ namespace Madeline.Frontend
         {
             var format = new CanvasTextFormat()
             {
-                FontSize = 18f * viewport.zoom,
-                WordWrapping = CanvasWordWrapping.NoWrap
+                FontSize = 18f,
+                WordWrapping = CanvasWordWrapping.NoWrap,
             };
             var layout = new CanvasTextLayout(session.Device, node.name, format, 0f, 0f);
 
             var offset = new Vector2(Node.Size.X + 15f, 0f);
-            session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.White);
+            session.DrawTextLayout(layout, node.pos + offset, Colors.White);
             offset.Y -= 25f;
-            session.DrawTextLayout(layout, viewport.Into(node.pos + offset), Colors.Gray);
+            session.DrawTextLayout(layout, node.pos + offset, Colors.Gray);
         }
 
         private void DrawNodeIO(CanvasDrawingSession session, Vector2 center, bool hover)
         {
             Color color = hover ? Palette.White : Palette.Gray4;
-            session.FillCircle(viewport.Into(center), Slot.DISPLAY_RADIUS * viewport.zoom, color);
+            session.FillCircle(center, Slot.DISPLAY_RADIUS, color);
         }
     }
 }

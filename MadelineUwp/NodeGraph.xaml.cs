@@ -22,7 +22,6 @@ namespace Madeline
 
         public NodeGraph()
         {
-            var hover = new Hover(viewport, mouse);
             var dialog = new CreationDialogHandler(viewport, mouse);
             var nodes = new NodesHandler(viewport, mouse);
             var dragSelect = new DragSelectHandler(viewport, mouse);
@@ -30,7 +29,6 @@ namespace Madeline
 
             mouseHandlers = new MouseHandler[]
             {
-                hover,
                 dialog,
                 nodes,
                 wireCreation,

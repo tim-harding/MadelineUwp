@@ -18,7 +18,6 @@ namespace Madeline.Frontend
         {
             this.viewport = viewport;
             this.mouse = mouse;
-            WireDrawer.viewport = viewport;
         }
 
         public void Draw(CanvasDrawingSession session)

@@ -15,8 +15,6 @@ namespace Madeline.Frontend
 
     internal class WireDrawer
     {
-        public static Viewport viewport;
-
         private const float PI = (float)Math.PI;
 
         public static void DrawWire(
@@ -54,7 +52,6 @@ namespace Madeline.Frontend
 
             path.EndFigure(CanvasFigureLoop.Open);
             var geo = CanvasGeometry.CreatePath(path);
-            geo = geo.Transform(viewport.Into());
             session.DrawGeometry(geo, color, 2f);
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.Numerics;
 
 namespace Madeline.Frontend
@@ -110,10 +111,6 @@ namespace Madeline.Frontend
 
         public float Distance(Vector2 pos)
         {
-            if (iPos.X == oPos.X)
-            {
-                var a = 1;
-            }
             float r = BaseRadius(true);
             r = FlattenedRadius(r);
             Vector2 c1 = oPos + CircleOffset(r);
