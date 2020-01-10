@@ -121,6 +121,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frontend\NodeDragHandler.cs" />
     <Compile Include="Frontend\Palette.cs" />
     <Compile Include="Frontend\Wire.cs" />
     <Compile Include="Frontend\WireCreationDrawer.cs" />

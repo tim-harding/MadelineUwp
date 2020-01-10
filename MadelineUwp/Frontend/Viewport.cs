@@ -22,9 +22,30 @@ namespace Madeline.Frontend
         public static SlotProximity Empty = new SlotProximity(float.MaxValue, Slot.Empty);
     }
 
+    internal struct NodeHover
+    {
+        public enum State
+        {
+            Body,
+            Disable,
+            Viewing,
+        }
+
+        public int id;
+        public State state;
+
+        public NodeHover(int id, State state)
+        {
+            this.id = id;
+            this.state = state;
+        }
+
+        public static NodeHover Empty = new NodeHover(-1, State.Body);
+    }
+
     internal class HoverInfo
     {
-        public int node;
+        public NodeHover node;
         public SlotProximity slot;
         public Slot wire;
 
@@ -42,7 +63,7 @@ namespace Madeline.Frontend
 
         public void Clear()
         {
-            node = -1;
+            node = NodeHover.Empty;
             slot = SlotProximity.Empty;
             wire = Slot.Empty;
         }

@@ -7,17 +7,11 @@ namespace Madeline.Frontend
 {
     internal class NodesHandler : MouseHandler, KeypressHandler
     {
-        private struct SnapPair
-        {
-            public bool vSnap;
-            public bool hSnap;
-            public Vector2 delta;
-        }
-
         private Viewport viewport;
         private Mouse mouse;
 
-        private Vector2 start;
+        private Vector2 cursorStart;
+        private Vector2 nodeStart;
         private int clickedNode = -1;
         private bool dragStarted;
 
@@ -68,12 +62,12 @@ namespace Madeline.Frontend
             switch (mouse.Right)
             {
                 case MouseButton.Down:
-                    start = mouse.current.pos;
+                    cursorStart = mouse.current.pos;
                     return true;
 
                 case MouseButton.Dragging:
                     int delta = (int)(mouse.Delta.X) * 3;
-                    viewport.ZoomAround(start, delta);
+                    viewport.ZoomAround(cursorStart, delta);
                     return true;
             }
             return false;
@@ -97,14 +91,20 @@ namespace Madeline.Frontend
 
         private bool BeginLmbInteration()
         {
-            start = mouse.current.pos;
+            cursorStart = mouse.current.pos;
             clickedNode = -1;
-            int hover = viewport.hover.node;
+            int hover = viewport.hover.node.id;
             bool hasHover = hover > -1;
             if (hasHover)
             {
                 clickedNode = hover;
                 dragStarted = false;
+
+                // Should always succeed if we have hover
+                if (viewport.graph.nodes.TryGet(hover, out Node node))
+                {
+                    nodeStart = node.pos;
+                }
             }
             return hasHover;
         }
@@ -140,8 +140,8 @@ namespace Madeline.Frontend
         private void CheckDragStarted()
         {
             const float DRAG_START = 16f;
-            viewport.hover.node = clickedNode;
-            Vector2 delta = mouse.current.pos - start;
+            viewport.hover.node.id = clickedNode;
+            Vector2 delta = mouse.current.pos - cursorStart;
             dragStarted |= delta.LengthSquared() > DRAG_START;
         }
 
@@ -149,50 +149,35 @@ namespace Madeline.Frontend
         {
             Graph graph = viewport.graph;
             Table<Node> nodes = graph.nodes;
-            int active = viewport.hover.node;
+            int active = viewport.hover.node.id;
             if (graph.nodes.TryGetRowForId(active, out int row))
             {
                 Node node = nodes.GetAtRow(row);
-
-                node.pos += mouse.Delta / viewport.zoom;
-                SnapPair snap = FindSnapPair(node.pos, active);
-                if (snap.hSnap)
-                {
-                    node.pos.X += snap.delta.X;
-                }
-                if (snap.vSnap)
-                {
-                    node.pos.Y += snap.delta.Y;
-                }
-
+                Vector2 mouseDelta = mouse.current.pos - cursorStart;
+                mouseDelta /= viewport.zoom;
+                Vector2 endPos = nodeStart + mouseDelta;
+                endPos += SnapDelta(endPos, active);
+                node.pos = endPos;
                 nodes.UpdateAtRow(row, node);
             }
         }
 
-        private SnapPair FindSnapPair(Vector2 pos, int nodeId)
+        private Vector2 SnapDelta(Vector2 pos, int nodeId)
         {
-            float SNAP_LIMIT = 8f;
-            var pair = new SnapPair();
-            pair.delta.X = float.MaxValue;
-            pair.delta.Y = float.MaxValue;
+            Vector2 snap = Vector2.One * float.MaxValue;
             foreach (TableEntry<Node> node in viewport.graph.nodes)
             {
                 if (node.id == nodeId) { continue; }
 
                 Vector2 delta = node.value.pos - pos;
-                var abs = new Vector2(Math.Abs(delta.X), Math.Abs(delta.Y));
-                if (abs.Y < SNAP_LIMIT && abs.Y < Math.Abs(pair.delta.Y))
-                {
-                    pair.delta.Y = delta.Y;
-                    pair.vSnap = true;
-                }
-                if (abs.X < SNAP_LIMIT && abs.X < Math.Abs(pair.delta.X))
-                {
-                    pair.delta.X = delta.X;
-                    pair.hSnap = true;
-                }
+                snap.Y = Math.Abs(delta.Y) < Math.Abs(snap.Y) ? delta.Y : snap.Y;
+                snap.X = Math.Abs(delta.X) < Math.Abs(snap.X) ? delta.X : snap.X;
             }
-            return pair;
+
+            float SNAP_LIMIT = 12f;
+            snap.X = Math.Abs(snap.X) < SNAP_LIMIT ? snap.X : 0f;
+            snap.Y = Math.Abs(snap.Y) < SNAP_LIMIT ? snap.Y : 0f;
+            return snap;
         }
 
         private void DisableNodes()
