@@ -6,39 +6,45 @@ using Windows.Foundation;
 
 namespace Madeline.Frontend
 {
-    internal struct TargetProximity
+    internal struct SlotProximity
     {
         public float distance;
-        public Slot target;
+        public Slot slot;
 
-        public void Clear()
+        public bool IsHover => distance < 256f;
+
+        public SlotProximity(float distance, Slot slot)
         {
-            distance = float.MaxValue;
-            target = Slot.Empty;
+            this.distance = distance;
+            this.slot = slot;
         }
 
-        public Slot Hover()
-        {
-            return distance < 16f ? target : Slot.Empty;
-        }
+        public static SlotProximity Empty = new SlotProximity(float.MaxValue, Slot.Empty);
     }
 
     internal class HoverInfo
     {
         public int node;
-        public TargetProximity slot;
-        public TargetProximity wire;
+        public SlotProximity slot;
+        public Slot wire;
 
         public HoverInfo()
         {
             Clear();
         }
 
+        public HoverInfo(HoverInfo src)
+        {
+            node = src.node;
+            slot = src.slot;
+            wire = src.wire;
+        }
+
         public void Clear()
         {
             node = -1;
-            slot.Clear();
-            wire.Clear();
+            slot = SlotProximity.Empty;
+            wire = Slot.Empty;
         }
     }
 
@@ -174,7 +180,7 @@ namespace Madeline.Frontend
 
         public Matrix3x2 Into()
         {
-            return  Matrix3x2.CreateTranslation(translate) * Matrix3x2.CreateScale(zoom);
+            return Matrix3x2.CreateTranslation(translate) * Matrix3x2.CreateScale(zoom);
         }
 
         public Matrix3x2 From()

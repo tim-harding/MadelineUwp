@@ -44,7 +44,7 @@ namespace Madeline
             drawers = new Drawer[]
             {
                 new CreationDialogDrawer(dialog),
-                new NodesDrawer(viewport),
+                new NodesDrawer(viewport, mouse),
                 new DragSelectDrawer(viewport),
                 new WireCreationDrawer(viewport, mouse),
             };

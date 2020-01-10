@@ -44,8 +44,8 @@ namespace Madeline.Frontend
                 {
                     Swap(ref srcPos, ref dstPos);
                 }
-                var wire = new Wire(srcPos, dstPos);
-                WireDrawer.DrawWire(session, wire, Palette.Indigo2, WireKind.DoubleEnded);
+                var wire = new Wire(srcPos, dstPos, WireKind.DoubleEnded);
+                session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
             }
             else
             {
@@ -55,8 +55,8 @@ namespace Madeline.Frontend
                 {
                     Swap(ref srcPos, ref dstPos);
                 }
-                var wire = new Wire(srcPos, dstPos);
-                WireDrawer.DrawWire(session, wire, Palette.Indigo2, kind);
+                var wire = new Wire(srcPos, dstPos, kind);
+                session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
             }
         }
 

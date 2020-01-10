@@ -33,11 +33,11 @@ namespace Madeline.Frontend
 
         private bool BeginPull()
         {
-            Slot slot = viewport.hover.slot.Hover();
-            bool valid = slot.node > -1;
+            SlotProximity proximity = viewport.hover.slot;
+            bool valid = proximity.slot.node > -1 && proximity.IsHover;
             if (valid)
             {
-                viewport.rewiring.src = slot;
+                viewport.rewiring.src = proximity.slot;
             }
             return valid;
         }

@@ -1,58 +1,41 @@
 ﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 
 namespace Madeline.Frontend
 {
-    internal struct LineSegment
+    internal enum WireKind
     {
-        public Vector2 start;
-        public Vector2 end;
-
-        public LineSegment(Vector2 start, Vector2 end)
-        {
-            this.start = start;
-            this.end = end;
-        }
-
-        public float Distance(Vector2 pos)
-        {
-            Vector2 dir = end - start;
-            float len = dir.Length();
-            if (len > 0f)
-            {
-                dir /= len;
-            }
-            Vector2 local = pos - start;
-            float t = Vector2.Dot(local, dir);
-            Vector2 proj = dir * t;
-
-            float dist = Vector2.Distance(proj, local);
-            if (t < 0 || t > len)
-            {
-                dist = float.MaxValue;
-                float distToStart = Vector2.Distance(pos, start);
-                float distToEnd = Vector2.Distance(pos, end);
-                dist = Math.Min(distToStart, distToEnd);
-            }
-
-            return dist;
-        }
+        DoubleEnded,
+        Down,
+        Up,
     }
 
     internal struct Wire
     {
+        private const float PI = (float)Math.PI;
+
         public Vector2 iPos;
         public Vector2 oPos;
+        public WireKind kind;
 
-        public Wire(Vector2 iPos, Vector2 oPos)
+        public float Rightward => Convert.ToInt32(iPos.X > oPos.X);
+
+        public float Sign => Rightward * 2f - 1f;
+
+        public Wire(Vector2 iPos, Vector2 oPos, WireKind kind)
         {
             Vector2 slotEnd = Vector2.UnitY * Slot.DISPLAY_RADIUS;
             this.oPos = oPos + slotEnd;
             this.iPos = iPos - slotEnd;
+            this.kind = kind;
         }
 
-        private const float PI = (float)Math.PI;
+        public Vector2 CircleOffset(float r)
+        {
+            return Vector2.UnitX * r * Sign;
+        }
 
         public float Theta(Vector2 to, Vector2 from, float r)
         {
@@ -100,40 +83,52 @@ namespace Madeline.Frontend
             return r;
         }
 
-        public float Rightward => Convert.ToInt32(iPos.X > oPos.X);
-
-        public float Sign => Rightward * 2f - 1f;
-
-        public Vector2 CircleOffset(float r)
+        public CanvasGeometry Geo(CanvasDrawingSession session)
         {
-            return Vector2.UnitX * r * Sign;
+            bool rounded = kind == WireKind.DoubleEnded;
+            float r = BaseRadius(rounded);
+            r = rounded ? FlattenedRadius(r) : r;
+            Vector2 target = rounded ? (iPos + oPos) / 2f : oPos;
+            float theta = Theta(iPos, target, r);
+
+            var path = new CanvasPathBuilder(session.Device);
+            path.BeginFigure(oPos);
+
+            switch (kind)
+            {
+                case WireKind.DoubleEnded:
+                    UpperArc(path, r, theta);
+                    LowerArc(path, r, theta);
+                    break;
+
+                case WireKind.Down:
+                    UpperArc(path, r, theta);
+                    path.AddLine(iPos);
+                    break;
+
+                case WireKind.Up:
+                    path.AddLine(oPos);
+                    LowerArc(path, r, theta);
+                    break;
+            }
+
+            path.EndFigure(CanvasFigureLoop.Open);
+            var geo = CanvasGeometry.CreatePath(path);
+            return geo;
         }
 
-        public float Distance(Vector2 pos)
+        private void UpperArc(CanvasPathBuilder path, float r, float theta)
         {
-            float r = BaseRadius(true);
-            r = FlattenedRadius(r);
+            float start = Rightward * PI;
             Vector2 c1 = oPos + CircleOffset(r);
-            Vector2 c2 = iPos - CircleOffset(r);
-
-            float theta = Theta(iPos, (iPos + oPos) / 2f, r);
-            LineSegment line = BetweenArcs(c1, c2, theta, r);
-            float dist = line.Distance(pos);
-            dist = Math.Min(dist, new LineSegment(iPos, line.end).Distance(pos));
-            dist = Math.Min(dist, new LineSegment(oPos, line.start).Distance(pos));
-            return dist;
+            path.AddArc(c1, r, r, start, -theta);
         }
 
-        public LineSegment BetweenArcs(Vector2 c1, Vector2 c2, float theta, float r)
+        private void LowerArc(CanvasPathBuilder path, float r, float theta)
         {
-            float angle = -theta;
-            var startRot = Matrix3x2.CreateRotation(angle, c1);
-            var start = Vector2.Transform(oPos, startRot);
-
-            var endRot = Matrix3x2.CreateRotation(angle, c2);
-            var end = Vector2.Transform(iPos, endRot);
-
-            return new LineSegment(start, end);
+            float start = (1f - Rightward) * PI;
+            Vector2 c2 = iPos - CircleOffset(r);
+            path.AddArc(c2, r, r, start - theta, theta);
         }
     }
 }

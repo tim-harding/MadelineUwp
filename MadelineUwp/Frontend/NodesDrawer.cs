@@ -67,10 +67,12 @@ namespace Madeline.Frontend
         }
 
         private Viewport viewport;
+        private Mouse mouse;
 
-        public NodesDrawer(Viewport viewport)
+        public NodesDrawer(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
+            this.mouse = mouse;
         }
 
         public void Draw(CanvasDrawingSession session)
@@ -78,8 +80,9 @@ namespace Madeline.Frontend
             var ctx = new Context(session.Device);
             session.Transform = viewport.Into();
 
+            viewport.hover.Clear();
+
             Graph graph = viewport.graph;
-            Slot slot = viewport.hover.slot.Hover();
             foreach (TableEntry<Node> node in graph.nodes)
             {
                 if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
@@ -94,12 +97,12 @@ namespace Madeline.Frontend
                     if (graph.nodes.TryGet(inputs.Consume(), out Node upstream))
                     {
                         Vector2 oPos = upstream.OutputPos();
-                        DrawWire(ctx, iPos, oPos, viewport.hover.wire.Hover().Equals(new Slot(node.id, i)));
+                        DrawWire(ctx, iPos, oPos, new Slot(node.id, i));
                     }
 
-                    DrawNodeIO(ctx, iPos, slot.Equals(new Slot(node.id, i)));
+                    DrawNodeIO(ctx, iPos, new Slot(node.id, i));
                 }
-                DrawNodeIO(ctx, node.value.OutputPos(), slot.Equals(new Slot(node.id, -1)));
+                DrawNodeIO(ctx, node.value.OutputPos(), new Slot(node.id, -1));
                 DrawNodeLabel(ctx, node.value);
             }
 
@@ -115,6 +118,8 @@ namespace Madeline.Frontend
             CanvasGeometry disable = ctx.baseGeo.disable.Transform(tx);
             CanvasGeometry view = ctx.baseGeo.viewing.Transform(tx);
 
+            bool hover = StoreNodeHover(body, node.id);
+
             bool active = node.id == viewport.selection.ActiveNode;
             bool enabled = node.value.enabled;
             bool selected = viewport.selection.active.nodes.Contains(node.id);
@@ -127,7 +132,6 @@ namespace Madeline.Frontend
             ctx.nodes.session.DrawGeometry(body, color, 2f);
             using (ctx.nodes.session.CreateLayer(1f, body))
             {
-                bool hover = viewport.hover.node == node.id;
                 bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
                 bool accent = hover || candidate;
                 color = accent ? plugin.colors.hover : plugin.colors.body;
@@ -150,11 +154,41 @@ namespace Madeline.Frontend
             }
         }
 
-        private void DrawWire(Context ctx, Vector2 iPos, Vector2 oPos, bool hover)
+        private bool StoreNodeHover(CanvasGeometry body, int node)
         {
+            bool hoverAlreadyFound = viewport.hover.node > -1;
+            if (hoverAlreadyFound) { return false; }
+
+            Vector2 cursorLocal = viewport.From(mouse.current.pos);
+            bool nodeHasHover = body.FillContainsPoint(cursorLocal);
+            if (nodeHasHover)
+            {
+                viewport.hover.node = node;
+            }
+            return nodeHasHover;
+        }
+
+        private void DrawWire(Context ctx, Vector2 iPos, Vector2 oPos, Slot slot)
+        {
+            var wire = new Wire(iPos, oPos, WireKind.DoubleEnded);
+            CanvasGeometry geo = wire.Geo(ctx.wires.session);
+            bool hover = StoreWireHover(geo, slot);
             Color color = hover ? Palette.Indigo2 : Palette.Indigo4;
-            var wire = new Wire(iPos, oPos);
-            WireDrawer.DrawWire(ctx.wires.session, wire, color, WireKind.DoubleEnded);
+            ctx.wires.session.DrawGeometry(geo, color, 2f);
+        }
+
+        private bool StoreWireHover(CanvasGeometry geo, Slot wire)
+        {
+            bool hoverAlreadyFound = viewport.hover.wire.node > -1;
+            if (hoverAlreadyFound) { return false; }
+
+            Vector2 cursorLocal = viewport.From(mouse.current.pos);
+            bool wireHasHover = geo.StrokeContainsPoint(cursorLocal, 16f);
+            if (wireHasHover)
+            {
+                viewport.hover.wire = wire;
+            }
+            return wireHasHover;
         }
 
         private void DrawNodeLabel(Context ctx, Node node)
@@ -172,12 +206,26 @@ namespace Madeline.Frontend
             ctx.texts.session.DrawTextLayout(layout, node.pos + offset, Colors.Gray);
         }
 
-        private void DrawNodeIO(Context ctx, Vector2 center, bool hover)
+        private void DrawNodeIO(Context ctx, Vector2 center, Slot slot)
         {
+            bool hover = StoreIOHover(center, slot);
             Color color = hover ? Palette.White : Palette.Gray4;
             var tx = Matrix3x2.CreateTranslation(center);
             CanvasGeometry geo = ctx.baseGeo.slot.Transform(tx);
             ctx.nodes.session.FillGeometry(geo, color);
+        }
+
+        private bool StoreIOHover(Vector2 center, Slot slot)
+        {
+            Vector2 mouseLocal = viewport.From(mouse.current.pos);
+            float distance = Vector2.DistanceSquared(center, mouseLocal);
+            SlotProximity cmp = viewport.hover.slot;
+            bool takeHover = distance < cmp.distance && !cmp.IsHover;
+            if (!takeHover) { return false; }
+
+            var proximity = new SlotProximity(distance, slot);
+            viewport.hover.slot = proximity;
+            return takeHover && proximity.IsHover;
         }
     }
 }
