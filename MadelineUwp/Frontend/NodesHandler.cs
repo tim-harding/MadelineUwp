@@ -1,4 +1,5 @@
 ﻿using Madeline.Backend;
+using System;
 using System.Numerics;
 using Windows.System;
 
@@ -6,6 +7,13 @@ namespace Madeline.Frontend
 {
     internal class NodesHandler : MouseHandler, KeypressHandler
     {
+        private struct SnapPair
+        {
+            public bool vSnap;
+            public bool hSnap;
+            public Vector2 delta;
+        }
+
         private Viewport viewport;
         private Mouse mouse;
 
@@ -145,9 +153,46 @@ namespace Madeline.Frontend
             if (graph.nodes.TryGetRowForId(active, out int row))
             {
                 Node node = nodes.GetAtRow(row);
+
                 node.pos += mouse.Delta / viewport.zoom;
+                SnapPair snap = FindSnapPair(node.pos, active);
+                if (snap.hSnap)
+                {
+                    node.pos.X += snap.delta.X;
+                }
+                if (snap.vSnap)
+                {
+                    node.pos.Y += snap.delta.Y;
+                }
+
                 nodes.UpdateAtRow(row, node);
             }
+        }
+
+        private SnapPair FindSnapPair(Vector2 pos, int nodeId)
+        {
+            float SNAP_LIMIT = 8f;
+            var pair = new SnapPair();
+            pair.delta.X = float.MaxValue;
+            pair.delta.Y = float.MaxValue;
+            foreach (TableEntry<Node> node in viewport.graph.nodes)
+            {
+                if (node.id == nodeId) { continue; }
+
+                Vector2 delta = node.value.pos - pos;
+                var abs = new Vector2(Math.Abs(delta.X), Math.Abs(delta.Y));
+                if (abs.Y < SNAP_LIMIT && abs.Y < Math.Abs(pair.delta.Y))
+                {
+                    pair.delta.Y = delta.Y;
+                    pair.vSnap = true;
+                }
+                if (abs.X < SNAP_LIMIT && abs.X < Math.Abs(pair.delta.X))
+                {
+                    pair.delta.X = delta.X;
+                    pair.hSnap = true;
+                }
+            }
+            return pair;
         }
 
         private void DisableNodes()
