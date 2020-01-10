@@ -23,31 +23,13 @@ namespace Madeline.Frontend
             }
         }
 
-        private struct Context
-        {
-            public CommandList wires;
-            public CommandList nodes;
-            public CommandList texts;
-
-            public BaseGeo baseGeo;
-
-            public Context(ICanvasResourceCreator device)
-            {
-                wires = new CommandList(device);
-                nodes = new CommandList(device);
-                texts = new CommandList(device);
-                baseGeo = new BaseGeo(device);
-            }
-        }
-
-        private struct BaseGeo
+        private struct BodyGeo
         {
             public CanvasGeometry disable;
             public CanvasGeometry clipper;
             public CanvasGeometry viewing;
-            public CanvasGeometry slot;
 
-            public BaseGeo(ICanvasResourceCreator device)
+            public BodyGeo(ICanvasResourceCreator device)
             {
                 var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
                 const float ROUNDING = 5f;
@@ -61,7 +43,44 @@ namespace Madeline.Frontend
                 disable = disable.Transform(rotate * verticalCenter);
                 var farSideTx = Matrix3x2.CreateTranslation(Node.Size.X, 0f);
                 viewing = disable.Transform(farSideTx);
+            }
 
+            public BodyGeo Transform(Matrix3x2 tx)
+            {
+                return new BodyGeo()
+                {
+                    clipper = clipper.Transform(tx),
+                    disable = disable.Transform(tx),
+                    viewing = viewing.Transform(tx),
+                };
+            }
+        }
+
+        private struct Context
+        {
+            public CommandList wires;
+            public CommandList nodes;
+            public CommandList texts;
+
+            public BaseGeo geo;
+
+            public Context(ICanvasResourceCreator device)
+            {
+                wires = new CommandList(device);
+                nodes = new CommandList(device);
+                texts = new CommandList(device);
+                geo = new BaseGeo(device);
+            }
+        }
+
+        private struct BaseGeo
+        {
+            public BodyGeo body;
+            public CanvasGeometry slot;
+
+            public BaseGeo(ICanvasResourceCreator device)
+            {
+                body = new BodyGeo(device);
                 slot = CanvasGeometry.CreateCircle(device, Vector2.Zero, Slot.DISPLAY_RADIUS);
             }
         }
@@ -114,10 +133,7 @@ namespace Madeline.Frontend
         private void DrawNodeBody(TableEntry<Node> node, Context ctx, Plugin plugin)
         {
             var tx = Matrix3x2.CreateTranslation(node.value.pos);
-            CanvasGeometry body = ctx.baseGeo.clipper.Transform(tx);
-            CanvasGeometry disable = ctx.baseGeo.disable.Transform(tx);
-            CanvasGeometry view = ctx.baseGeo.viewing.Transform(tx);
-
+            BodyGeo body = ctx.geo.body.Transform(tx);
             bool hover = StoreNodeHover(body, node.id);
 
             bool active = node.id == viewport.selection.ActiveNode;
@@ -125,47 +141,51 @@ namespace Madeline.Frontend
             bool selected = viewport.selection.active.nodes.Contains(node.id);
             if (selected)
             {
-                ctx.nodes.session.DrawGeometry(body, Palette.Red5, 6f);
+                ctx.nodes.session.DrawGeometry(body.clipper, Palette.Red5, 6f);
             }
 
-            Color color = active || !enabled ? Palette.Black : Palette.Gray2;
-            ctx.nodes.session.DrawGeometry(body, color, 2f);
-            using (ctx.nodes.session.CreateLayer(1f, body))
+            Color bodyColor = active || !enabled ? Palette.Black : Palette.Gray2;
+            ctx.nodes.session.DrawGeometry(body.clipper, bodyColor, 2f);
+            using (ctx.nodes.session.CreateLayer(1f, body.clipper))
             {
                 bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
                 bool accent = hover || candidate;
-                color = accent ? plugin.colors.hover : plugin.colors.body;
-                color = enabled ? color : (accent ? Palette.Tone6 : Palette.Tone5);
-                ctx.nodes.session.Clear(color);
+                bodyColor = accent ? plugin.colors.hover : plugin.colors.body;
+                bodyColor = enabled ? bodyColor : (accent ? Palette.Tone6 : Palette.Tone5);
+                ctx.nodes.session.Clear(bodyColor);
 
-                if (!enabled)
-                {
-                    ctx.nodes.session.FillGeometry(disable, Palette.Yellow5);
-                }
+                bool disableHover = hover && viewport.hover.node.state == NodeHover.State.Disable;
+                Color disableColor = disableHover ? Palette.Yellow3 : bodyColor;
+                disableColor = enabled ? disableColor : Palette.Yellow5;
+                ctx.nodes.session.FillGeometry(body.disable, disableColor);
 
-                if (viewport.viewing == node.id)
-                {
-                    ctx.nodes.session.FillGeometry(view, Palette.Blue5);
-                }
+                bool viewing = node.id == viewport.viewing;
+                bool viewingHover = hover && viewport.hover.node.state == NodeHover.State.Viewing;
+                Color viewingColor = viewingHover ? Palette.Blue3 : bodyColor;
+                viewingColor = viewing ? Palette.Blue5 : viewingColor;
+                ctx.nodes.session.FillGeometry(body.viewing, viewingColor);
 
-                color = enabled ? Palette.Tone7 : Palette.Black;
-                ctx.nodes.session.DrawGeometry(disable, color);
-                ctx.nodes.session.DrawGeometry(view, color);
+                viewingColor = enabled ? Palette.Tone7 : Palette.Black;
+                ctx.nodes.session.DrawGeometry(body.disable, viewingColor);
+                ctx.nodes.session.DrawGeometry(body.viewing, viewingColor);
             }
         }
 
-        private bool StoreNodeHover(CanvasGeometry body, int node)
+        private bool StoreNodeHover(BodyGeo body, int node)
         {
-            bool hoverAlreadyFound = viewport.hover.node > -1;
+            bool hoverAlreadyFound = viewport.hover.node.id > -1;
             if (hoverAlreadyFound) { return false; }
 
             Vector2 cursorLocal = viewport.From(mouse.current.pos);
-            bool nodeHasHover = body.FillContainsPoint(cursorLocal);
-            if (nodeHasHover)
-            {
-                viewport.hover.node = node;
-            }
-            return nodeHasHover;
+            bool nodeHasHover = body.clipper.FillContainsPoint(cursorLocal);
+            if (!nodeHasHover) { return false; }
+
+            bool disable = body.disable.FillContainsPoint(cursorLocal);
+            bool viewing = body.viewing.FillContainsPoint(cursorLocal);
+            NodeHover.State state = disable ? NodeHover.State.Disable : NodeHover.State.Body;
+            state = viewing ? NodeHover.State.Viewing : state;
+            viewport.hover.node = new NodeHover(node, state);
+            return true;
         }
 
         private void DrawWire(Context ctx, Vector2 iPos, Vector2 oPos, Slot slot)
@@ -211,7 +231,7 @@ namespace Madeline.Frontend
             bool hover = StoreIOHover(center, slot);
             Color color = hover ? Palette.White : Palette.Gray4;
             var tx = Matrix3x2.CreateTranslation(center);
-            CanvasGeometry geo = ctx.baseGeo.slot.Transform(tx);
+            CanvasGeometry geo = ctx.geo.slot.Transform(tx);
             ctx.nodes.session.FillGeometry(geo, color);
         }
 
