@@ -145,8 +145,12 @@ namespace Madeline.Frontend
             {
                 bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
                 bool accent = hover || candidate;
+<<<<<<< HEAD
                 Plugin.ColorScheme pluginColors = node.value.plugin.colors;
                 bodyColor = accent ? pluginColors.hover : pluginColors.body;
+=======
+                bodyColor = accent ? plugin.colors.hover : plugin.colors.body;
+>>>>>>> origin/master
                 bodyColor = enabled ? bodyColor : (accent ? Palette.Tone6 : Palette.Tone5);
                 ctx.nodes.session.Clear(bodyColor);
 

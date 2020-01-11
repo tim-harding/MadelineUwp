@@ -121,10 +121,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+<<<<<<< HEAD
     <Compile Include="Frontend\Actions\Connect.cs" />
     <Compile Include="Frontend\Actions\DeleteNode.cs" />
     <Compile Include="Frontend\Actions\Disconnect.cs" />
     <Compile Include="Frontend\Actions\InsertNode.cs" />
+=======
+    <Compile Include="Frontend\NodeDragHandler.cs" />
+>>>>>>> origin/master
     <Compile Include="Frontend\Palette.cs" />
     <Compile Include="Frontend\History.cs" />
     <Compile Include="Frontend\Wire.cs" />
