@@ -9,11 +9,24 @@ namespace Madeline.Backend
         private List<int> ids = new List<int>();
         private List<T> values = new List<T>();
 
-        public void Insert(T value)
+        public int Insert(T value)
         {
             int id = next++;
             ids.Add(id);
             values.Add(value);
+            return id;
+        }
+
+        public void InsertWithId(int id, T value)
+        {
+            if (TryGetRowForId(id, out int row))
+            {
+                // Element with this ID already exists
+                return;
+            }
+            int index = ~row;
+            ids.Insert(index, id);
+            values.Insert(index, value);
         }
 
         public void Update(int id, T value)

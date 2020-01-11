@@ -102,7 +102,7 @@ namespace Madeline.Frontend
             int i = srcIsOutput ? dst.node : src.node;
             int o = srcIsOutput ? src.node : dst.node;
             int slot = Math.Max(src.slot, dst.slot);
-            viewport.graph.Connect(o, i, slot);
+            viewport.history.SubmitChange(new Actions.Connect(o, i, slot));
             rewiring.src = new Slot(-1, -1);
             return true;
         }

@@ -127,7 +127,7 @@ namespace Madeline.Frontend
             if (selection > -1 && selection < found.Count)
             {
                 Vector2 pos = viewport.From(origin);
-                viewport.graph.InsertNode(pos, found[selection].id);
+                viewport.history.SubmitChange(new Actions.InsertNode(viewport.graph, found[selection].id, pos));
             }
             Hide();
         }

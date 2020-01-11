@@ -5,24 +5,23 @@ namespace Madeline.Frontend
 {
     internal class SampleData
     {
-        public static Graph DefaultGraph()
+        public static void Init(Viewport viewport)
         {
-            var graph = new Graph();
+            Graph graph = viewport.graph;
 
             graph.plugins.Insert(new Plugin("load", 0, new Plugin.ColorScheme(Palette.Gray4, Palette.White)));
             graph.plugins.Insert(new Plugin("merge", 2, new Plugin.ColorScheme(Palette.Green3, Palette.Green2)));
             graph.plugins.Insert(new Plugin("shuffle", 1, new Plugin.ColorScheme(Palette.Indigo3, Palette.Indigo2)));
 
-            graph.InsertNode(new Vector2(0, 0), 0);
-            graph.InsertNode(new Vector2(200, 0), 0);
-            graph.InsertNode(new Vector2(100, 100), 1);
-            graph.InsertNode(new Vector2(100, 200), 2);
+            History history = viewport.history;
+            history.SubmitChange(new Actions.InsertNode(graph, 0, new Vector2(200f, 200f)));
+            history.SubmitChange(new Actions.InsertNode(graph, 0, new Vector2(400f, 200f)));
+            history.SubmitChange(new Actions.InsertNode(graph, 1, new Vector2(300f, 300f)));
+            history.SubmitChange(new Actions.InsertNode(graph, 2, new Vector2(300f, 400f)));
 
-            graph.Connect(0, 2, 0);
-            graph.Connect(1, 2, 1);
-            graph.Connect(2, 3, 0);
-
-            return graph;
+            history.SubmitChange(new Actions.Connect(0, 2, 0));
+            history.SubmitChange(new Actions.Connect(1, 2, 1));
+            history.SubmitChange(new Actions.Connect(2, 3, 0));
         }
     }
 }

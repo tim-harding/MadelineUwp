@@ -2,6 +2,8 @@
 using System;
 using System.Numerics;
 using Windows.System;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace Madeline.Frontend
 {
@@ -32,7 +34,7 @@ namespace Madeline.Frontend
             {
                 case VirtualKey.Delete:
                 case VirtualKey.Back:
-                    viewport.graph.DeleteNode(viewport.selection.ActiveNode);
+                    viewport.history.SubmitChange(new Actions.DeleteNode());
                     return true;
 
                 case VirtualKey.R:
@@ -42,8 +44,29 @@ namespace Madeline.Frontend
                 case VirtualKey.Q:
                     DisableNodes();
                     break;
+
+                case VirtualKey.Z:
+                    bool ctrl = IsKeyDown(VirtualKey.Control);
+                    bool shift = IsKeyDown(VirtualKey.Shift);
+                    History history = viewport.history;
+                    if (ctrl && shift)
+                    {
+                        history.Redo();
+                    }
+                    else if (ctrl)
+                    {
+                        history.Undo();
+                    }
+                    break;
             }
             return false;
+        }
+
+        private bool IsKeyDown(VirtualKey key)
+        {
+            CoreWindow window = Window.Current.CoreWindow;
+            CoreVirtualKeyStates state = window.GetKeyState(key);
+            return state.HasFlag(CoreVirtualKeyStates.Down);
         }
 
         private bool HandleMiddleButton()

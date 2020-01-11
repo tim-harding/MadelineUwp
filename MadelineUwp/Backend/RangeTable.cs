@@ -9,21 +9,69 @@ namespace Madeline.Backend
         private List<int> starts = new List<int>();
         private List<T> values = new List<T>();
 
-        public void Extend(int count, T template)
+        public int Extend(int count, T template)
         {
-            ids.Add(next++);
+            int id = next++;
+            ids.Add(id);
             starts.Add(values.Count);
             for (int i = 0; i < count; i++)
             {
                 values.Add(template);
             }
+            return id;
         }
 
-        public void Insert(IEnumerable<T> multiple)
+        public void ExtendWithId(int id, int count, T template)
         {
-            ids.Add(next++);
+            if (TryGetRowForId(id, out int row))
+            {
+                return;
+            }
+
+            int index = ~row;
+            ids.Insert(index, id);
+
+            int start = index < starts.Count ? starts[index] : values.Count;
+            for (int i = 0; i < count; i++)
+            {
+                values.Insert(start, template);
+            }
+
+            starts.Insert(index, start);
+            for (int i = index; i < starts.Count; i++)
+            {
+                starts[i] += count;
+            }
+        }
+
+        public int Insert(IEnumerable<T> multiple)
+        {
+            int id = next++;
+            ids.Add(id);
             starts.Add(values.Count);
             values.AddRange(multiple);
+            return id;
+        }
+
+        public void InsertWithId(int id, IEnumerable<T> multiple)
+        {
+            if (TryGetRowForId(id, out int row))
+            {
+                return;
+            }
+            int index = ~row;
+            ids.Insert(index, id);
+
+            int countBegin = values.Count;
+            int start = starts[index];
+            values.InsertRange(start, multiple);
+            int countAdded = values.Count - countBegin;
+
+            starts.Insert(index, start);
+            for (int i = index; i < starts.Count; i++)
+            {
+                starts[i] += countAdded;
+            }
         }
 
         public void Update(int id, int offset, T value)

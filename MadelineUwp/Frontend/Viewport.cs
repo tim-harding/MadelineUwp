@@ -6,6 +6,70 @@ using Windows.Foundation;
 
 namespace Madeline.Frontend
 {
+    internal class Viewport
+    {
+        public Graph graph = new Graph();
+        public Vector2 translate;
+        public float zoom = 1f;
+        public int viewing = -1;
+
+        public HoverInfo hover = new HoverInfo();
+        public SelectionInfo selection = new SelectionInfo();
+        public RewiringInfo rewiring = new RewiringInfo();
+        public History history;
+
+        public Viewport()
+        {
+            history = new History(graph);
+        }
+
+        public void ZoomAround(Vector2 pos, int delta)
+        {
+            float factor = (float)Math.Pow(1.001, delta);
+            zoom *= factor;
+            translate = From(Into(translate) - pos * (factor - 1f));
+        }
+
+        public void Move(Vector2 delta)
+        {
+            translate += delta * 1f / zoom;
+        }
+
+        public Vector2 Into(Vector2 pos)
+        {
+            return (pos + translate) * zoom;
+        }
+
+        public Aabb Into(Aabb box)
+        {
+            box.start = Into(box.start);
+            box.end = Into(box.end);
+            return box;
+        }
+
+        public Vector2 From(Vector2 pos)
+        {
+            return pos / zoom - translate;
+        }
+
+        public Aabb From(Aabb box)
+        {
+            box.start = From(box.start);
+            box.end = From(box.end);
+            return box;
+        }
+
+        public Matrix3x2 Into()
+        {
+            return Matrix3x2.CreateTranslation(translate) * Matrix3x2.CreateScale(zoom);
+        }
+
+        public Matrix3x2 From()
+        {
+            return Matrix3x2.CreateScale(1f / zoom) * Matrix3x2.CreateTranslation(-translate);
+        }
+    }
+
     internal struct SlotProximity
     {
         public float distance;
@@ -150,63 +214,5 @@ namespace Madeline.Frontend
     {
         public Slot src = Slot.Empty;
         public Slot dst = Slot.Empty;
-    }
-
-    internal class Viewport
-    {
-        public Graph graph = SampleData.DefaultGraph();
-        public Vector2 translate = new Vector2(400, 300);
-        public float zoom = 1f;
-        public int viewing = -1;
-
-        public HoverInfo hover = new HoverInfo();
-        public SelectionInfo selection = new SelectionInfo();
-        public RewiringInfo rewiring = new RewiringInfo();
-
-        public void ZoomAround(Vector2 pos, int delta)
-        {
-            float factor = (float)Math.Pow(1.001, delta);
-            zoom *= factor;
-            translate = From(Into(translate) - pos * (factor - 1f));
-        }
-
-        public void Move(Vector2 delta)
-        {
-            translate += delta * 1f / zoom;
-        }
-
-        public Vector2 Into(Vector2 pos)
-        {
-            return (pos + translate) * zoom;
-        }
-
-        public Aabb Into(Aabb box)
-        {
-            box.start = Into(box.start);
-            box.end = Into(box.end);
-            return box;
-        }
-
-        public Vector2 From(Vector2 pos)
-        {
-            return pos / zoom - translate;
-        }
-
-        public Aabb From(Aabb box)
-        {
-            box.start = From(box.start);
-            box.end = From(box.end);
-            return box;
-        }
-
-        public Matrix3x2 Into()
-        {
-            return Matrix3x2.CreateTranslation(translate) * Matrix3x2.CreateScale(zoom);
-        }
-
-        public Matrix3x2 From()
-        {
-            return Matrix3x2.CreateScale(1f / zoom) * Matrix3x2.CreateTranslation(-translate);
-        }
     }
 }

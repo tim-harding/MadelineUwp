@@ -51,6 +51,9 @@ namespace Madeline
 
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
+
+            SampleData.Init(viewport);
+
             InitializeComponent();
         }
 
