@@ -27,11 +27,9 @@ namespace Madeline.Frontend.Actions
 
         private void SetSlot(Graph graph, int i)
         {
-            if (graph.nodes.TryGetRowForId(downstream, out int row))
+            if (graph.nodes.TryGet(downstream, out Node node))
             {
-                Node node = graph.nodes.GetAtRow(row);
                 node.inputs[inputSlot] = i;
-                graph.nodes.UpdateAtRow(row, node);
             }
         }
     }

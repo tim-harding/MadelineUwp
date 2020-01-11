@@ -173,15 +173,13 @@ namespace Madeline.Frontend
             Graph graph = viewport.graph;
             Table<Node> nodes = graph.nodes;
             int active = viewport.hover.node.id;
-            if (graph.nodes.TryGetRowForId(active, out int row))
+            if (graph.nodes.TryGet(active, out Node node))
             {
-                Node node = nodes.GetAtRow(row);
                 Vector2 mouseDelta = mouse.current.pos - cursorStart;
                 mouseDelta /= viewport.zoom;
                 Vector2 endPos = nodeStart + mouseDelta;
                 endPos += SnapDelta(endPos, active);
                 node.pos = endPos;
-                nodes.UpdateAtRow(row, node);
             }
         }
 
@@ -206,11 +204,9 @@ namespace Madeline.Frontend
         private void DisableNodes()
         {
             Graph graph = viewport.graph;
-            if (graph.nodes.TryGetRowForId(viewport.selection.ActiveNode, out int row))
+            if (graph.nodes.TryGet(viewport.selection.ActiveNode, out Node node))
             {
-                Node node = graph.nodes.GetAtRow(row);
                 node.enabled = !node.enabled;
-                graph.nodes.UpdateAtRow(row, node);
             }
         }
     }

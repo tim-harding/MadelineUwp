@@ -2,7 +2,7 @@
 
 namespace Madeline.Backend
 {
-    internal struct Node
+    internal class Node
     {
         private const float WIDTH = 90f;
         private const float HEIGHT = 27f;

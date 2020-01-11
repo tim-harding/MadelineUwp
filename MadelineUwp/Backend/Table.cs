@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Madeline.Backend
@@ -22,25 +21,11 @@ namespace Madeline.Backend
         {
             if (TryGetRowForId(id, out int row))
             {
-                // Element with this ID already exists
                 return;
             }
             int index = ~row;
             ids.Insert(index, id);
             values.Insert(index, value);
-        }
-
-        public void Update(int id, T value)
-        {
-            if (TryGetRowForId(id, out int row))
-            {
-                values[row] = value;
-            }
-        }
-
-        public void UpdateAtRow(int row, T value)
-        {
-            values[row] = value;
         }
 
         public void Delete(int id)
@@ -59,15 +44,10 @@ namespace Madeline.Backend
             return success;
         }
 
-        public bool TryGetRowForId(int id, out int row)
+        private bool TryGetRowForId(int id, out int row)
         {
             row = ids.BinarySearch(id);
             return row > -1;
-        }
-
-        public T GetAtRow(int row)
-        {
-            return values[row];
         }
 
         public IEnumerator<TableEntry<T>> GetEnumerator()
