@@ -24,6 +24,7 @@ namespace Madeline.Frontend
 
         public void Draw(CanvasDrawingSession session)
         {
+            session.Transform = Matrix3x2.Identity;
             this.session = session;
             if (!dialog.display)
             {
