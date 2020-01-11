@@ -2,7 +2,7 @@
 
 namespace Madeline.Frontend.Actions
 {
-    internal class DeleteNode : Action
+    internal class DeleteNode : HistoricEvent
     {
         public DeleteNode() {  }
 

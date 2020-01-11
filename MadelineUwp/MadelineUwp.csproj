@@ -134,7 +134,6 @@
     <Compile Include="Backend\Graph.cs" />
     <Compile Include="Backend\ListSlice.cs" />
     <Compile Include="Backend\Range.cs" />
-    <Compile Include="Backend\RangeTable.cs" />
     <Compile Include="Backend\Table.cs" />
     <Compile Include="Backend\TableEntry.cs" />
     <Compile Include="Frontend\DragSelectHandler.cs" />

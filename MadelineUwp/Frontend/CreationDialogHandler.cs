@@ -15,7 +15,7 @@ namespace Madeline.Frontend
 
         public Mouse mouse;
         public Viewport viewport;
-        public List<TableEntry<Plugin>> found = new List<TableEntry<Plugin>>();
+        public List<string> found = new List<string>();
 
         public string query = "";
         public int selection = 0;
@@ -127,7 +127,9 @@ namespace Madeline.Frontend
             if (selection > -1 && selection < found.Count)
             {
                 Vector2 pos = viewport.From(origin);
-                viewport.history.SubmitChange(new Actions.InsertNode(viewport.graph, found[selection].id, pos));
+                string key = found[selection];
+                Plugin plugin = viewport.graph.plugins[key];
+                viewport.history.SubmitChange(new Actions.InsertNode(viewport.graph, plugin, pos));
             }
             Hide();
         }
@@ -150,13 +152,13 @@ namespace Madeline.Frontend
         private void UpdateFound()
         {
             int previousCount = found.Count;
-            foreach (TableEntry<Plugin> plugin in viewport.graph.plugins)
+            foreach (string name in viewport.graph.plugins.Keys)
             {
                 bool alwaysMatch = query.Length == 0;
-                bool matchQuery = plugin.value.name.Contains(query);
+                bool matchQuery = name.Contains(query);
                 if (alwaysMatch || matchQuery)
                 {
-                    found.Add(plugin);
+                    found.Add(name);
                 }
             }
 

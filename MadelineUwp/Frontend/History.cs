@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Madeline.Frontend
 {
-    internal abstract class Action
+    internal abstract class HistoricEvent
     {
         public abstract void Redo(Graph graph);
         public abstract void Undo(Graph graph);
@@ -11,7 +11,7 @@ namespace Madeline.Frontend
 
     internal class History
     {
-        private List<Action> queue;
+        private List<HistoricEvent> queue;
         private int current = 0;
         private int head = 0;
         private int tail = 1;
@@ -23,7 +23,7 @@ namespace Madeline.Frontend
             this.graph = graph;
 
             const int MEMORY = 8;
-            queue = new List<Action>(MEMORY);
+            queue = new List<HistoricEvent>(MEMORY);
             for (int i = 0; i < MEMORY; i++)
             {
                 queue.Add(null);
@@ -34,7 +34,7 @@ namespace Madeline.Frontend
         {
             if (current == Previous(tail)) { return; }
 
-            Action action = queue[current];
+            HistoricEvent action = queue[current];
             action.Redo(graph);
             current = Next(current);
         }
@@ -44,11 +44,11 @@ namespace Madeline.Frontend
             if (current == head) { return; }
             current = Previous(current);
 
-            Action action = queue[current];
+            HistoricEvent action = queue[current];
             action.Undo(graph);
         }
 
-        public void SubmitChange(Action action)
+        public void SubmitChange(HistoricEvent action)
         {
             action.Redo(graph);
             queue[current] = action;

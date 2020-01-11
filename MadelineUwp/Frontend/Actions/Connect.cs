@@ -2,7 +2,7 @@
 
 namespace Madeline.Frontend.Actions
 {
-    internal class Connect : Action
+    internal class Connect : HistoricEvent
     {
         private int downstream;
         private int upstream;
@@ -17,12 +17,22 @@ namespace Madeline.Frontend.Actions
 
         public override void Redo(Graph graph)
         {
-            graph.inputs.Update(downstream, inputSlot, upstream);
+            SetSlot(graph, upstream);
         }
 
         public override void Undo(Graph graph)
         {
-            graph.inputs.Update(downstream, inputSlot, -1);
+            SetSlot(graph, -1);
+        }
+
+        private void SetSlot(Graph graph, int i)
+        {
+            if (graph.nodes.TryGetRowForId(downstream, out int row))
+            {
+                Node node = graph.nodes.GetAtRow(row);
+                node.inputs[inputSlot] = i;
+                graph.nodes.UpdateAtRow(row, node);
+            }
         }
     }
 }

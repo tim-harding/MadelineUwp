@@ -11,16 +11,22 @@ namespace Madeline.Backend
 
         public Vector2 pos;
         public string name;
-        public int plugin;
+        public Plugin plugin;
         public bool enabled;
+        public int[] inputs;
 
         public static Vector2 Size => new Vector2(WIDTH, HEIGHT);
 
-        public Node(Vector2 pos, Plugin plugin, int pluginId)
+        public Node(Vector2 pos, Plugin plugin)
         {
             this.pos = pos;
-            this.plugin = pluginId;
+            this.plugin = plugin;
             name = plugin.name;
+            inputs = new int[plugin.inputs];
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                inputs[i] = -1;
+            }
             enabled = true;
         }
 

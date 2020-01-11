@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Madeline.Backend;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Numerics;
@@ -69,7 +70,8 @@ namespace Madeline.Frontend
 
         private void DrawLine(int i)
         {
-            Backend.Plugin plugin = dialog.found[i].value;
+            string key = dialog.found[i];
+            Plugin plugin = dialog.viewport.graph.plugins[key];
             Vector2 pos = dialog.origin + dialog.Line * (i + 1);
             session.DrawText(plugin.name, pos + Margin, Colors.White);
         }

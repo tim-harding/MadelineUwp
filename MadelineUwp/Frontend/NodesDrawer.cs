@@ -104,16 +104,11 @@ namespace Madeline.Frontend
             Graph graph = viewport.graph;
             foreach (TableEntry<Node> node in graph.nodes)
             {
-                if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
+                DrawNodeBody(node, ctx);
+                for (int i = 0; i < node.value.plugin.inputs; i++)
                 {
-                    Debug.Assert(false, "Incomplete handling for missing plugins.");
-                }
-                DrawNodeBody(node, ctx, plugin);
-                ListSlice<int> inputs = graph.inputs.GetAtRow(node.row);
-                for (int i = 0; i < plugin.inputs; i++)
-                {
-                    Vector2 iPos = node.value.InputPos(i, plugin.inputs);
-                    if (graph.nodes.TryGet(inputs.Consume(), out Node upstream))
+                    Vector2 iPos = node.value.InputPos(i, node.value.inputs.Length);
+                    if (graph.nodes.TryGet(node.value.inputs[i], out Node upstream))
                     {
                         Vector2 oPos = upstream.OutputPos();
                         DrawWire(ctx, iPos, oPos, new Slot(node.id, i));
@@ -130,7 +125,7 @@ namespace Madeline.Frontend
             session.DrawImage(ctx.texts.list);
         }
 
-        private void DrawNodeBody(TableEntry<Node> node, Context ctx, Plugin plugin)
+        private void DrawNodeBody(TableEntry<Node> node, Context ctx)
         {
             var tx = Matrix3x2.CreateTranslation(node.value.pos);
             BodyGeo body = ctx.geo.body.Transform(tx);
@@ -150,7 +145,8 @@ namespace Madeline.Frontend
             {
                 bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
                 bool accent = hover || candidate;
-                bodyColor = accent ? plugin.colors.hover : plugin.colors.body;
+                Plugin.ColorScheme pluginColors = node.value.plugin.colors;
+                bodyColor = accent ? pluginColors.hover : pluginColors.body;
                 bodyColor = enabled ? bodyColor : (accent ? Palette.Tone6 : Palette.Tone5);
                 ctx.nodes.session.Clear(bodyColor);
 

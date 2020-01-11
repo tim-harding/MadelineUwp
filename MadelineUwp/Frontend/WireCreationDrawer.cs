@@ -7,10 +7,6 @@ namespace Madeline.Frontend
 {
     internal class WireCreationDrawer : Drawer
     {
-        private const string MISSING_PLUGIN_MESSAGE = "Nodes with missing plugins " +
-            "have no input slots, so it should never " +
-            "be possible to start a wire off them.";
-
         private Viewport viewport;
         private Mouse mouse;
 
@@ -26,20 +22,12 @@ namespace Madeline.Frontend
             if (viewport.rewiring.src.node < 0) { return; }
             if (!graph.nodes.TryGet(viewport.rewiring.src.node, out Node srcNode)) { return; }
 
-            if (!graph.plugins.TryGet(srcNode.plugin, out Plugin srcPlugin))
-            {
-                Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
-            }
-            Vector2 srcPos = srcNode.SlotPos(viewport.rewiring.src.slot, srcPlugin.inputs);
+            Vector2 srcPos = srcNode.SlotPos(viewport.rewiring.src.slot, srcNode.inputs.Length);
 
             bool up = viewport.rewiring.src.slot > -1;
             if (graph.nodes.TryGet(viewport.rewiring.dst.node, out Node dstNode))
             {
-                if (!graph.plugins.TryGet(dstNode.plugin, out Plugin dstPlugin))
-                {
-                    Debug.Assert(false, MISSING_PLUGIN_MESSAGE);
-                }
-                Vector2 dstPos = dstNode.SlotPos(viewport.rewiring.dst.slot, dstPlugin.inputs);
+                Vector2 dstPos = dstNode.SlotPos(viewport.rewiring.dst.slot, dstNode.inputs.Length);
                 if (!up)
                 {
                     Swap(ref srcPos, ref dstPos);

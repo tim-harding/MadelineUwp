@@ -1,8 +1,9 @@
-﻿using Windows.UI;
+﻿using System;
+using Windows.UI;
 
 namespace Madeline.Backend
 {
-    internal struct Plugin
+    internal class Plugin
     {
         public string name;
         public int inputs;

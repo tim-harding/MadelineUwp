@@ -59,13 +59,10 @@ namespace Madeline.Frontend
                 bool srcIsOutput = rewiring.src.slot < 0;
                 if (srcIsOutput)
                 {
-                    if (!graph.plugins.TryGet(node.value.plugin, out Plugin plugin))
+                    int inputs = node.value.inputs.Length;
+                    for (int i = 0; i < inputs; i++)
                     {
-                        continue;
-                    }
-                    for (int i = 0; i < plugin.inputs; i++)
-                    {
-                        Vector2 iPos = node.value.InputPos(i, plugin.inputs);
+                        Vector2 iPos = node.value.InputPos(i, inputs);
                         SetNearest(cursor, iPos, new Slot(node.id, i), ref nearest);
                     }
                 }

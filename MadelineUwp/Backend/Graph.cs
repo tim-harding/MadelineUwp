@@ -1,9 +1,10 @@
-﻿namespace Madeline.Backend
+﻿using System.Collections.Generic;
+
+namespace Madeline.Backend
 {
     internal class Graph
     {
-        public Table<Plugin> plugins = new Table<Plugin>();
+        public Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
         public Table<Node> nodes = new Table<Node>();
-        public RangeTable<int> inputs = new RangeTable<int>();
     }
 }
