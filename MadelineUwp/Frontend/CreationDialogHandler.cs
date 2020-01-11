@@ -129,7 +129,7 @@ namespace Madeline.Frontend
                 Vector2 pos = viewport.From(origin);
                 string key = found[selection];
                 Plugin plugin = viewport.graph.plugins[key];
-                viewport.history.SubmitChange(new Actions.InsertNode(viewport.graph, plugin, pos));
+                viewport.history.SubmitChange(new HistoricEvents.InsertNode(viewport.graph, plugin, pos));
             }
             Hide();
         }

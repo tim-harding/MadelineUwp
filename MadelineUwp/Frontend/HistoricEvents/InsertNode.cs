@@ -1,7 +1,7 @@
 ﻿using Madeline.Backend;
 using System.Numerics;
 
-namespace Madeline.Frontend.Actions
+namespace Madeline.Frontend.HistoricEvents
 {
     internal class InsertNode : HistoricEvent
     {

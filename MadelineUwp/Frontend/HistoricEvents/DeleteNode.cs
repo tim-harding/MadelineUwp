@@ -1,6 +1,6 @@
 ﻿using Madeline.Backend;
 
-namespace Madeline.Frontend.Actions
+namespace Madeline.Frontend.HistoricEvents
 {
     internal class DeleteNode : HistoricEvent
     {

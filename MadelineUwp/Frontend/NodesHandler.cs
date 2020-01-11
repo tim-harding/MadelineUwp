@@ -34,7 +34,7 @@ namespace Madeline.Frontend
             {
                 case VirtualKey.Delete:
                 case VirtualKey.Back:
-                    viewport.history.SubmitChange(new Actions.DeleteNode());
+                    viewport.history.SubmitChange(new HistoricEvents.DeleteNode());
                     return true;
 
                 case VirtualKey.R:
