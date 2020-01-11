@@ -91,7 +91,11 @@ namespace Madeline.Frontend
         private bool CommitPull()
         {
             RewiringInfo rewiring = viewport.rewiring;
-            if (rewiring.src.node < 0) { return false; }
+            if (rewiring.src.node < 0 || rewiring.dst.node < 0)
+            {
+                rewiring.src = new Slot(-1, -1);
+                return false;
+            }
 
             Slot src = rewiring.src;
             Slot dst = rewiring.dst;
