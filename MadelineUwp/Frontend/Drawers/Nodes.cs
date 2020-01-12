@@ -6,9 +6,9 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Drawers
 {
-    internal class NodesDrawer : Drawer
+    internal class Nodes : Drawer
     {
         private struct CommandList
         {
@@ -89,7 +89,7 @@ namespace Madeline.Frontend
         private Viewport viewport;
         private Mouse mouse;
 
-        public NodesDrawer(Viewport viewport, Mouse mouse)
+        public Nodes(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

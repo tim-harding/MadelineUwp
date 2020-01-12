@@ -1,16 +1,15 @@
 ﻿using Madeline.Backend;
 using Microsoft.Graphics.Canvas;
-using System.Diagnostics;
 using System.Numerics;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Drawers
 {
-    internal class WireCreationDrawer : Drawer
+    internal class WireCreation : Drawer
     {
         private Viewport viewport;
         private Mouse mouse;
 
-        public WireCreationDrawer(Viewport viewport, Mouse mouse)
+        public WireCreation(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

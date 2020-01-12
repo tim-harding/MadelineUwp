@@ -6,9 +6,9 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Drawers
 {
-    internal class CreationDialogDrawer : Drawer
+    internal class CreationDialog : Drawer
     {
         private const int MARGIN = 6;
 
@@ -17,7 +17,7 @@ namespace Madeline.Frontend
         private CreationDialogHandler dialog;
         private CanvasDrawingSession session;
 
-        public CreationDialogDrawer(CreationDialogHandler dialog)
+        public CreationDialog(CreationDialogHandler dialog)
         {
             this.dialog = dialog;
         }

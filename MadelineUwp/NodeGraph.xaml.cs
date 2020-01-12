@@ -43,9 +43,9 @@ namespace Madeline
 
             drawers = new Drawer[]
             {
-                new NodesDrawer(viewport, mouse),
-                new WireCreationDrawer(viewport, mouse),
-                new CreationDialogDrawer(dialog),
+                new Frontend.Drawers.Nodes(viewport, mouse),
+                new Frontend.Drawers.WireCreation(viewport, mouse),
+                new Frontend.Drawers.CreationDialog(dialog),
             };
 
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
