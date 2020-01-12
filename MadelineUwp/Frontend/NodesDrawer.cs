@@ -136,13 +136,12 @@ namespace Madeline.Frontend
         {
             var tx = Matrix3x2.CreateTranslation(node.value.pos);
             BodyGeo body = ctx.geo.body.Transform(tx);
-            bool hover = StoreNodeHover(body, node.id);
-            StoreNodeSelectCandidacy(body.clipper, ctx.geo.selectBox, node.id);
 
+            bool hover = StoreNodeHover(body, node.id);
+            bool candidate = StoreNodeSelectCandidacy(body.clipper, ctx.geo.selectBox, node.id);
             bool selected = viewport.selection.active.nodes.Contains(node.id);
             bool active = viewport.active == node.id;
             bool enabled = node.value.enabled;
-            bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
 
             if (active || selected)
             {
@@ -195,15 +194,15 @@ namespace Madeline.Frontend
             return true;
         }
 
-        private void StoreNodeSelectCandidacy(CanvasGeometry clipper, CanvasGeometry bbox, int node)
+        private bool StoreNodeSelectCandidacy(CanvasGeometry clipper, CanvasGeometry bbox, int node)
         {
             switch (clipper.CompareWith(bbox))
             {
                 case CanvasGeometryRelation.Disjoint:
-                    break;
+                    return false;
                 default:
                     viewport.selection.candidates.nodes.Add(node);
-                    break;
+                    return true;
             }
         }
 
@@ -212,7 +211,10 @@ namespace Madeline.Frontend
             var wire = new Wire(iPos, oPos, WireKind.DoubleEnded);
             CanvasGeometry geo = wire.Geo(ctx.wires.session);
             bool hover = StoreWireHover(geo, slot);
-            Color color = hover ? Palette.Indigo2 : Palette.Indigo4;
+            bool candidate = StoreWireSelectCandidacy(geo, ctx.geo.selectBox, slot);
+            bool selected = viewport.selection.active.wires.Contains(slot);
+            Color color = hover || candidate ? Palette.Indigo2 : Palette.Indigo4;
+            color = selected ? Palette.Yellow3 : color;
             ctx.wires.session.DrawGeometry(geo, color, 2f);
         }
 
@@ -228,6 +230,18 @@ namespace Madeline.Frontend
                 viewport.hover.wire = wire;
             }
             return wireHasHover;
+        }
+
+        private bool StoreWireSelectCandidacy(CanvasGeometry geo, CanvasGeometry bbox, Slot wire)
+        {
+            switch (geo.CompareWith(bbox))
+            {
+                case CanvasGeometryRelation.Disjoint:
+                    return false;
+                default:
+                    viewport.selection.candidates.wires.Add(wire);
+                    return true;
+            }
         }
 
         private void DrawNodeLabel(Context ctx, Node node)

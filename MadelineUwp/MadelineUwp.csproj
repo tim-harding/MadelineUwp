@@ -148,7 +148,6 @@
     <Compile Include="Frontend\NodesHandler.cs" />
     <Compile Include="Frontend\NodesDrawer.cs" />
     <Compile Include="Frontend\SampleData.cs" />
-    <Compile Include="Frontend\DragSelectDrawer.cs" />
     <Compile Include="Frontend\Slot.cs" />
     <Compile Include="Frontend\Viewport.cs" />
   </ItemGroup>

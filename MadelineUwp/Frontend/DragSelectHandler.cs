@@ -57,12 +57,21 @@ namespace Madeline.Frontend
         {
             if (!dragging) { return false; }
 
-            bool ctrl = IsDown(VirtualKey.Control);
-            bool shift = IsDown(VirtualKey.Shift);
+            CommitNodes();
+            CommitWires();
 
+            viewport.selection.candidates.Clear();
+            dragging = false;
+            viewport.selection.box = Aabb.Zero;
+            return true;
+        }
+
+        private void CommitNodes()
+        {
             List<int> select = viewport.selection.active.nodes;
             List<int> candidates = viewport.selection.candidates.nodes;
-
+            bool ctrl = IsDown(VirtualKey.Control);
+            bool shift = IsDown(VirtualKey.Shift);
             if (ctrl)
             {
                 foreach (int candidate in candidates)
@@ -100,11 +109,39 @@ namespace Madeline.Frontend
                     select.Add(candidate);
                 }
             }
+        }
 
-            viewport.selection.candidates.Clear();
-            dragging = false;
-            viewport.selection.box = Aabb.Zero;
-            return true;
+        private void CommitWires()
+        {
+            List<Slot> select = viewport.selection.active.wires;
+            List<Slot> candidates = viewport.selection.candidates.wires;
+            bool ctrl = IsDown(VirtualKey.Control);
+            bool shift = IsDown(VirtualKey.Shift);
+            if (ctrl)
+            {
+                foreach (Slot candidate in candidates)
+                {
+                    select.Remove(candidate);
+                }
+            }
+            else if (shift)
+            {
+                foreach (Slot candidate in candidates)
+                {
+                    if (!select.Contains(candidate))
+                    {
+                        select.Add(candidate);
+                    }
+                }
+            }
+            else
+            {
+                select.Clear();
+                foreach (Slot candidate in candidates)
+                {
+                    select.Add(candidate);
+                }
+            }
         }
 
         private bool IsDown(VirtualKey key)
