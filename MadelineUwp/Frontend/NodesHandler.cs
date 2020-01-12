@@ -35,7 +35,7 @@ namespace Madeline.Frontend
             {
                 case VirtualKey.Delete:
                 case VirtualKey.Back:
-                    viewport.history.SubmitChange(new HistoricEvents.DeleteNode());
+                    DeleteNodes();
                     return true;
 
                 case VirtualKey.R:
@@ -235,6 +235,25 @@ namespace Madeline.Frontend
             CoreWindow window = Window.Current.CoreWindow;
             CoreVirtualKeyStates state = window.GetKeyState(key);
             return state.HasFlag(CoreVirtualKeyStates.Down);
+        }
+
+        private void DeleteNodes()
+        {
+            List<int> select = viewport.selection.active.nodes;
+            if (select.Count == 0) { return; }
+
+            var nodes = new Node[select.Count];
+            int[] ids = new int[select.Count];
+            for (int i = 0; i < select.Count; i++)
+            {
+                int id = select[i];
+                ids[i] = id;
+                if (viewport.graph.nodes.TryGet(id, out Node node))
+                {
+                    nodes[i] = node;
+                }
+            }
+            viewport.history.SubmitChange(new HistoricEvents.DeleteNodes(ids, nodes));
         }
     }
 }
