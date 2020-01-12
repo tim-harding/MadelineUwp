@@ -6,7 +6,7 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Madeline.Frontend.Drawers
+namespace Madeline.Frontend.Drawing
 {
     internal class CreationDialog : Drawer
     {

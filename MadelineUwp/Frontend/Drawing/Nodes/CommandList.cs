@@ -1,6 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 
-namespace Madeline.Frontend.Drawers.Nodes
+namespace Madeline.Frontend.Drawing.Nodes
 {
     internal struct CommandList
     {

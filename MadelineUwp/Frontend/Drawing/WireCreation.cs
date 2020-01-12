@@ -2,7 +2,7 @@
 using Microsoft.Graphics.Canvas;
 using System.Numerics;
 
-namespace Madeline.Frontend.Drawers
+namespace Madeline.Frontend.Drawing
 {
     internal class WireCreation : Drawer
     {

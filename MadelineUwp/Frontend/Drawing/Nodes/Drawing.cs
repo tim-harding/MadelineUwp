@@ -5,7 +5,7 @@ using Microsoft.Graphics.Canvas.Text;
 using System.Numerics;
 using Windows.UI;
 
-namespace Madeline.Frontend.Drawers.Nodes
+namespace Madeline.Frontend.Drawing.Nodes
 {
     internal class Drawing : Drawer
     {

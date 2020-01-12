@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Drawing
 {
     // https://tailwindcss.com/docs/customizing-colors#default-color-palette
     internal static class Palette
