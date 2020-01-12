@@ -2,12 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Windows.Foundation;
 using Windows.System;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class CreationDialog : IKeypressHandler
+    internal class CreationDialog : IMouseHandler, IKeypressHandler
     {
+        public const int WIDTH = 150;
+        public const int HEIGHT = 600;
+        public const int LEADING = 25;
+
         public Mouse mouse;
         public Viewport viewport;
         public List<string> found = new List<string>();
@@ -17,6 +22,9 @@ namespace Madeline.Frontend.Handlers
         public int failPoint;
         public bool display;
         public Vector2 origin;
+
+        public Vector2 Size => new Vector2(WIDTH, HEIGHT);
+        public Vector2 Line => Vector2.UnitY * LEADING;
 
         public CreationDialog(Viewport viewport, Mouse mouse)
         {
@@ -37,6 +45,28 @@ namespace Madeline.Frontend.Handlers
                 return true;
             }
             return false;
+        }
+
+        public bool HandleMouse()
+        {
+            if (!display)
+            {
+                return false;
+            }
+            MouseState current = mouse.current;
+            var bounds = new Rect(origin.ToPoint(), new Size(WIDTH, HEIGHT));
+            bool inBounds = bounds.Contains(current.pos.ToPoint());
+            if (inBounds)
+            {
+                Vector2 relative = current.pos - origin;
+                selection = (int)relative.Y / LEADING - 1;
+            }
+            else if (!inBounds && current.left)
+            {
+                Hide();
+            }
+            UpdateSeletion();
+            return true;
         }
 
         private void HandleKey(VirtualKey key)
