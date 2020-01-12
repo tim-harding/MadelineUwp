@@ -64,33 +64,50 @@ namespace Madeline.Frontend
             bool ctrl = IsDown(VirtualKey.Control);
             bool shift = IsDown(VirtualKey.Shift);
 
-            SelectionInfo select = viewport.selection;
-            List<int> nodes = MatchingNodes();
+            List<int> select = viewport.selection.active.nodes;
+            List<int> candidates = viewport.selection.candidates.nodes;
+
             if (ctrl)
             {
-                foreach (int node in nodes)
+                foreach (int candidate in candidates)
                 {
-                    select.active.nodes.Remove(node);
+                    select.Remove(candidate);
+                }
+                if (candidates.Contains(viewport.active) && select.Count > 0)
+                {
+                    viewport.active = select[0];
                 }
             }
             else if (shift)
             {
-                foreach (int node in nodes)
+                if (candidates.Count > 0)
                 {
-                    if (!select.active.nodes.Contains(node))
+                    viewport.active = candidates[0];
+                }
+                foreach (int candidate in candidates)
+                {
+                    if (!select.Contains(candidate))
                     {
-                        select.active.nodes.Add(node);
+                        select.Add(candidate);
                     }
                 }
             }
             else
             {
-                select.active.nodes = nodes;
+                if (candidates.Count > 0)
+                {
+                    viewport.active = candidates[0];
+                }
+                select.Clear();
+                foreach (int candidate in candidates)
+                {
+                    select.Add(candidate);
+                }
             }
 
-            select.candidates.Clear();
+            viewport.selection.candidates.Clear();
             dragging = false;
-            select.box.start = select.box.end;
+            viewport.selection.box = Aabb.Zero;
             return true;
         }
 

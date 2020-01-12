@@ -12,6 +12,7 @@ namespace Madeline.Frontend
         public Vector2 translate;
         public float zoom = 1f;
         public int viewing = -1;
+        public int active = -1;
 
         public HoverInfo hover = new HoverInfo();
         public SelectionInfo selection = new SelectionInfo();
@@ -138,22 +139,28 @@ namespace Madeline.Frontend
         public Vector2 start;
         public Vector2 end;
 
+        public Aabb(Vector2 start, Vector2 end)
+        {
+            this.start = start;
+            this.end = end;
+        }
+
         public Rect ToRect()
         {
             return new Rect(start.ToPoint(), end.ToPoint());
         }
+
+        public static Aabb Zero = new Aabb(Vector2.Zero, Vector2.Zero);
     }
 
     internal class Components
     {
         public List<int> nodes = new List<int>();
-        public List<Slot> slots = new List<Slot>();
         public List<Slot> wires = new List<Slot>();
 
         public void Clear()
         {
             nodes.Clear();
-            slots.Clear();
             wires.Clear();
         }
     }
@@ -163,51 +170,6 @@ namespace Madeline.Frontend
         public Components candidates = new Components();
         public Components active = new Components();
         public Aabb box;
-
-        public int ActiveNode
-        {
-            get
-            {
-                List<int> nodes = active.nodes;
-                return nodes.Count > 0 ? nodes[0] : -1;
-            }
-            set
-            {
-                List<int> nodes = active.nodes;
-                nodes.Clear();
-                nodes.Add(value);
-            }
-        }
-
-        public Slot ActiveSlot
-        {
-            get
-            {
-                List<Slot> slots = active.slots;
-                return slots.Count > 0 ? slots[0] : Slot.Empty;
-            }
-            set
-            {
-                List<Slot> slots = active.slots;
-                slots.Clear();
-                slots.Add(value);
-            }
-        }
-
-        public Slot ActiveWire
-        {
-            get
-            {
-                List<Slot> wires = active.wires;
-                return wires.Count > 0 ? wires[0] : Slot.Empty;
-            }
-            set
-            {
-                List<Slot> wires = active.wires;
-                wires.Clear();
-                wires.Add(value);
-            }
-        }
     }
 
     internal class RewiringInfo

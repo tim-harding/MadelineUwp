@@ -2,7 +2,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
@@ -131,19 +131,22 @@ namespace Madeline.Frontend
             BodyGeo body = ctx.geo.body.Transform(tx);
             bool hover = StoreNodeHover(body, node.id);
 
-            bool active = node.id == viewport.selection.ActiveNode;
-            bool enabled = node.value.enabled;
             bool selected = viewport.selection.active.nodes.Contains(node.id);
-            if (selected)
+            bool active = viewport.active == node.id;
+            bool enabled = node.value.enabled;
+            bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
+
+            if (active || selected)
             {
-                ctx.nodes.session.DrawGeometry(body.clipper, Palette.Red5, 6f);
+                Color accentColor = active && !selected ? Palette.Red5 : Palette.Yellow5;
+                ctx.nodes.session.DrawGeometry(body.clipper, accentColor, 6f);
             }
 
-            Color bodyColor = active || !enabled ? Palette.Black : Palette.Gray2;
+            Color bodyColor = active || selected || !enabled ? Palette.Black : Palette.Gray2;
             ctx.nodes.session.DrawGeometry(body.clipper, bodyColor, 2f);
+
             using (ctx.nodes.session.CreateLayer(1f, body.clipper))
             {
-                bool candidate = viewport.selection.candidates.nodes.Contains(node.id);
                 bool accent = hover || candidate;
                 Plugin.ColorScheme pluginColors = node.value.plugin.colors;
                 bodyColor = accent ? pluginColors.hover : pluginColors.body;

@@ -9,6 +9,8 @@ namespace Madeline.Backend
         private List<int> ids = new List<int>();
         private List<T> values = new List<T>();
 
+        public int Rows => ids.Count;
+
         public int Insert(T value)
         {
             int id = next++;

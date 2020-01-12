@@ -1,5 +1,6 @@
 ﻿using Madeline.Backend;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Windows.System;
 using Windows.UI.Core;
@@ -38,7 +39,7 @@ namespace Madeline.Frontend
                     return true;
 
                 case VirtualKey.R:
-                    viewport.viewing = viewport.selection.ActiveNode;
+                    viewport.viewing = viewport.active;
                     break;
 
                 case VirtualKey.Q:
@@ -46,27 +47,10 @@ namespace Madeline.Frontend
                     break;
 
                 case VirtualKey.Z:
-                    bool ctrl = IsKeyDown(VirtualKey.Control);
-                    bool shift = IsKeyDown(VirtualKey.Shift);
-                    History history = viewport.history;
-                    if (ctrl && shift)
-                    {
-                        history.Redo();
-                    }
-                    else if (ctrl)
-                    {
-                        history.Undo();
-                    }
+                    ShiftHistory();
                     break;
             }
             return false;
-        }
-
-        private bool IsKeyDown(VirtualKey key)
-        {
-            CoreWindow window = Window.Current.CoreWindow;
-            CoreVirtualKeyStates state = window.GetKeyState(key);
-            return state.HasFlag(CoreVirtualKeyStates.Down);
         }
 
         private bool HandleMiddleButton()
@@ -149,14 +133,35 @@ namespace Madeline.Frontend
         private bool CommitLmbInteration()
         {
             bool handling = clickedNode > -1;
-            if (handling)
+            if (handling && !dragStarted)
             {
-                if (!dragStarted)
+                bool ctrl = IsKeyDown(VirtualKey.Control);
+                bool shift = IsKeyDown(VirtualKey.Shift);
+                List<int> nodes = viewport.selection.active.nodes;
+                if (ctrl)
                 {
-                    viewport.selection.ActiveNode = clickedNode;
+                    nodes.Remove(clickedNode);
+                    if (clickedNode == viewport.active && nodes.Count > 0)
+                    {
+                        viewport.active = nodes[0];
+                    }
                 }
-                clickedNode = -1;
+                else if (shift)
+                {
+                    viewport.active = clickedNode;
+                    if (!nodes.Contains(clickedNode))
+                    {
+                        nodes.Add(clickedNode);
+                    }
+                }
+                else
+                {
+                    viewport.active = clickedNode;
+                    nodes.Clear();
+                    nodes.Add(clickedNode);
+                }
             }
+            clickedNode = -1;
             return handling;
         }
 
@@ -204,10 +209,32 @@ namespace Madeline.Frontend
         private void DisableNodes()
         {
             Graph graph = viewport.graph;
-            if (graph.nodes.TryGet(viewport.selection.ActiveNode, out Node node))
+            if (graph.nodes.TryGet(viewport.active, out Node node))
             {
                 node.enabled = !node.enabled;
             }
+        }
+
+        private void ShiftHistory()
+        {
+            bool ctrl = IsKeyDown(VirtualKey.Control);
+            bool shift = IsKeyDown(VirtualKey.Shift);
+            History history = viewport.history;
+            if (ctrl && shift)
+            {
+                history.Redo();
+            }
+            else if (ctrl)
+            {
+                history.Undo();
+            }
+        }
+
+        private bool IsKeyDown(VirtualKey key)
+        {
+            CoreWindow window = Window.Current.CoreWindow;
+            CoreVirtualKeyStates state = window.GetKeyState(key);
+            return state.HasFlag(CoreVirtualKeyStates.Down);
         }
     }
 }
