@@ -121,29 +121,28 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frontend\Drawers\Nodes\BaseGeo.cs" />
-    <Compile Include="Frontend\Drawers\Nodes\BodyGeo.cs" />
-    <Compile Include="Frontend\Drawers\Nodes\CommandList.cs" />
-    <Compile Include="Frontend\Drawers\Nodes\Context.cs" />
-    <Compile Include="Frontend\Drawers\Nodes\Selection.cs" />
+    <Compile Include="Frontend\Drawing\IDrawer.cs" />
+    <Compile Include="Frontend\Drawing\Nodes\BaseGeo.cs" />
+    <Compile Include="Frontend\Drawing\Nodes\BodyGeo.cs" />
+    <Compile Include="Frontend\Drawing\Nodes\CommandList.cs" />
+    <Compile Include="Frontend\Drawing\Nodes\Context.cs" />
+    <Compile Include="Frontend\Drawing\Nodes\Selection.cs" />
     <Compile Include="Frontend\HistoricEvents\Connect.cs" />
     <Compile Include="Frontend\HistoricEvents\DeleteNodes.cs" />
     <Compile Include="Frontend\HistoricEvents\Disconnect.cs" />
     <Compile Include="Frontend\HistoricEvents\InsertNode.cs" />
-    <Compile Include="Frontend\Palette.cs" />
+    <Compile Include="Frontend\Drawing\Palette.cs" />
     <Compile Include="Frontend\History.cs" />
-    <Compile Include="Frontend\Drawers\Wire.cs" />
-    <Compile Include="Frontend\Drawers\WireCreation.cs" />
+    <Compile Include="Frontend\Drawing\Wire.cs" />
+    <Compile Include="Frontend\Drawing\WireCreation.cs" />
     <Compile Include="Frontend\Handlers\WireCreation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\Graph.cs" />
-    <Compile Include="Backend\ListSlice.cs" />
-    <Compile Include="Backend\Range.cs" />
     <Compile Include="Backend\Table.cs" />
     <Compile Include="Backend\TableEntry.cs" />
     <Compile Include="Frontend\Handlers\DragSelect.cs" />
-    <Compile Include="Frontend\Handlers.cs" />
-    <Compile Include="Frontend\Drawers\CreationDialog.cs" />
+    <Compile Include="Frontend\Handlers\HandlerInterfaces.cs" />
+    <Compile Include="Frontend\Drawing\CreationDialog.cs" />
     <Compile Include="NodeGraph.xaml.cs">
       <DependentUpon>NodeGraph.xaml</DependentUpon>
     </Compile>
@@ -151,7 +150,7 @@
     <Compile Include="Backend\Plugin.cs" />
     <Compile Include="Frontend\Mouse.cs" />
     <Compile Include="Frontend\Handlers\Nodes.cs" />
-    <Compile Include="Frontend\Drawers\Nodes\Drawing.cs" />
+    <Compile Include="Frontend\Drawing\Nodes\Drawing.cs" />
     <Compile Include="Frontend\SampleData.cs" />
     <Compile Include="Frontend\Slot.cs" />
     <Compile Include="Frontend\Viewport.cs" />

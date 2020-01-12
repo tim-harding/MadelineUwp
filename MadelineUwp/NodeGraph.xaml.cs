@@ -16,7 +16,7 @@ namespace Madeline
         private Viewport viewport = new Viewport();
         private Mouse mouse = new Mouse();
 
-        private IDrawer[] drawers;
+        private Frontend.Drawing.IDrawer[] drawers;
         private IMouseHandler[] mouseHandlers;
         private IKeypressHandler[] keypressHandlers;
 
@@ -41,7 +41,7 @@ namespace Madeline
                 nodes,
             };
 
-            drawers = new IDrawer[]
+            drawers = new Frontend.Drawing.IDrawer[]
             {
                 new Frontend.Drawing.Nodes.Drawing(viewport, mouse),
                 new Frontend.Drawing.WireCreation(viewport, mouse),
@@ -59,7 +59,7 @@ namespace Madeline
         private void Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             CanvasDrawingSession session = args.DrawingSession;
-            foreach (IDrawer drawer in drawers)
+            foreach (Frontend.Drawing.IDrawer drawer in drawers)
             {
                 drawer.Draw(session);
             }
