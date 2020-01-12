@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Windows.Foundation;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Structure
 {
     internal struct Aabb
     {

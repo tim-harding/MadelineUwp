@@ -121,8 +121,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frontend\Aabb.cs" />
-    <Compile Include="Frontend\Components.cs" />
+    <Compile Include="Frontend\Structure\Aabb.cs" />
+    <Compile Include="Frontend\Structure\Components.cs" />
     <Compile Include="Frontend\Drawing\IDrawer.cs" />
     <Compile Include="Frontend\Drawing\Nodes\BaseGeo.cs" />
     <Compile Include="Frontend\Drawing\Nodes\BodyGeo.cs" />
@@ -138,11 +138,11 @@
     <Compile Include="Frontend\Drawing\Wire.cs" />
     <Compile Include="Frontend\Drawing\WireCreation.cs" />
     <Compile Include="Frontend\Handlers\WireCreation.cs" />
-    <Compile Include="Frontend\HoverInfo.cs" />
-    <Compile Include="Frontend\NodeHover.cs" />
-    <Compile Include="Frontend\RewiringInfo.cs" />
-    <Compile Include="Frontend\SelectionInfo.cs" />
-    <Compile Include="Frontend\SlotProximity.cs" />
+    <Compile Include="Frontend\Structure\HoverInfo.cs" />
+    <Compile Include="Frontend\Structure\NodeHover.cs" />
+    <Compile Include="Frontend\Structure\RewiringInfo.cs" />
+    <Compile Include="Frontend\Structure\SelectionInfo.cs" />
+    <Compile Include="Frontend\Structure\SlotProximity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\Graph.cs" />
     <Compile Include="Backend\Table.cs" />
@@ -159,7 +159,7 @@
     <Compile Include="Frontend\Handlers\Nodes.cs" />
     <Compile Include="Frontend\Drawing\Nodes\Drawing.cs" />
     <Compile Include="Frontend\SampleData.cs" />
-    <Compile Include="Frontend\Slot.cs" />
+    <Compile Include="Frontend\Structure\Slot.cs" />
     <Compile Include="Frontend\Viewport.cs" />
   </ItemGroup>
   <ItemGroup>

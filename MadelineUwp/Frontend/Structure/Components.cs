@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Structure
 {
     internal class Components
     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Madeline.Frontend.Structure;
+using System.Collections.Generic;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;

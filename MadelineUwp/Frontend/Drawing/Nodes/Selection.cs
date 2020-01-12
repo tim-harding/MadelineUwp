@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.Geometry;
+﻿using Madeline.Frontend.Structure;
+using Microsoft.Graphics.Canvas.Geometry;
 using System.Numerics;
 
 namespace Madeline.Frontend.Drawing.Nodes

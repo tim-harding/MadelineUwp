@@ -1,4 +1,4 @@
-﻿namespace Madeline.Frontend
+﻿namespace Madeline.Frontend.Structure
 {
     internal class SelectionInfo
     {
