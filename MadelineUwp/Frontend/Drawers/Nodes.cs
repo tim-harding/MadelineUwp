@@ -3,89 +3,12 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using System.Numerics;
-using Windows.Foundation;
 using Windows.UI;
 
 namespace Madeline.Frontend.Drawers
 {
     internal class Nodes : Drawer
     {
-        private struct CommandList
-        {
-            public CanvasCommandList list;
-            public CanvasDrawingSession session;
-
-            public CommandList(ICanvasResourceCreator device)
-            {
-                list = new CanvasCommandList(device);
-                session = list.CreateDrawingSession();
-            }
-        }
-
-        private struct BodyGeo
-        {
-            public CanvasGeometry disable;
-            public CanvasGeometry clipper;
-            public CanvasGeometry viewing;
-
-            public BodyGeo(ICanvasResourceCreator device)
-            {
-                var rect = new Rect(Vector2.Zero.ToPoint(), Node.Size.ToSize());
-                const float ROUNDING = 5f;
-                clipper = CanvasGeometry.CreateRoundedRectangle(device, rect, ROUNDING, ROUNDING);
-
-                var size = new Vector2(20f, 60f);
-                rect = new Rect((-size).ToPoint(), size.ToPoint());
-                var verticalCenter = Matrix3x2.CreateTranslation(0f, Node.Size.Y / 2f);
-                var rotate = Matrix3x2.CreateRotation(0.2f);
-                disable = CanvasGeometry.CreateRectangle(device, rect);
-                disable = disable.Transform(rotate * verticalCenter);
-                var farSideTx = Matrix3x2.CreateTranslation(Node.Size.X, 0f);
-                viewing = disable.Transform(farSideTx);
-            }
-
-            public BodyGeo Transform(Matrix3x2 tx)
-            {
-                return new BodyGeo()
-                {
-                    clipper = clipper.Transform(tx),
-                    disable = disable.Transform(tx),
-                    viewing = viewing.Transform(tx),
-                };
-            }
-        }
-
-        private struct Context
-        {
-            public CommandList wires;
-            public CommandList nodes;
-            public CommandList texts;
-
-            public BaseGeo geo;
-
-            public Context(ICanvasResourceCreator device, Viewport viewport)
-            {
-                wires = new CommandList(device);
-                nodes = new CommandList(device);
-                texts = new CommandList(device);
-                geo = new BaseGeo(device, viewport);
-            }
-        }
-
-        private struct BaseGeo
-        {
-            public BodyGeo body;
-            public CanvasGeometry slot;
-            public CanvasGeometry selectBox;
-
-            public BaseGeo(ICanvasResourceCreator device, Viewport viewport)
-            {
-                body = new BodyGeo(device);
-                slot = CanvasGeometry.CreateCircle(device, Vector2.Zero, Slot.DISPLAY_RADIUS);
-                selectBox = CanvasGeometry.CreateRectangle(device, viewport.selection.box.ToRect());
-            }
-        }
-
         private Viewport viewport;
         private Mouse mouse;
 
