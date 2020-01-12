@@ -5,9 +5,9 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.System;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Handlers
 {
-    internal class CreationDialogHandler : MouseHandler, KeypressHandler
+    internal class CreationDialog : MouseHandler, KeypressHandler
     {
         public const int WIDTH = 150;
         public const int HEIGHT = 600;
@@ -26,7 +26,7 @@ namespace Madeline.Frontend
         public Vector2 Size => new Vector2(WIDTH, HEIGHT);
         public Vector2 Line => Vector2.UnitY * LEADING;
 
-        public CreationDialogHandler(Viewport viewport, Mouse mouse)
+        public CreationDialog(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

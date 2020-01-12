@@ -134,14 +134,14 @@
     <Compile Include="Frontend\History.cs" />
     <Compile Include="Frontend\Wire.cs" />
     <Compile Include="Frontend\Drawers\WireCreation.cs" />
-    <Compile Include="Frontend\WireCreationHandler.cs" />
+    <Compile Include="Frontend\Handlers\WireCreation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\Graph.cs" />
     <Compile Include="Backend\ListSlice.cs" />
     <Compile Include="Backend\Range.cs" />
     <Compile Include="Backend\Table.cs" />
     <Compile Include="Backend\TableEntry.cs" />
-    <Compile Include="Frontend\DragSelectHandler.cs" />
+    <Compile Include="Frontend\Handlers\DragSelect.cs" />
     <Compile Include="Frontend\Handlers.cs" />
     <Compile Include="Frontend\Drawers\CreationDialog.cs" />
     <Compile Include="NodeGraph.xaml.cs">
@@ -150,7 +150,7 @@
     <Compile Include="Backend\Node.cs" />
     <Compile Include="Backend\Plugin.cs" />
     <Compile Include="Frontend\Mouse.cs" />
-    <Compile Include="Frontend\NodesHandler.cs" />
+    <Compile Include="Frontend\Handlers\Nodes.cs" />
     <Compile Include="Frontend\Drawers\Nodes\Drawing.cs" />
     <Compile Include="Frontend\SampleData.cs" />
     <Compile Include="Frontend\Slot.cs" />
@@ -170,7 +170,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Compile Include="Frontend\CreationDialogHandler.cs" />
+    <Compile Include="Frontend\Handlers\CreationDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

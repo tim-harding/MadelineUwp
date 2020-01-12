@@ -14,10 +14,10 @@ namespace Madeline.Frontend.Drawers
 
         private Vector2 Margin = Vector2.UnitX * MARGIN;
 
-        private CreationDialogHandler dialog;
+        private Handlers.CreationDialog dialog;
         private CanvasDrawingSession session;
 
-        public CreationDialog(CreationDialogHandler dialog)
+        public CreationDialog(Handlers.CreationDialog dialog)
         {
             this.dialog = dialog;
         }
@@ -36,7 +36,7 @@ namespace Madeline.Frontend.Drawers
             DrawSeperator();
             DrawSelection();
 
-            int maxCount = CreationDialogHandler.HEIGHT / CreationDialogHandler.LEADING;
+            int maxCount = Handlers.CreationDialog.HEIGHT / Handlers.CreationDialog.LEADING;
             int count = Math.Min(dialog.found.Count, maxCount);
             for (int i = 0; i < count; i++)
             {

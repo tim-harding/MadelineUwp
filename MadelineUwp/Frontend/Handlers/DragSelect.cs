@@ -3,16 +3,16 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Handlers
 {
-    internal class DragSelectHandler : MouseHandler
+    internal class DragSelect : MouseHandler
     {
         private Viewport viewport;
         private Mouse mouse;
 
         private bool dragging = false;
 
-        public DragSelectHandler(Viewport viewport, Mouse mouse)
+        public DragSelect(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

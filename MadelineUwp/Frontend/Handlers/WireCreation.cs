@@ -2,14 +2,14 @@
 using System;
 using System.Numerics;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Handlers
 {
-    internal class WireCreationHandler : MouseHandler
+    internal class WireCreation : MouseHandler
     {
         private Viewport viewport;
         private Mouse mouse;
 
-        public WireCreationHandler(Viewport viewport, Mouse mouse)
+        public WireCreation(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

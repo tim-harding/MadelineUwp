@@ -22,10 +22,10 @@ namespace Madeline
 
         public NodeGraph()
         {
-            var dialog = new CreationDialogHandler(viewport, mouse);
-            var nodes = new NodesHandler(viewport, mouse);
-            var dragSelect = new DragSelectHandler(viewport, mouse);
-            var wireCreation = new WireCreationHandler(viewport, mouse);
+            var dialog = new Frontend.Handlers.CreationDialog(viewport, mouse);
+            var nodes = new Frontend.Handlers.Nodes(viewport, mouse);
+            var dragSelect = new Frontend.Handlers.DragSelect(viewport, mouse);
+            var wireCreation = new Frontend.Handlers.WireCreation(viewport, mouse);
 
             mouseHandlers = new MouseHandler[]
             {

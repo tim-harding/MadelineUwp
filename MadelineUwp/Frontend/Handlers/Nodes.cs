@@ -6,9 +6,9 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Handlers
 {
-    internal class NodesHandler : MouseHandler, KeypressHandler
+    internal class Nodes : MouseHandler, KeypressHandler
     {
         private Viewport viewport;
         private Mouse mouse;
@@ -18,7 +18,7 @@ namespace Madeline.Frontend
         private int clickedNode = -1;
         private bool dragStarted;
 
-        public NodesHandler(Viewport viewport, Mouse mouse)
+        public Nodes(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;
