@@ -8,7 +8,7 @@ using Windows.UI.Xaml;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class Nodes : MouseHandler, KeypressHandler
+    internal class Nodes : IMouseHandler, IKeypressHandler
     {
         private Viewport viewport;
         private Mouse mouse;

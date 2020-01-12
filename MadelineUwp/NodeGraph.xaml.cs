@@ -16,9 +16,9 @@ namespace Madeline
         private Viewport viewport = new Viewport();
         private Mouse mouse = new Mouse();
 
-        private Drawer[] drawers;
-        private MouseHandler[] mouseHandlers;
-        private KeypressHandler[] keypressHandlers;
+        private IDrawer[] drawers;
+        private IMouseHandler[] mouseHandlers;
+        private IKeypressHandler[] keypressHandlers;
 
         public NodeGraph()
         {
@@ -27,7 +27,7 @@ namespace Madeline
             var dragSelect = new Frontend.Handlers.DragSelect(viewport, mouse);
             var wireCreation = new Frontend.Handlers.WireCreation(viewport, mouse);
 
-            mouseHandlers = new MouseHandler[]
+            mouseHandlers = new IMouseHandler[]
             {
                 dialog,
                 nodes,
@@ -35,13 +35,13 @@ namespace Madeline
                 dragSelect,
             };
 
-            keypressHandlers = new KeypressHandler[]
+            keypressHandlers = new IKeypressHandler[]
             {
                 dialog,
                 nodes,
             };
 
-            drawers = new Drawer[]
+            drawers = new IDrawer[]
             {
                 new Frontend.Drawing.Nodes.Drawing(viewport, mouse),
                 new Frontend.Drawing.WireCreation(viewport, mouse),
@@ -59,7 +59,7 @@ namespace Madeline
         private void Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             CanvasDrawingSession session = args.DrawingSession;
-            foreach (Drawer drawer in drawers)
+            foreach (IDrawer drawer in drawers)
             {
                 drawer.Draw(session);
             }
@@ -82,7 +82,7 @@ namespace Madeline
         {
             UpdateMouse(e);
             canvas.Invalidate();
-            foreach (MouseHandler handler in mouseHandlers)
+            foreach (IMouseHandler handler in mouseHandlers)
             {
                 if (handler.HandleMouse())
                 {
@@ -97,7 +97,7 @@ namespace Madeline
             canvas.Invalidate();
             if (args.KeyStatus.WasKeyDown)
             {
-                foreach (KeypressHandler handler in keypressHandlers)
+                foreach (IKeypressHandler handler in keypressHandlers)
                 {
                     if (handler.HandleKeypress(key))
                     {

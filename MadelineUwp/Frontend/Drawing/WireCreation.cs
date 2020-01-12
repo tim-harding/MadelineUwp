@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Madeline.Frontend.Drawing
 {
-    internal class WireCreation : Drawer
+    internal class WireCreation : IDrawer
     {
         private Viewport viewport;
         private Mouse mouse;

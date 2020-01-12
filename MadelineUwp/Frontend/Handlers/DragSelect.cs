@@ -5,7 +5,7 @@ using Windows.UI.Xaml;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class DragSelect : MouseHandler
+    internal class DragSelect : IMouseHandler
     {
         private Viewport viewport;
         private Mouse mouse;

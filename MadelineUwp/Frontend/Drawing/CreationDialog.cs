@@ -8,7 +8,7 @@ using Windows.UI;
 
 namespace Madeline.Frontend.Drawing
 {
-    internal class CreationDialog : Drawer
+    internal class CreationDialog : IDrawer
     {
         private const int MARGIN = 6;
 

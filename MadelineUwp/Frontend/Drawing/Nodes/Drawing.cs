@@ -7,7 +7,7 @@ using Windows.UI;
 
 namespace Madeline.Frontend.Drawing.Nodes
 {
-    internal class Drawing : Drawer
+    internal class Drawing : IDrawer
     {
         private Viewport viewport;
         private Mouse mouse;

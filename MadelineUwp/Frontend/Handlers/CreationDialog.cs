@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class CreationDialog : MouseHandler, KeypressHandler
+    internal class CreationDialog : IMouseHandler, IKeypressHandler
     {
         public const int WIDTH = 150;
         public const int HEIGHT = 600;

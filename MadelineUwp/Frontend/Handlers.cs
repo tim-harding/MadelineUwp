@@ -3,17 +3,17 @@ using Windows.System;
 
 namespace Madeline.Frontend
 {
-    internal interface Drawer
+    internal interface IDrawer
     {
         void Draw(CanvasDrawingSession session);
     }
 
-    internal interface MouseHandler
+    internal interface IMouseHandler
     {
         bool HandleMouse();
     }
 
-    internal interface KeypressHandler
+    internal interface IKeypressHandler
     {
         bool HandleKeypress(VirtualKey key);
     }

@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class WireCreation : MouseHandler
+    internal class WireCreation : IMouseHandler
     {
         private Viewport viewport;
         private Mouse mouse;
