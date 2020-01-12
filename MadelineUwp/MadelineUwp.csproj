@@ -121,11 +121,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frontend\Drawers\BaseGeo.cs" />
-    <Compile Include="Frontend\Drawers\BodyGeo.cs" />
-    <Compile Include="Frontend\Drawers\CommandList.cs" />
-    <Compile Include="Frontend\Drawers\Context.cs" />
-    <Compile Include="Frontend\Drawers\Selection.cs" />
+    <Compile Include="Frontend\Drawers\Nodes\BaseGeo.cs" />
+    <Compile Include="Frontend\Drawers\Nodes\BodyGeo.cs" />
+    <Compile Include="Frontend\Drawers\Nodes\CommandList.cs" />
+    <Compile Include="Frontend\Drawers\Nodes\Context.cs" />
+    <Compile Include="Frontend\Drawers\Nodes\Selection.cs" />
     <Compile Include="Frontend\HistoricEvents\Connect.cs" />
     <Compile Include="Frontend\HistoricEvents\DeleteNodes.cs" />
     <Compile Include="Frontend\HistoricEvents\Disconnect.cs" />
@@ -151,7 +151,7 @@
     <Compile Include="Backend\Plugin.cs" />
     <Compile Include="Frontend\Mouse.cs" />
     <Compile Include="Frontend\NodesHandler.cs" />
-    <Compile Include="Frontend\Drawers\Nodes.cs" />
+    <Compile Include="Frontend\Drawers\Nodes\Drawing.cs" />
     <Compile Include="Frontend\SampleData.cs" />
     <Compile Include="Frontend\Slot.cs" />
     <Compile Include="Frontend\Viewport.cs" />

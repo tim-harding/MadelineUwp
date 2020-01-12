@@ -43,7 +43,7 @@ namespace Madeline
 
             drawers = new Drawer[]
             {
-                new Frontend.Drawers.Nodes(viewport, mouse),
+                new Frontend.Drawers.Nodes.Drawing(viewport, mouse),
                 new Frontend.Drawers.WireCreation(viewport, mouse),
                 new Frontend.Drawers.CreationDialog(dialog),
             };

@@ -5,15 +5,15 @@ using Microsoft.Graphics.Canvas.Text;
 using System.Numerics;
 using Windows.UI;
 
-namespace Madeline.Frontend.Drawers
+namespace Madeline.Frontend.Drawers.Nodes
 {
-    internal class Nodes : Drawer
+    internal class Drawing : Drawer
     {
         private Viewport viewport;
         private Mouse mouse;
         private Selection selection;
 
-        public Nodes(Viewport viewport, Mouse mouse)
+        public Drawing(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

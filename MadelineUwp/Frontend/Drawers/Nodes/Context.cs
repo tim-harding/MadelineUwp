@@ -1,6 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 
-namespace Madeline.Frontend.Drawers
+namespace Madeline.Frontend.Drawers.Nodes
 {
     internal class Context
     {
