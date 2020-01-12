@@ -1,7 +1,4 @@
-﻿using Madeline.Backend;
-using System.Collections.Generic;
-using System.Numerics;
-using Windows.Foundation;
+﻿using System.Collections.Generic;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -52,7 +49,6 @@ namespace Madeline.Frontend
             {
                 SelectionInfo select = viewport.selection;
                 select.box.end = viewport.From(mouse.current.pos);
-                select.candidates.nodes = MatchingNodes();
             }
             return dragging;
         }
@@ -116,70 +112,6 @@ namespace Madeline.Frontend
             CoreWindow window = Window.Current.CoreWindow;
             CoreVirtualKeyStates state = window.GetKeyState(key);
             return state.HasFlag(CoreVirtualKeyStates.Down);
-        }
-
-        private List<int> MatchingNodes()
-        {
-            var nodes = new List<int>();
-            foreach (TableEntry<Node> node in viewport.graph.nodes)
-            {
-                if (Includes(node.value.pos))
-                {
-                    nodes.Add(node.id);
-                }
-            }
-            return nodes;
-        }
-
-        private List<Slot> MatchingSlots()
-        {
-            var slots = new List<Slot>();
-            return slots;
-        }
-
-        private List<Slot> MatchingWires()
-        {
-            var wires = new List<Slot>();
-            return wires;
-        }
-
-        private bool Includes(Vector2 nodePos)
-        {
-            var selectRect = viewport.selection.box.ToRect();
-            var nodeRect = new Rect(nodePos.ToPoint(), Node.Size.ToSize());
-            selectRect.Intersect(nodeRect);
-            return !selectRect.IsEmpty;
-        }
-
-        private bool Intersect(Rect aabb, Vector2 start, Vector2 end)
-        {
-            Vector2 dir = end - start;
-            dir /= dir.Length();
-
-            var min = new Vector2((float)aabb.Left, (float)aabb.Bottom);
-            var max = new Vector2((float)aabb.Right, (float)aabb.Top);
-
-            Vector2 tmin = (min - start) / dir;
-            Vector2 tmax = (max - start) / dir;
-
-            if (tmin.X > tmax.X)
-            {
-                Swap(ref tmin.X, ref tmax.X);
-            }
-
-            if (tmin.Y > tmax.Y)
-            {
-                Swap(ref tmin.Y, ref tmax.Y);
-            }
-
-            return tmin.X > tmax.Y || tmin.Y > tmax.X;
-        }
-
-        private void Swap(ref float lhs, ref float rhs)
-        {
-            float tmp = lhs;
-            lhs = rhs;
-            rhs = tmp;
         }
     }
 }

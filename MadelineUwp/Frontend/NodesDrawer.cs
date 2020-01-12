@@ -2,7 +2,6 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
-using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
@@ -64,12 +63,12 @@ namespace Madeline.Frontend
 
             public BaseGeo geo;
 
-            public Context(ICanvasResourceCreator device)
+            public Context(ICanvasResourceCreator device, Viewport viewport)
             {
                 wires = new CommandList(device);
                 nodes = new CommandList(device);
                 texts = new CommandList(device);
-                geo = new BaseGeo(device);
+                geo = new BaseGeo(device, viewport);
             }
         }
 
@@ -77,11 +76,13 @@ namespace Madeline.Frontend
         {
             public BodyGeo body;
             public CanvasGeometry slot;
+            public CanvasGeometry selectBox;
 
-            public BaseGeo(ICanvasResourceCreator device)
+            public BaseGeo(ICanvasResourceCreator device, Viewport viewport)
             {
                 body = new BodyGeo(device);
                 slot = CanvasGeometry.CreateCircle(device, Vector2.Zero, Slot.DISPLAY_RADIUS);
+                selectBox = CanvasGeometry.CreateRectangle(device, viewport.selection.box.ToRect());
             }
         }
 
@@ -96,10 +97,11 @@ namespace Madeline.Frontend
 
         public void Draw(CanvasDrawingSession session)
         {
-            var ctx = new Context(session.Device);
+            var ctx = new Context(session.Device, viewport);
             session.Transform = viewport.Into();
 
             viewport.hover.Clear();
+            viewport.selection.candidates.Clear();
 
             Graph graph = viewport.graph;
             foreach (TableEntry<Node> node in graph.nodes)
@@ -123,6 +125,11 @@ namespace Madeline.Frontend
             session.DrawImage(ctx.wires.list);
             session.DrawImage(ctx.nodes.list);
             session.DrawImage(ctx.texts.list);
+
+            var color = Color.FromArgb(64, 255, 255, 255);
+            CanvasGeometry bbox = ctx.geo.selectBox;
+            session.DrawGeometry(bbox, color);
+            session.FillGeometry(bbox, color);
         }
 
         private void DrawNodeBody(TableEntry<Node> node, Context ctx)
@@ -130,6 +137,7 @@ namespace Madeline.Frontend
             var tx = Matrix3x2.CreateTranslation(node.value.pos);
             BodyGeo body = ctx.geo.body.Transform(tx);
             bool hover = StoreNodeHover(body, node.id);
+            StoreNodeSelectCandidacy(body.clipper, ctx.geo.selectBox, node.id);
 
             bool selected = viewport.selection.active.nodes.Contains(node.id);
             bool active = viewport.active == node.id;
@@ -185,6 +193,18 @@ namespace Madeline.Frontend
             state = viewing ? NodeHover.State.Viewing : state;
             viewport.hover.node = new NodeHover(node, state);
             return true;
+        }
+
+        private void StoreNodeSelectCandidacy(CanvasGeometry clipper, CanvasGeometry bbox, int node)
+        {
+            switch (clipper.CompareWith(bbox))
+            {
+                case CanvasGeometryRelation.Disjoint:
+                    break;
+                default:
+                    viewport.selection.candidates.nodes.Add(node);
+                    break;
+            }
         }
 
         private void DrawWire(Context ctx, Vector2 iPos, Vector2 oPos, Slot slot)
