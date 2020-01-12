@@ -100,7 +100,7 @@ namespace Madeline.Frontend.Drawers.Nodes
 
         private void DrawWire(Context ctx, Vector2 iPos, Vector2 oPos, Slot slot)
         {
-            var wire = new Wire(iPos, oPos, WireKind.DoubleEnded);
+            var wire = new Wire(iPos, oPos, Wire.Kind.DoubleEnded);
             CanvasGeometry geo = wire.Geo(ctx.wires.session);
             bool hover = selection.StoreWireHover(geo, slot);
             bool candidate = selection.StoreWireSelectCandidacy(geo, ctx.geo.selectBox, slot);

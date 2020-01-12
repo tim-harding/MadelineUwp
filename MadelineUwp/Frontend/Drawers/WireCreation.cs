@@ -31,13 +31,13 @@ namespace Madeline.Frontend.Drawers
                 {
                     Swap(ref srcPos, ref dstPos);
                 }
-                var wire = new Wire(srcPos, dstPos, WireKind.DoubleEnded);
+                var wire = new Wire(srcPos, dstPos, Wire.Kind.DoubleEnded);
                 session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
             }
             else
             {
                 Vector2 dstPos = viewport.From(mouse.current.pos);
-                WireKind kind = up ? WireKind.Up : WireKind.Down;
+                Wire.Kind kind = up ? Wire.Kind.Up : Wire.Kind.Down;
                 if (!up)
                 {
                     Swap(ref srcPos, ref dstPos);

@@ -3,28 +3,28 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Drawers
 {
-    internal enum WireKind
-    {
-        DoubleEnded,
-        Down,
-        Up,
-    }
-
     internal struct Wire
     {
+        internal enum Kind
+        {
+            DoubleEnded,
+            Down,
+            Up,
+        }
+
         private const float PI = (float)Math.PI;
 
         public Vector2 iPos;
         public Vector2 oPos;
-        public WireKind kind;
+        public Kind kind;
 
         public float Rightward => Convert.ToInt32(iPos.X > oPos.X);
 
         public float Sign => Rightward * 2f - 1f;
 
-        public Wire(Vector2 iPos, Vector2 oPos, WireKind kind)
+        public Wire(Vector2 iPos, Vector2 oPos, Kind kind)
         {
             Vector2 slotEnd = Vector2.UnitY * Slot.DISPLAY_RADIUS;
             this.oPos = oPos + slotEnd;
@@ -85,7 +85,7 @@ namespace Madeline.Frontend
 
         public CanvasGeometry Geo(CanvasDrawingSession session)
         {
-            bool rounded = kind == WireKind.DoubleEnded;
+            bool rounded = kind == Kind.DoubleEnded;
             float r = BaseRadius(rounded);
             r = rounded ? FlattenedRadius(r) : r;
             Vector2 target = rounded ? (iPos + oPos) / 2f : oPos;
@@ -96,17 +96,17 @@ namespace Madeline.Frontend
 
             switch (kind)
             {
-                case WireKind.DoubleEnded:
+                case Kind.DoubleEnded:
                     UpperArc(path, r, theta);
                     LowerArc(path, r, theta);
                     break;
 
-                case WireKind.Down:
+                case Kind.Down:
                     UpperArc(path, r, theta);
                     path.AddLine(iPos);
                     break;
 
-                case WireKind.Up:
+                case Kind.Up:
                     path.AddLine(oPos);
                     LowerArc(path, r, theta);
                     break;

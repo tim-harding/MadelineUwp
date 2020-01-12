@@ -132,7 +132,7 @@
     <Compile Include="Frontend\HistoricEvents\InsertNode.cs" />
     <Compile Include="Frontend\Palette.cs" />
     <Compile Include="Frontend\History.cs" />
-    <Compile Include="Frontend\Wire.cs" />
+    <Compile Include="Frontend\Drawers\Wire.cs" />
     <Compile Include="Frontend\Drawers\WireCreation.cs" />
     <Compile Include="Frontend\Handlers\WireCreation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
