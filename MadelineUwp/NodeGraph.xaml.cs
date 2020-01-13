@@ -29,6 +29,7 @@ namespace Madeline
 
             mouseHandlers = new IMouseHandler[]
             {
+                dialog,
                 nodes,
                 wireCreation,
                 dragSelect,

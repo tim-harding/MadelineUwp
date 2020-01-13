@@ -10,12 +10,9 @@ namespace Madeline.Frontend.Drawing
 {
     internal class CreationDialog : IDrawer
     {
-        private const float WIDTH = 120f;
-        private const float MARGIN = 10f;
-        private const float LINE_HEIGHT = 38f;
-
-        private Vector2 Margin = Vector2.UnitX * MARGIN;
-        private Vector2 Line = Vector2.UnitY * LINE_HEIGHT;
+        private Vector2 Width = Vector2.UnitX * Handlers.CreationDialog.WIDTH;
+        private Vector2 Margin = Vector2.UnitX * Handlers.CreationDialog.MARGIN;
+        private Vector2 Line = Vector2.UnitY * Handlers.CreationDialog.LINE_HEIGHT;
 
         private Handlers.CreationDialog dialog;
         private CanvasDrawingSession session;
@@ -66,7 +63,7 @@ namespace Madeline.Frontend.Drawing
         {
             const float ROUNDING = 5f;
             int lines = dialog.found.Count + 1;
-            var size = new Vector2(WIDTH, lines * LINE_HEIGHT);
+            Vector2 size = Width + Line * lines;
             var rect = new Rect(Vector2.Zero.ToPoint(), size.ToSize());
             var clip = CanvasGeometry.CreateRoundedRectangle(session.Device, rect, ROUNDING, ROUNDING);
             var target = new CanvasRenderTarget(session.Device, size.X, size.Y, session.Dpi);
@@ -93,7 +90,7 @@ namespace Madeline.Frontend.Drawing
             {
                 Vector2 line = Line * i;
                 Vector2 start = line + halfLine;
-                Vector2 end = line + Vector2.UnitX * WIDTH + halfLine;
+                Vector2 end = line + Width + halfLine;
                 session.DrawLine(start, end, Palette.Tone8);
             }
         }
@@ -110,7 +107,7 @@ namespace Madeline.Frontend.Drawing
         private void FillLine(int line, Color color)
         {
             Vector2 offset = Line * line;
-            Vector2 size = Line + Vector2.UnitX * WIDTH;
+            Vector2 size = Line + Width;
             var rect = new Rect(offset.ToPoint(), size.ToSize());
             session.FillRectangle(rect, color);
         }
@@ -147,7 +144,7 @@ namespace Madeline.Frontend.Drawing
                 FontSize = 18f,
                 WordWrapping = CanvasWordWrapping.NoWrap,
             };
-            var layout = new CanvasTextLayout(session.Device, text, format, WIDTH, LINE_HEIGHT);
+            var layout = new CanvasTextLayout(session.Device, text, format, Width.X, Line.Y);
             return layout;
         }
     }

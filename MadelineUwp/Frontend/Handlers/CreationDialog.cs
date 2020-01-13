@@ -9,9 +9,9 @@ namespace Madeline.Frontend.Handlers
 {
     internal class CreationDialog : IMouseHandler, IKeypressHandler
     {
-        public const int WIDTH = 150;
-        public const int HEIGHT = 600;
-        public const int LEADING = 25;
+        public const float WIDTH = 120f;
+        public const float MARGIN = 10f;
+        public const float LINE_HEIGHT = 38f;
 
         public Mouse mouse;
         public Viewport viewport;
@@ -23,8 +23,7 @@ namespace Madeline.Frontend.Handlers
         public bool display;
         public Vector2 origin;
 
-        public Vector2 Size => new Vector2(WIDTH, HEIGHT);
-        public Vector2 Line => Vector2.UnitY * LEADING;
+        public Vector2 Line => Vector2.UnitY * LINE_HEIGHT;
 
         public CreationDialog(Viewport viewport, Mouse mouse)
         {
@@ -54,12 +53,14 @@ namespace Madeline.Frontend.Handlers
                 return false;
             }
             MouseState current = mouse.current;
-            var bounds = new Rect(origin.ToPoint(), new Size(WIDTH, HEIGHT));
+            int lines = found.Count + 1;
+            var size = new Vector2(WIDTH, LINE_HEIGHT * lines);
+            var bounds = new Rect(origin.ToPoint(), size.ToSize());
             bool inBounds = bounds.Contains(current.pos.ToPoint());
             if (inBounds)
             {
                 Vector2 relative = current.pos - origin;
-                selection = (int)relative.Y / LEADING - 1;
+                selection = (int)(relative.Y / LINE_HEIGHT) - 1;
             }
             else if (!inBounds && current.left)
             {
