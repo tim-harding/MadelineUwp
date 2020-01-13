@@ -9,7 +9,7 @@
       Unloaded="Unload">
 
     <Grid>
-        <canvas:CanvasControl Name="canvas"
+        <canvas:CanvasControl Name="graph"
                               ClearColor="#343434"
                               Draw="Draw"
                               PointerMoved="HandleMouse"

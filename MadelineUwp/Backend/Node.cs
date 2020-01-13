@@ -14,6 +14,7 @@ namespace Madeline.Backend
         public Plugin plugin;
         public bool enabled;
         public int[] inputs;
+        public Control[] controls;
 
         public static Vector2 Size => new Vector2(WIDTH, HEIGHT);
 
@@ -28,6 +29,7 @@ namespace Madeline.Backend
                 inputs[i] = -1;
             }
             enabled = true;
+            controls = (Control[])plugin.controls.Clone();
         }
 
         public Vector2 SlotPos(int slot)

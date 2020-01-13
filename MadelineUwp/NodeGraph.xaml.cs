@@ -67,21 +67,21 @@ namespace Madeline
 
         private void Unload(object sender, RoutedEventArgs e)
         {
-            canvas.RemoveFromVisualTree();
-            canvas = null;
+            graph.RemoveFromVisualTree();
+            graph = null;
         }
 
         private void HandleScroll(object sender, PointerRoutedEventArgs e)
         {
-            int wheel = e.GetCurrentPoint(canvas).Properties.MouseWheelDelta;
+            int wheel = e.GetCurrentPoint(graph).Properties.MouseWheelDelta;
             viewport.ZoomAround(mouse.current.pos, wheel);
-            canvas.Invalidate();
+            graph.Invalidate();
         }
 
         private void HandleMouse(object sender, PointerRoutedEventArgs e)
         {
             UpdateMouse(e);
-            canvas.Invalidate();
+            graph.Invalidate();
             foreach (IMouseHandler handler in mouseHandlers)
             {
                 if (handler.HandleMouse())
@@ -94,7 +94,7 @@ namespace Madeline
         private void HandleKeypress(CoreWindow sender, KeyEventArgs args)
         {
             VirtualKey key = args.VirtualKey;
-            canvas.Invalidate();
+            graph.Invalidate();
             if (args.KeyStatus.WasKeyDown)
             {
                 foreach (IKeypressHandler handler in keypressHandlers)
@@ -109,7 +109,7 @@ namespace Madeline
 
         private void UpdateMouse(PointerRoutedEventArgs e)
         {
-            PointerPoint point = e.GetCurrentPoint(canvas);
+            PointerPoint point = e.GetCurrentPoint(graph);
             PointerPointProperties props = point.Properties;
             mouse.previous = mouse.current;
             mouse.current = new MouseState

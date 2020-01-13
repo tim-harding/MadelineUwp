@@ -121,6 +121,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Backend\Control.cs" />
     <Compile Include="Frontend\Structure\Aabb.cs" />
     <Compile Include="Frontend\Structure\Components.cs" />
     <Compile Include="Frontend\Drawing\IDrawer.cs" />
@@ -136,8 +137,8 @@
     <Compile Include="Frontend\Drawing\Palette.cs" />
     <Compile Include="Frontend\History.cs" />
     <Compile Include="Frontend\Drawing\Wire.cs" />
-    <Compile Include="Frontend\Drawing\WireCreation.cs" />
-    <Compile Include="Frontend\Handlers\WireCreation.cs" />
+    <Compile Include="Frontend\Drawing\WireCreationDrawer.cs" />
+    <Compile Include="Frontend\Handlers\WireCreationHandler.cs" />
     <Compile Include="Frontend\Structure\HoverInfo.cs" />
     <Compile Include="Frontend\Structure\NodeHover.cs" />
     <Compile Include="Frontend\Structure\RewiringInfo.cs" />
@@ -147,17 +148,17 @@
     <Compile Include="Backend\Graph.cs" />
     <Compile Include="Backend\Table.cs" />
     <Compile Include="Backend\TableEntry.cs" />
-    <Compile Include="Frontend\Handlers\DragSelect.cs" />
+    <Compile Include="Frontend\Handlers\DragSelectHandler.cs" />
     <Compile Include="Frontend\Handlers\HandlerInterfaces.cs" />
-    <Compile Include="Frontend\Drawing\CreationDialog.cs" />
+    <Compile Include="Frontend\Drawing\CreationDialogDrawer.cs" />
     <Compile Include="NodeGraph.xaml.cs">
       <DependentUpon>NodeGraph.xaml</DependentUpon>
     </Compile>
     <Compile Include="Backend\Node.cs" />
     <Compile Include="Backend\Plugin.cs" />
     <Compile Include="Frontend\Mouse.cs" />
-    <Compile Include="Frontend\Handlers\Nodes.cs" />
-    <Compile Include="Frontend\Drawing\Nodes\Drawing.cs" />
+    <Compile Include="Frontend\Handlers\NodesHandler.cs" />
+    <Compile Include="Frontend\Drawing\Nodes\NodesDrawer.cs" />
     <Compile Include="Frontend\SampleData.cs" />
     <Compile Include="Frontend\Structure\Slot.cs" />
     <Compile Include="Frontend\Viewport.cs" />
@@ -177,7 +178,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Compile Include="Frontend\Handlers\CreationDialog.cs" />
+    <Compile Include="Frontend\Handlers\CreationDialogHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

@@ -1,5 +1,4 @@
-﻿using System;
-using Windows.UI;
+﻿using Windows.UI;
 
 namespace Madeline.Backend
 {
@@ -8,12 +7,16 @@ namespace Madeline.Backend
         public string name;
         public int inputs;
         public ColorScheme colors;
+        public Control[] controls;
 
-        public Plugin(string name, int inputs, ColorScheme colors)
+        public Plugin() { }
+
+        public Plugin(string name, int inputs, ColorScheme colors, Control[] controls)
         {
             this.name = name;
             this.inputs = inputs;
             this.colors = colors;
+            this.controls = controls;
         }
 
         public struct ColorScheme
