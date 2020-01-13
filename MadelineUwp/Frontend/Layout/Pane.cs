@@ -30,6 +30,7 @@ namespace Madeline.Frontend.Layout
             {
                 CanvasDrawingSession tmp = Globals.session;
                 Globals.session = offscreen;
+                Globals.session.Clear(Palette.Tone3);
                 foreach (IDrawer drawer in drawers)
                 {
                     drawer.Draw();
