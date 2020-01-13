@@ -8,6 +8,8 @@ using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Madeline.Frontend.Handlers;
+using Madeline.Frontend.Drawing;
 
 namespace Madeline
 {
@@ -16,16 +18,16 @@ namespace Madeline
         private Viewport viewport = new Viewport();
         private Mouse mouse = new Mouse();
 
-        private Frontend.Drawing.IDrawer[] drawers;
+        private IDrawer[] drawers;
         private IMouseHandler[] mouseHandlers;
         private IKeypressHandler[] keypressHandlers;
 
         public NodeGraph()
         {
-            var dialog = new Frontend.Handlers.CreationDialogHandler(viewport, mouse);
-            var nodes = new Frontend.Handlers.NodesHandler(viewport, mouse);
-            var dragSelect = new Frontend.Handlers.DragSelectHandler(viewport, mouse);
-            var wireCreation = new Frontend.Handlers.WireCreationHandler(viewport, mouse);
+            var dialog = new CreationDialogHandler(viewport, mouse);
+            var nodes = new NodesHandler(viewport, mouse);
+            var dragSelect = new DragSelectHandler(viewport, mouse);
+            var wireCreation = new WireCreationHandler(viewport, mouse);
 
             mouseHandlers = new IMouseHandler[]
             {
@@ -41,11 +43,11 @@ namespace Madeline
                 nodes,
             };
 
-            drawers = new Frontend.Drawing.IDrawer[]
+            drawers = new IDrawer[]
             {
                 new Frontend.Drawing.Nodes.NodesDrawer(viewport, mouse),
-                new Frontend.Drawing.WireCreationDrawer(viewport, mouse),
-                new Frontend.Drawing.CreationDialogDrawer(dialog),
+                new WireCreationDrawer(viewport, mouse),
+                new CreationDialogDrawer(dialog),
             };
 
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
@@ -59,7 +61,7 @@ namespace Madeline
         private void Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             CanvasDrawingSession session = args.DrawingSession;
-            foreach (Frontend.Drawing.IDrawer drawer in drawers)
+            foreach (IDrawer drawer in drawers)
             {
                 drawer.Draw(session);
             }

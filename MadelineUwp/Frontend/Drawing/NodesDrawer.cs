@@ -1,4 +1,5 @@
 ﻿using Madeline.Backend;
+using Madeline.Frontend.Drawing.Nodes;
 using Madeline.Frontend.Structure;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -6,7 +7,7 @@ using Microsoft.Graphics.Canvas.Text;
 using System.Numerics;
 using Windows.UI;
 
-namespace Madeline.Frontend.Drawing.Nodes
+namespace Madeline.Frontend.Drawing
 {
     internal class NodesDrawer : IDrawer
     {
