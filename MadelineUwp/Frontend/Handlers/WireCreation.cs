@@ -35,77 +35,96 @@ namespace Madeline.Frontend.Handlers
         private bool BeginPull()
         {
             SlotProximity proximity = viewport.hover.slot;
-            bool valid = proximity.slot.node > -1 && proximity.IsHover;
-            if (valid)
+            bool isSlotHover = proximity.slot.node > -1 && proximity.IsHover;
+
+            Slot wire = viewport.hover.wire;
+            bool isWireHover = wire.node > -1;
+
+            if (isSlotHover)
             {
                 viewport.rewiring.src = proximity.slot;
+                viewport.rewiring.bidirectional = false;
             }
+            else if (isWireHover)
+            {
+                if (viewport.graph.nodes.TryGet(wire.node, out Node node))
+                {
+                    viewport.rewiring.src = wire;
+                    viewport.rewiring.upstreamReference = node.inputs[wire.index];
+                    viewport.rewiring.bidirectional = true;
+                }
+            }
+            viewport.rewiring.dst = Slot.Empty;
+
+            bool valid = isSlotHover || isWireHover;
             return valid;
         }
 
         private bool AdvancePull()
         {
             Graph graph = viewport.graph;
-            int srcId = viewport.rewiring.src.node;
-            if (!graph.nodes.TryGet(srcId, out Node srcNode)) { return false; }
+            Slot src = viewport.rewiring.src;
+            if (!graph.nodes.TryGet(src.node, out Node srcNode)) { return false; }
 
             RewiringInfo rewiring = viewport.rewiring;
-            Vector2 cursor = viewport.From(mouse.current.pos);
-            float nearest = float.MaxValue;
-            rewiring.dst = new Slot(-1, -1);
-            foreach (TableEntry<Node> node in graph.nodes)
-            {
-                if (node.id == srcId) { continue; }
 
-                bool srcIsOutput = rewiring.src.slot < 0;
-                if (srcIsOutput)
-                {
-                    int inputs = node.value.inputs.Length;
-                    for (int i = 0; i < inputs; i++)
-                    {
-                        Vector2 iPos = node.value.InputPos(i, inputs);
-                        SetNearest(cursor, iPos, new Slot(node.id, i), ref nearest);
-                    }
-                }
-                else
-                {
-                    Vector2 oPos = node.value.OutputPos();
-                    SetNearest(cursor, oPos, new Slot(node.id, -1), ref nearest);
-                }
-            }
+            SlotProximity nearest = viewport.hover.slot;
+            bool srcIsOutput = rewiring.src.index < 0;
 
             const float SNAP_RADIUS = 1024f;
-            rewiring.dst = nearest < SNAP_RADIUS ? rewiring.dst : Slot.Empty;
-            return true;
-        }
-
-        private void SetNearest(Vector2 srcPos, Vector2 dstPos, Slot slot, ref float nearest)
-        {
-            float distance = Vector2.DistanceSquared(srcPos, dstPos);
-            if (distance < nearest)
+            bool isNear = nearest.distance < SNAP_RADIUS;
+            if (nearest.slot.node == src.node)
             {
-                nearest = distance;
-                viewport.rewiring.dst = slot;
+                rewiring.dst = Slot.Empty;
             }
+            else if (rewiring.bidirectional)
+            {
+                // Should also be able to hover over a node to wire through it
+                rewiring.dst = isNear ? nearest.slot : Slot.Empty;
+            }
+            else if (srcIsOutput)
+            {
+                bool isInput = nearest.slot.index > -1;
+                rewiring.dst = isInput && isNear ? nearest.slot : Slot.Empty;
+            }
+            else
+            {
+                bool isOutput = nearest.slot.index < 0;
+                rewiring.dst = isOutput && isNear ? nearest.slot : Slot.Empty;
+            }
+
+            return true;
         }
 
         private bool CommitPull()
         {
             RewiringInfo rewiring = viewport.rewiring;
-            if (rewiring.src.node < 0 || rewiring.dst.node < 0)
+            Slot src = rewiring.src;
+            Slot dst = rewiring.dst;
+            if (src.node < 0 || dst.node < 0)
             {
                 rewiring.src = new Slot(-1, -1);
                 return false;
             }
 
-            Slot src = rewiring.src;
-            Slot dst = rewiring.dst;
-            bool srcIsOutput = src.slot < 0;
-            int i = srcIsOutput ? dst.node : src.node;
-            int o = srcIsOutput ? src.node : dst.node;
-            int slot = Math.Max(src.slot, dst.slot);
-            viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
-            rewiring.src = new Slot(-1, -1);
+            if (rewiring.bidirectional)
+            {
+                bool dstIsOutput = dst.index < 0;
+                int o = dstIsOutput ? dst.node : rewiring.upstreamReference;
+                int i = dstIsOutput ? src.node : dst.node;
+                int slot = Math.Max(src.index, dst.index);
+                viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
+                rewiring.src = new Slot(-1, -1);
+            }
+            else
+            {
+                bool srcIsOutput = src.index < 0;
+                int i = srcIsOutput ? dst.node : src.node;
+                int o = srcIsOutput ? src.node : dst.node;
+                int slot = Math.Max(src.index, dst.index);
+                viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
+                rewiring.src = new Slot(-1, -1);
+            }
             return true;
         }
     }

@@ -38,13 +38,13 @@ namespace Madeline.Backend
             }
             else
             {
-                return InputPos(slot, inputs);
+                return InputPos(slot);
             }
         }
 
-        public Vector2 InputPos(int input, int inputs)
+        public Vector2 InputPos(int input)
         {
-            float local = input - (inputs - 1) / 2f;
+            float local = input - (inputs.Length - 1) / 2f;
             var offset = new Vector2
             {
                 X = WIDTH / 2f + local * INPUT_SEPARATION,

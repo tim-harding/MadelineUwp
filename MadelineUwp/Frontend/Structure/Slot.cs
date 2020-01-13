@@ -6,15 +6,15 @@
 
         // -1 is output
         // 0.. is input
-        public int slot;
+        public int index;
         public int node;
 
         public static Slot Empty => new Slot(-1, -1);
 
-        public Slot(int node, int slot)
+        public Slot(int node, int index)
         {
             this.node = node;
-            this.slot = slot;
+            this.index = index;
         }
     }
 }

@@ -104,11 +104,11 @@ namespace Madeline.Frontend.Drawing
 
                 case Kind.Down:
                     UpperArc(path, r, theta);
-                    path.AddLine(iPos);
+                    path.AddLine(iPos + Vector2.UnitY * Slot.DISPLAY_RADIUS);
                     break;
 
                 case Kind.Up:
-                    path.AddLine(oPos);
+                    path.AddLine(oPos - Vector2.UnitY * Slot.DISPLAY_RADIUS);
                     LowerArc(path, r, theta);
                     break;
             }

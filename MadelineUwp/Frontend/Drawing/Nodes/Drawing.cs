@@ -35,7 +35,7 @@ namespace Madeline.Frontend.Drawing.Nodes
                 DrawNodeBody(node, ctx);
                 for (int i = 0; i < node.value.plugin.inputs; i++)
                 {
-                    Vector2 iPos = node.value.InputPos(i, node.value.inputs.Length);
+                    Vector2 iPos = node.value.InputPos(i);
                     if (graph.nodes.TryGet(node.value.inputs[i], out Node upstream))
                     {
                         Vector2 oPos = upstream.OutputPos();

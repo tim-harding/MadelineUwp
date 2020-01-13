@@ -4,5 +4,8 @@
     {
         public Slot src = Slot.Empty;
         public Slot dst = Slot.Empty;
+
+        public int upstreamReference;
+        public bool bidirectional;
     }
 }
