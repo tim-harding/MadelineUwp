@@ -7,8 +7,6 @@ namespace Madeline.Frontend.Panes.NodeGraph.Structure
     {
         public Vector2 translate;
         public float zoom = 1f;
-        public int viewing = -1;
-        public int active = -1;
 
         public HoverInfo hover = new HoverInfo();
         public SelectionInfo selection = new SelectionInfo();

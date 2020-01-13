@@ -128,6 +128,7 @@
     <Compile Include="Frontend\Layout\Range.cs" />
     <Compile Include="Frontend\Layout\Pane.cs" />
     <Compile Include="Frontend\Layout\PaneGrid.cs" />
+    <Compile Include="Frontend\Panes\Controls\Drawing\ControlsDrawer.cs" />
     <Compile Include="Frontend\Panes\Factory.cs" />
     <Compile Include="Frontend\Panes\NodeGraph\Structure\Aabb.cs" />
     <Compile Include="Frontend\Panes\NodeGraph\Structure\Components.cs" />
@@ -214,7 +215,6 @@
     <None Include="MadelineUwpKey.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Frontend\Panes\Controls\" />
     <Folder Include="Frontend\Panes\Viewer\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

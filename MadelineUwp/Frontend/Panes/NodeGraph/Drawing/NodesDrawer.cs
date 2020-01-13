@@ -60,7 +60,7 @@ namespace Madeline.Frontend.Panes.NodeGraph.Drawing
             bool hover = selection.StoreNodeHover(body, node.id);
             bool candidate = selection.StoreNodeSelectCandidacy(body.clipper, ctx.geo.selectBox, node.id);
             bool selected = viewport.selection.active.nodes.Contains(node.id);
-            bool active = viewport.active == node.id;
+            bool active = Globals.graph.active == node.id;
             bool enabled = node.value.enabled;
 
             if (active || selected)
@@ -85,7 +85,7 @@ namespace Madeline.Frontend.Panes.NodeGraph.Drawing
                 disableColor = enabled ? disableColor : Palette.Yellow5;
                 ctx.nodes.session.FillGeometry(body.disable, disableColor);
 
-                bool viewing = node.id == viewport.viewing;
+                bool viewing = node.id == Globals.graph.viewing;
                 bool viewingHover = hover && viewport.hover.node.state == NodeHover.State.Viewing;
                 Color viewingColor = viewingHover ? Palette.Blue3 : bodyColor;
                 viewingColor = viewing ? Palette.Blue5 : viewingColor;

@@ -90,9 +90,9 @@ namespace Madeline.Frontend.Panes.NodeGraph.Behavior
             {
                 select.Remove(candidate);
             }
-            if (candidates.Contains(viewport.active) && select.Count > 0)
+            if (candidates.Contains(Globals.graph.active) && select.Count > 0)
             {
-                viewport.active = select[0];
+                Globals.graph.active = select[0];
             }
         }
 
@@ -102,7 +102,7 @@ namespace Madeline.Frontend.Panes.NodeGraph.Behavior
             List<int> candidates = viewport.selection.candidates.nodes;
             if (candidates.Count > 0)
             {
-                viewport.active = candidates[0];
+                Globals.graph.active = candidates[0];
             }
             foreach (int candidate in candidates)
             {
@@ -119,7 +119,7 @@ namespace Madeline.Frontend.Panes.NodeGraph.Behavior
             List<int> candidates = viewport.selection.candidates.nodes;
             if (candidates.Count > 0)
             {
-                viewport.active = candidates[0];
+                Globals.graph.active = candidates[0];
             }
             select.Clear();
             foreach (int candidate in candidates)

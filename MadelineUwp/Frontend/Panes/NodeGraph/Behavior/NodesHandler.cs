@@ -42,7 +42,7 @@ namespace Madeline.Frontend.Panes.NodeGraph.Behavior
                     return true;
 
                 case VirtualKey.R:
-                    viewport.viewing = viewport.active;
+                    Globals.graph.viewing = Globals.graph.active;
                     break;
 
                 case VirtualKey.Q:
@@ -139,16 +139,16 @@ namespace Madeline.Frontend.Panes.NodeGraph.Behavior
             {
                 switch (viewport.hover.node.state)
                 {
-                    case Structure.NodeHover.State.Body:
+                    case NodeHover.State.Body:
                         ModifyNodeSelection();
                         break;
 
-                    case Structure.NodeHover.State.Disable:
+                    case NodeHover.State.Disable:
                         DisableNode();
                         break;
 
-                    case Structure.NodeHover.State.Viewing:
-                        viewport.viewing = viewport.hover.node.id;
+                    case NodeHover.State.Viewing:
+                        Globals.graph.viewing = viewport.hover.node.id;
                         break;
                 }
             }
@@ -178,16 +178,16 @@ namespace Madeline.Frontend.Panes.NodeGraph.Behavior
         {
             List<int> nodes = viewport.selection.active.nodes;
             nodes.Remove(clickedNode);
-            if (clickedNode == viewport.active && nodes.Count > 0)
+            if (clickedNode == Globals.graph.active && nodes.Count > 0)
             {
-                viewport.active = nodes[0];
+                Globals.graph.active = nodes[0];
             }
         }
 
         private void AddNodeToSelection()
         {
             List<int> nodes = viewport.selection.active.nodes;
-            viewport.active = clickedNode;
+            Globals.graph.active = clickedNode;
             if (!nodes.Contains(clickedNode))
             {
                 nodes.Add(clickedNode);
@@ -197,7 +197,7 @@ namespace Madeline.Frontend.Panes.NodeGraph.Behavior
         private void ReplaceNodeSelection()
         {
             List<int> nodes = viewport.selection.active.nodes;
-            viewport.active = clickedNode;
+            Globals.graph.active = clickedNode;
             nodes.Clear();
             nodes.Add(clickedNode);
         }
