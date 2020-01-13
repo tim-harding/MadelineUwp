@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.System;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
 
 namespace Madeline.Frontend.Handlers
 {
@@ -107,7 +105,6 @@ namespace Madeline.Frontend.Handlers
                 clickedNode = hover;
                 dragStarted = false;
 
-                // Should always succeed if we have hover
                 if (viewport.graph.nodes.TryGet(hover, out Node node))
                 {
                     nodeStart = node.pos;
@@ -138,38 +135,11 @@ namespace Madeline.Frontend.Handlers
                 switch (viewport.hover.node.state)
                 {
                     case Structure.NodeHover.State.Body:
-                        bool ctrl = IsKeyDown(VirtualKey.Control);
-                        bool shift = IsKeyDown(VirtualKey.Shift);
-                        List<int> nodes = viewport.selection.active.nodes;
-                        if (ctrl)
-                        {
-                            nodes.Remove(clickedNode);
-                            if (clickedNode == viewport.active && nodes.Count > 0)
-                            {
-                                viewport.active = nodes[0];
-                            }
-                        }
-                        else if (shift)
-                        {
-                            viewport.active = clickedNode;
-                            if (!nodes.Contains(clickedNode))
-                            {
-                                nodes.Add(clickedNode);
-                            }
-                        }
-                        else
-                        {
-                            viewport.active = clickedNode;
-                            nodes.Clear();
-                            nodes.Add(clickedNode);
-                        }
+                        ModifyNodeSelection();
                         break;
 
                     case Structure.NodeHover.State.Disable:
-                        if (viewport.graph.nodes.TryGet(viewport.hover.node.id, out Node node))
-                        {
-                            node.enabled = !node.enabled;
-                        }
+                        DisableNode();
                         break;
 
                     case Structure.NodeHover.State.Viewing:
@@ -179,6 +149,60 @@ namespace Madeline.Frontend.Handlers
             }
             clickedNode = -1;
             return handling;
+        }
+
+        private void ModifyNodeSelection()
+        {
+            bool ctrl = Utils.IsKeyDown(VirtualKey.Control);
+            bool shift = Utils.IsKeyDown(VirtualKey.Shift);
+            if (ctrl)
+            {
+                DeselectNode();
+            }
+            else if (shift)
+            {
+                AddNodeToSelection();
+            }
+            else
+            {
+                ReplaceNodeSelection();
+            }
+        }
+
+        private void DeselectNode()
+        {
+            List<int> nodes = viewport.selection.active.nodes;
+            nodes.Remove(clickedNode);
+            if (clickedNode == viewport.active && nodes.Count > 0)
+            {
+                viewport.active = nodes[0];
+            }
+        }
+
+        private void AddNodeToSelection()
+        {
+            List<int> nodes = viewport.selection.active.nodes;
+            viewport.active = clickedNode;
+            if (!nodes.Contains(clickedNode))
+            {
+                nodes.Add(clickedNode);
+            }
+        }
+
+        private void ReplaceNodeSelection()
+        {
+            List<int> nodes = viewport.selection.active.nodes;
+            viewport.active = clickedNode;
+            nodes.Clear();
+            nodes.Add(clickedNode);
+        }
+
+        private void DisableNode()
+        {
+            if (viewport.graph.nodes.TryGet(viewport.hover.node.id, out Node node))
+            {
+                node.enabled = !node.enabled;
+            }
         }
 
         private void CheckDragStarted()
@@ -236,8 +260,8 @@ namespace Madeline.Frontend.Handlers
 
         private void ShiftHistory()
         {
-            bool ctrl = IsKeyDown(VirtualKey.Control);
-            bool shift = IsKeyDown(VirtualKey.Shift);
+            bool ctrl = Utils.IsKeyDown(VirtualKey.Control);
+            bool shift = Utils.IsKeyDown(VirtualKey.Shift);
             History history = viewport.history;
             if (ctrl && shift)
             {
@@ -247,13 +271,6 @@ namespace Madeline.Frontend.Handlers
             {
                 history.Undo();
             }
-        }
-
-        private bool IsKeyDown(VirtualKey key)
-        {
-            CoreWindow window = Window.Current.CoreWindow;
-            CoreVirtualKeyStates state = window.GetKeyState(key);
-            return state.HasFlag(CoreVirtualKeyStates.Down);
         }
 
         private void DeleteNodes()

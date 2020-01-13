@@ -44,14 +44,11 @@ namespace Madeline.Frontend.Handlers
                 viewport.rewiring.src = proximity.slot;
                 viewport.rewiring.bidirectional = false;
             }
-            else if (isWireHover)
+            else if (isWireHover && viewport.graph.nodes.TryGet(wire.node, out Node node))
             {
-                if (viewport.graph.nodes.TryGet(wire.node, out Node node))
-                {
-                    viewport.rewiring.src = wire;
-                    viewport.rewiring.upstream = node.inputs[wire.index];
-                    viewport.rewiring.bidirectional = true;
-                }
+                viewport.rewiring.src = wire;
+                viewport.rewiring.upstream = node.inputs[wire.index];
+                viewport.rewiring.bidirectional = true;
             }
             viewport.rewiring.dst = Slot.Empty;
 
@@ -100,31 +97,36 @@ namespace Madeline.Frontend.Handlers
             RewiringInfo rewiring = viewport.rewiring;
             Slot src = rewiring.src;
             Slot dst = rewiring.dst;
-            if (src.node < 0 || dst.node < 0)
+            bool complete = src.node > -1 && dst.node > -1;
+            if (complete)
             {
-                rewiring.src = new Slot(-1, -1);
-                return false;
+                (int i, int o) = RewiringIO();
+                int slot = Math.Max(src.index, dst.index);
+                viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
             }
+            rewiring.src = new Slot(-1, -1);
+            return complete;
+        }
 
+        private (int i, int o) RewiringIO()
+        {
+            RewiringInfo rewiring = viewport.rewiring;
+            Slot src = rewiring.src;
+            Slot dst = rewiring.dst;
+            int i, o;
             if (rewiring.bidirectional)
             {
                 bool dstIsOutput = dst.index < 0;
-                int o = dstIsOutput ? dst.node : rewiring.upstream;
-                int i = dstIsOutput ? src.node : dst.node;
-                int slot = Math.Max(src.index, dst.index);
-                viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
-                rewiring.src = new Slot(-1, -1);
+                i = dstIsOutput ? src.node : dst.node;
+                o = dstIsOutput ? dst.node : rewiring.upstream;
             }
             else
             {
                 bool srcIsOutput = src.index < 0;
-                int i = srcIsOutput ? dst.node : src.node;
-                int o = srcIsOutput ? src.node : dst.node;
-                int slot = Math.Max(src.index, dst.index);
-                viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
-                rewiring.src = new Slot(-1, -1);
+                i = srcIsOutput ? dst.node : src.node;
+                o = srcIsOutput ? src.node : dst.node;
             }
-            return true;
+            return (i, o);
         }
     }
 }

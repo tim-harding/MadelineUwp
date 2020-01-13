@@ -1,4 +1,8 @@
-﻿namespace Madeline
+﻿using Windows.System;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+
+namespace Madeline
 {
     internal static class Utils
     {
@@ -12,6 +16,13 @@
             T tmp = lhs;
             lhs = rhs;
             rhs = tmp;
+        }
+
+        public static bool IsKeyDown(VirtualKey key)
+        {
+            CoreWindow window = Window.Current.CoreWindow;
+            CoreVirtualKeyStates state = window.GetKeyState(key);
+            return state.HasFlag(CoreVirtualKeyStates.Down);
         }
     }
 }

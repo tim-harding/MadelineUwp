@@ -1,8 +1,6 @@
 ﻿using Madeline.Frontend.Structure;
 using System.Collections.Generic;
 using Windows.System;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
 
 namespace Madeline.Frontend.Handlers
 {
@@ -58,8 +56,23 @@ namespace Madeline.Frontend.Handlers
         {
             if (!dragging) { return false; }
 
-            CommitNodes();
-            CommitWires();
+            bool ctrl = Utils.IsKeyDown(VirtualKey.Control);
+            bool shift = Utils.IsKeyDown(VirtualKey.Shift);
+            if (ctrl)
+            {
+                SubtractNodeSelection();
+                SubtractWireSelection();
+            }
+            else if (shift)
+            {
+                AddNodeSelection();
+                AddWireSelection();
+            }
+            else
+            {
+                ReplaceNodeSelection();
+                ReplaceWireSelection();
+            }
 
             viewport.selection.candidates.Clear();
             dragging = false;
@@ -67,89 +80,84 @@ namespace Madeline.Frontend.Handlers
             return true;
         }
 
-        private void CommitNodes()
+        private void SubtractNodeSelection()
         {
             List<int> select = viewport.selection.active.nodes;
             List<int> candidates = viewport.selection.candidates.nodes;
-            bool ctrl = IsDown(VirtualKey.Control);
-            bool shift = IsDown(VirtualKey.Shift);
-            if (ctrl)
+            foreach (int candidate in candidates)
             {
-                foreach (int candidate in candidates)
-                {
-                    select.Remove(candidate);
-                }
-                if (candidates.Contains(viewport.active) && select.Count > 0)
-                {
-                    viewport.active = select[0];
-                }
+                select.Remove(candidate);
             }
-            else if (shift)
+            if (candidates.Contains(viewport.active) && select.Count > 0)
             {
-                if (candidates.Count > 0)
-                {
-                    viewport.active = candidates[0];
-                }
-                foreach (int candidate in candidates)
-                {
-                    if (!select.Contains(candidate))
-                    {
-                        select.Add(candidate);
-                    }
-                }
+                viewport.active = select[0];
             }
-            else
+        }
+
+        private void AddNodeSelection()
+        {
+            List<int> select = viewport.selection.active.nodes;
+            List<int> candidates = viewport.selection.candidates.nodes;
+            if (candidates.Count > 0)
             {
-                if (candidates.Count > 0)
-                {
-                    viewport.active = candidates[0];
-                }
-                select.Clear();
-                foreach (int candidate in candidates)
+                viewport.active = candidates[0];
+            }
+            foreach (int candidate in candidates)
+            {
+                if (!select.Contains(candidate))
                 {
                     select.Add(candidate);
                 }
             }
         }
 
-        private void CommitWires()
+        private void ReplaceNodeSelection()
+        {
+            List<int> select = viewport.selection.active.nodes;
+            List<int> candidates = viewport.selection.candidates.nodes;
+            if (candidates.Count > 0)
+            {
+                viewport.active = candidates[0];
+            }
+            select.Clear();
+            foreach (int candidate in candidates)
+            {
+                select.Add(candidate);
+            }
+        }
+
+        private void SubtractWireSelection()
         {
             List<Slot> select = viewport.selection.active.wires;
             List<Slot> candidates = viewport.selection.candidates.wires;
-            bool ctrl = IsDown(VirtualKey.Control);
-            bool shift = IsDown(VirtualKey.Shift);
-            if (ctrl)
+            foreach (Slot candidate in candidates)
             {
-                foreach (Slot candidate in candidates)
-                {
-                    select.Remove(candidate);
-                }
+                select.Remove(candidate);
             }
-            else if (shift)
+        }
+
+        private void AddWireSelection()
+        {
+            List<Slot> select = viewport.selection.active.wires;
+            List<Slot> candidates = viewport.selection.candidates.wires;
+            foreach (Slot candidate in candidates)
             {
-                foreach (Slot candidate in candidates)
-                {
-                    if (!select.Contains(candidate))
-                    {
-                        select.Add(candidate);
-                    }
-                }
-            }
-            else
-            {
-                select.Clear();
-                foreach (Slot candidate in candidates)
+                if (!select.Contains(candidate))
                 {
                     select.Add(candidate);
                 }
             }
         }
 
-        private bool IsDown(VirtualKey key)
+        private void ReplaceWireSelection()
         {
-            CoreWindow window = Window.Current.CoreWindow;
-            CoreVirtualKeyStates state = window.GetKeyState(key);
-            return state.HasFlag(CoreVirtualKeyStates.Down);
+            List<Slot> select = viewport.selection.active.wires;
+            List<Slot> candidates = viewport.selection.candidates.wires;
+            select.Clear();
+            foreach (Slot candidate in candidates)
+            {
+                select.Add(candidate);
+            }
         }
     }
 }
