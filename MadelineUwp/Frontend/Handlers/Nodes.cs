@@ -135,30 +135,46 @@ namespace Madeline.Frontend.Handlers
             bool handling = clickedNode > -1;
             if (handling && !dragStarted)
             {
-                bool ctrl = IsKeyDown(VirtualKey.Control);
-                bool shift = IsKeyDown(VirtualKey.Shift);
-                List<int> nodes = viewport.selection.active.nodes;
-                if (ctrl)
+                switch (viewport.hover.node.state)
                 {
-                    nodes.Remove(clickedNode);
-                    if (clickedNode == viewport.active && nodes.Count > 0)
-                    {
-                        viewport.active = nodes[0];
-                    }
-                }
-                else if (shift)
-                {
-                    viewport.active = clickedNode;
-                    if (!nodes.Contains(clickedNode))
-                    {
-                        nodes.Add(clickedNode);
-                    }
-                }
-                else
-                {
-                    viewport.active = clickedNode;
-                    nodes.Clear();
-                    nodes.Add(clickedNode);
+                    case Structure.NodeHover.State.Body:
+                        bool ctrl = IsKeyDown(VirtualKey.Control);
+                        bool shift = IsKeyDown(VirtualKey.Shift);
+                        List<int> nodes = viewport.selection.active.nodes;
+                        if (ctrl)
+                        {
+                            nodes.Remove(clickedNode);
+                            if (clickedNode == viewport.active && nodes.Count > 0)
+                            {
+                                viewport.active = nodes[0];
+                            }
+                        }
+                        else if (shift)
+                        {
+                            viewport.active = clickedNode;
+                            if (!nodes.Contains(clickedNode))
+                            {
+                                nodes.Add(clickedNode);
+                            }
+                        }
+                        else
+                        {
+                            viewport.active = clickedNode;
+                            nodes.Clear();
+                            nodes.Add(clickedNode);
+                        }
+                        break;
+
+                    case Structure.NodeHover.State.Disable:
+                        if (viewport.graph.nodes.TryGet(viewport.hover.node.id, out Node node))
+                        {
+                            node.enabled = !node.enabled;
+                        }
+                        break;
+
+                    case Structure.NodeHover.State.Viewing:
+                        viewport.viewing = viewport.hover.node.id;
+                        break;
                 }
             }
             clickedNode = -1;
@@ -208,10 +224,12 @@ namespace Madeline.Frontend.Handlers
 
         private void DisableNodes()
         {
-            Graph graph = viewport.graph;
-            if (graph.nodes.TryGet(viewport.active, out Node node))
+            foreach (int nodeId in viewport.selection.active.nodes)
             {
-                node.enabled = !node.enabled;
+                if (viewport.graph.nodes.TryGet(nodeId, out Node node))
+                {
+                    node.enabled = !node.enabled;
+                }
             }
         }
 
