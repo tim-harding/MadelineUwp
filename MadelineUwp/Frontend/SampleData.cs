@@ -8,7 +8,7 @@ namespace Madeline.Frontend
     {
         public static void Init(Viewport viewport)
         {
-            Graph graph = viewport.graph;
+            NodeGraph graph = viewport.graph;
 
             graph.plugins.Add("load", new Plugin
             {

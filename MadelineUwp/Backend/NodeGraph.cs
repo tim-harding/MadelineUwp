@@ -2,7 +2,7 @@
 
 namespace Madeline.Backend
 {
-    internal class Graph
+    internal class NodeGraph
     {
         public Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
         public Table<Node> nodes = new Table<Node>();

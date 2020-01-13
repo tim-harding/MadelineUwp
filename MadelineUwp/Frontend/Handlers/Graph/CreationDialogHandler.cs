@@ -5,7 +5,7 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.System;
 
-namespace Madeline.Frontend.Handlers
+namespace Madeline.Frontend.Handlers.Graph
 {
     internal class CreationDialogHandler : IMouseHandler, IKeypressHandler
     {

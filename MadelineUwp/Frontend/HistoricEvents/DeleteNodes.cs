@@ -13,7 +13,7 @@ namespace Madeline.Frontend.HistoricEvents
             this.nodes = nodes;
         }
 
-        public override void Redo(Graph graph)
+        public override void Redo(NodeGraph graph)
         {
             foreach (int id in ids)
             {
@@ -21,7 +21,7 @@ namespace Madeline.Frontend.HistoricEvents
             }
         }
 
-        public override void Undo(Graph graph)
+        public override void Undo(NodeGraph graph)
         {
             for (int i = 0; i < ids.Length; i++)
             {

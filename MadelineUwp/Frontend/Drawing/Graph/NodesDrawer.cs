@@ -30,7 +30,7 @@ namespace Madeline.Frontend.Drawing
             viewport.hover.Clear();
             viewport.selection.candidates.Clear();
 
-            Graph graph = viewport.graph;
+            NodeGraph graph = viewport.graph;
             foreach (TableEntry<Node> node in graph.nodes)
             {
                 DrawNodeBody(node, ctx);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.System;
 
-namespace Madeline.Frontend.Handlers
+namespace Madeline.Frontend.Handlers.Graph
 {
     internal class NodesHandler : IMouseHandler, IKeypressHandler
     {
@@ -216,7 +216,7 @@ namespace Madeline.Frontend.Handlers
         // TODO: Should drag all selected nodes at once
         private void DragNode()
         {
-            Graph graph = viewport.graph;
+            NodeGraph graph = viewport.graph;
             Table<Node> nodes = graph.nodes;
             int active = viewport.hover.node.id;
             if (graph.nodes.TryGet(active, out Node node))

@@ -1,4 +1,4 @@
-﻿<Page x:Class="Madeline.NodeGraph"
+﻿<Page x:Class="Madeline.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,7 +9,7 @@
       Unloaded="Unload">
 
     <Grid>
-        <canvas:CanvasControl Name="graph"
+        <canvas:CanvasControl Name="canvas"
                               ClearColor="#343434"
                               Draw="Draw"
                               PointerMoved="HandleMouse"

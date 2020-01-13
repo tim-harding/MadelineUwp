@@ -5,8 +5,8 @@ namespace Madeline.Frontend
 {
     internal abstract class HistoricEvent
     {
-        public abstract void Redo(Graph graph);
-        public abstract void Undo(Graph graph);
+        public abstract void Redo(NodeGraph graph);
+        public abstract void Undo(NodeGraph graph);
     }
 
     internal class History
@@ -16,9 +16,9 @@ namespace Madeline.Frontend
         private int head = 0;
         private int tail = 1;
 
-        private Graph graph;
+        private NodeGraph graph;
 
-        public History(Graph graph)
+        public History(NodeGraph graph)
         {
             this.graph = graph;
 

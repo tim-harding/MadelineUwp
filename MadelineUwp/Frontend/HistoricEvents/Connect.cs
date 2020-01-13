@@ -15,17 +15,17 @@ namespace Madeline.Frontend.HistoricEvents
             this.inputSlot = inputSlot;
         }
 
-        public override void Redo(Graph graph)
+        public override void Redo(NodeGraph graph)
         {
             SetSlot(graph, upstream);
         }
 
-        public override void Undo(Graph graph)
+        public override void Undo(NodeGraph graph)
         {
             SetSlot(graph, -1);
         }
 
-        private void SetSlot(Graph graph, int i)
+        private void SetSlot(NodeGraph graph, int i)
         {
             if (graph.nodes.TryGet(downstream, out Node node))
             {

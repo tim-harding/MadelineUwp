@@ -9,13 +9,13 @@ namespace Madeline.Frontend.HistoricEvents
         private Plugin plugin;
         private Vector2 pos;
 
-        public InsertNode(Graph graph, Plugin plugin, Vector2 pos)
+        public InsertNode(NodeGraph graph, Plugin plugin, Vector2 pos)
         {
             this.plugin = plugin;
             this.pos = pos;
         }
 
-        public override void Redo(Graph graph)
+        public override void Redo(NodeGraph graph)
         {
             var node = new Node(pos, plugin);
             switch (id)
@@ -30,7 +30,7 @@ namespace Madeline.Frontend.HistoricEvents
             }
         }
 
-        public override void Undo(Graph graph)
+        public override void Undo(NodeGraph graph)
         {
             graph.nodes.Delete(id);
         }

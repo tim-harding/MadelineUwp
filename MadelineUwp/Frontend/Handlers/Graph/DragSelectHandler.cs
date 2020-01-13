@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Windows.System;
 
-namespace Madeline.Frontend.Handlers
+namespace Madeline.Frontend.Handlers.Graph
 {
     internal class DragSelectHandler : IMouseHandler
     {

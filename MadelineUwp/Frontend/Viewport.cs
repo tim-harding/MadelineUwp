@@ -7,7 +7,7 @@ namespace Madeline.Frontend
 {
     internal class Viewport
     {
-        public Graph graph = new Graph();
+        public NodeGraph graph = new NodeGraph();
         public Vector2 translate;
         public float zoom = 1f;
         public int viewing = -1;

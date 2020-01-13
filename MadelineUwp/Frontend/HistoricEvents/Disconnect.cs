@@ -6,12 +6,12 @@ namespace Madeline.Frontend.HistoricEvents
     {
         public Disconnect(int node, int output, int input) : base(node, output, input) { }
 
-        public override void Redo(Graph graph)
+        public override void Redo(NodeGraph graph)
         {
             base.Undo(graph);
         }
 
-        public override void Undo(Graph graph)
+        public override void Undo(NodeGraph graph)
         {
             base.Redo(graph);
         }

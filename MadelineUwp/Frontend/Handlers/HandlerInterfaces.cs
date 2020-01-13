@@ -1,6 +1,6 @@
 ﻿using Windows.System;
 
-namespace Madeline.Frontend
+namespace Madeline.Frontend.Handlers
 {
     internal interface IMouseHandler
     {

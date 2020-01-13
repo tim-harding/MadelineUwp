@@ -2,7 +2,7 @@
 using Madeline.Frontend.Structure;
 using System;
 
-namespace Madeline.Frontend.Handlers
+namespace Madeline.Frontend.Handlers.Graph
 {
     internal class WireCreationHandler : IMouseHandler
     {
@@ -58,7 +58,7 @@ namespace Madeline.Frontend.Handlers
 
         private bool AdvancePull()
         {
-            Graph graph = viewport.graph;
+            NodeGraph graph = viewport.graph;
             Slot src = viewport.rewiring.src;
             if (!graph.nodes.TryGet(src.node, out Node srcNode)) { return false; }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using Madeline.Frontend.Handlers.Graph;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
@@ -10,14 +11,14 @@ namespace Madeline.Frontend.Drawing
 {
     internal class CreationDialogDrawer : IDrawer
     {
-        private Vector2 Width = Vector2.UnitX * Handlers.CreationDialogHandler.WIDTH;
-        private Vector2 Margin = Vector2.UnitX * Handlers.CreationDialogHandler.MARGIN;
-        private Vector2 Line = Vector2.UnitY * Handlers.CreationDialogHandler.LINE_HEIGHT;
+        private Vector2 Width = Vector2.UnitX * CreationDialogHandler.WIDTH;
+        private Vector2 Margin = Vector2.UnitX * CreationDialogHandler.MARGIN;
+        private Vector2 Line = Vector2.UnitY * CreationDialogHandler.LINE_HEIGHT;
 
-        private Handlers.CreationDialogHandler dialog;
+        private CreationDialogHandler dialog;
         private CanvasDrawingSession session;
 
-        public CreationDialogDrawer(Handlers.CreationDialogHandler dialog)
+        public CreationDialogDrawer(CreationDialogHandler dialog)
         {
             this.dialog = dialog;
         }
