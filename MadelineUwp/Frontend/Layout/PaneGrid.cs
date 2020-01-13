@@ -1,6 +1,5 @@
 ﻿using Madeline.Frontend.Drawing;
 using Madeline.Frontend.Handlers;
-using System.Numerics;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -22,9 +21,7 @@ namespace Madeline.Frontend.Layout
 
         public void Draw()
         {
-            Rect bounds = Window.Current.Bounds;
-            var size = new Size(bounds.Width, bounds.Height);
-            grid.dimensions = size.ToVector2();
+            grid.dimensions = Window.Current.Bounds.Size();
             foreach (Occupant occupant in occupants)
             {
                 Pane pane = occupant.pane;
