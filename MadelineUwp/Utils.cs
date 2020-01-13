@@ -1,4 +1,6 @@
-﻿using Windows.System;
+﻿using System.Numerics;
+using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
@@ -23,6 +25,18 @@ namespace Madeline
             CoreWindow window = Window.Current.CoreWindow;
             CoreVirtualKeyStates state = window.GetKeyState(key);
             return state.HasFlag(CoreVirtualKeyStates.Down);
+        }
+
+        public static Vector2 Origin(this Rect rect)
+        {
+            var point = new Point(rect.Left, rect.Top);
+            return point.ToVector2();
+        }
+
+        public static Vector2 Size(this Rect rect)
+        {
+            var point = new Point(rect.Right - rect.Left, rect.Bottom - rect.Top);
+            return point.ToVector2();
         }
     }
 }

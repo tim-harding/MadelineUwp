@@ -38,8 +38,8 @@ namespace Madeline.Frontend.Handlers.Graph
         private bool BeginSelect()
         {
             SelectionInfo select = viewport.selection;
-            select.box.start = viewport.From(Mouse.current.pos);
-            select.box.end = viewport.From(Mouse.current.pos);
+            select.box.start = viewport.From(Mouse.Relative);
+            select.box.end = viewport.From(Mouse.Relative);
             dragging = true;
             return true;
         }
@@ -49,7 +49,7 @@ namespace Madeline.Frontend.Handlers.Graph
             if (dragging)
             {
                 SelectionInfo select = viewport.selection;
-                select.box.end = viewport.From(Mouse.current.pos);
+                select.box.end = viewport.From(Mouse.Relative);
             }
             return dragging;
         }

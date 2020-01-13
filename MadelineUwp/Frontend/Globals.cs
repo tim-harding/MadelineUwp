@@ -1,4 +1,5 @@
 ﻿using Madeline.Backend;
+using Madeline.Frontend.Layout;
 using Microsoft.Graphics.Canvas;
 
 namespace Madeline.Frontend
@@ -8,6 +9,7 @@ namespace Madeline.Frontend
         public static History history;
         public static NodeGraph graph;
         public static CanvasDrawingSession session;
+        public static Pane pane;
 
         public static void Init()
         {

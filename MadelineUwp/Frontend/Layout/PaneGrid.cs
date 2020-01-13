@@ -12,6 +12,8 @@ namespace Madeline.Frontend.Layout
         private Grid grid;
         private Occupant[] occupants;
 
+        private delegate bool ProcessInput(IInputHandler handler);
+
         public PaneGrid(Grid grid, Occupant[] occupants)
         {
             this.grid = grid;
@@ -26,6 +28,7 @@ namespace Madeline.Frontend.Layout
             foreach (Occupant occupant in occupants)
             {
                 Pane pane = occupant.pane;
+                Globals.pane = pane;
                 Rect rect = grid.Occupant(occupant);
                 pane.rect = rect;
                 pane.Draw();
@@ -34,31 +37,29 @@ namespace Madeline.Frontend.Layout
 
         public bool HandleKeypress(VirtualKey key)
         {
-            foreach (Occupant occupant in occupants)
-            {
-                if (occupant.pane.HandleKeypress(key))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return Handle((IInputHandler handler) => handler.HandleKeypress(key));
         }
 
         public bool HandleMouse()
         {
+            return Handle((IInputHandler handler) => handler.HandleMouse());
+        }
+
+        public bool HandleScroll(int delta)
+        {
+            return Handle((IInputHandler handler) => handler.HandleScroll(delta));
+        }
+
+        private bool Handle(ProcessInput callback)
+        {
             foreach (Occupant occupant in occupants)
             {
-                if (occupant.pane.HandleMouse())
+                if (callback(occupant.pane))
                 {
                     return true;
                 }
             }
             return false;
-        }
-
-        public bool HandleScroll(int delta)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

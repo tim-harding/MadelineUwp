@@ -75,19 +75,14 @@ namespace Madeline
         {
             PointerPoint point = e.GetCurrentPoint(canvas);
             PointerPointProperties props = point.Properties;
-            Mouse.previous = Mouse.current;
-            Mouse.current = new Mouse.State
+            var update = new Mouse.State
             {
                 left = props.IsLeftButtonPressed,
                 right = props.IsRightButtonPressed,
                 middle = props.IsMiddleButtonPressed,
                 pos = point.Position.ToVector2(),
             };
-
-            if (!Mouse.previous.AnyDown() && Mouse.current.AnyDown())
-            {
-                Mouse.lastDown = Mouse.current.pos;
-            }
+            Mouse.Update(update);
         }
     }
 }

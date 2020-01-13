@@ -87,7 +87,7 @@ namespace Madeline.Frontend.Drawing.Graph
         private void BidirectionalDangling()
         {
             RewiringInfo rewiring = viewport.rewiring;
-            Vector2 mousePos = viewport.From(Mouse.current.pos);
+            Vector2 mousePos = viewport.From(Mouse.Relative);
             if (Globals.graph.nodes.TryGet(rewiring.upstream, out Node upstream))
             {
                 Vector2 iPos = src.InputPos(rewiring.src.index);
@@ -110,7 +110,7 @@ namespace Madeline.Frontend.Drawing.Graph
         private void DirectedDangling()
         {
             Vector2 srcPos = src.SlotPos(viewport.rewiring.src.index);
-            Vector2 dstPos = viewport.From(Mouse.current.pos);
+            Vector2 dstPos = viewport.From(Mouse.Relative);
             DirectedGeneral(srcPos, dstPos);
         }
 

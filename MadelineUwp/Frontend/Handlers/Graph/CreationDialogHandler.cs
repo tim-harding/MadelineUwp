@@ -45,17 +45,17 @@ namespace Madeline.Frontend.Handlers.Graph
         {
             if (!info.display) { return false; }
 
-            Mouse.State current = Mouse.current;
             int lines = info.found.Count + 1;
             var size = new Vector2(WIDTH, LINE_HEIGHT * lines);
             var bounds = new Rect(info.origin.ToPoint(), size.ToSize());
-            bool inBounds = bounds.Contains(current.pos.ToPoint());
+            bool inBounds = bounds.Contains(Mouse.Relative.ToPoint());
+            bool down = Mouse.Left == Mouse.Button.Down;
             if (inBounds)
             {
-                Vector2 relative = current.pos - info.origin;
+                Vector2 relative = Mouse.Relative - info.origin;
                 info.selection = (int)(relative.Y / LINE_HEIGHT) - 1;
             }
-            else if (!inBounds && current.left)
+            else if (!inBounds && down)
             {
                 Hide();
             }
@@ -173,7 +173,7 @@ namespace Madeline.Frontend.Handlers.Graph
         private void Show()
         {
             info.display = true;
-            info.origin = Mouse.current.pos;
+            info.origin = Mouse.Relative;
             UpdateFound();
         }
 

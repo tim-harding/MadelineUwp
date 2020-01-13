@@ -22,7 +22,7 @@ namespace Madeline.Frontend.Handlers.Graph
 
         public bool HandleScroll(int delta)
         {
-            viewport.ZoomAround(Mouse.current.pos, delta);
+            viewport.ZoomAround(Mouse.Relative, delta);
             return true;
         }
 
@@ -71,7 +71,7 @@ namespace Madeline.Frontend.Handlers.Graph
             switch (Mouse.Right)
             {
                 case Mouse.Button.Down:
-                    cursorStart = Mouse.current.pos;
+                    cursorStart = Mouse.Relative;
                     return true;
 
                 case Mouse.Button.Dragging:
@@ -100,7 +100,7 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private bool BeginLmbInteration()
         {
-            cursorStart = Mouse.current.pos;
+            cursorStart = Mouse.Relative;
             clickedNode = -1;
             int hover = viewport.hover.node.id;
             bool hasHover = hover > -1;
@@ -213,7 +213,7 @@ namespace Madeline.Frontend.Handlers.Graph
         {
             const float DRAG_START = 16f;
             viewport.hover.node.id = clickedNode;
-            Vector2 delta = Mouse.current.pos - cursorStart;
+            Vector2 delta = Mouse.Relative - cursorStart;
             dragStarted |= delta.LengthSquared() > DRAG_START;
         }
 
@@ -225,7 +225,7 @@ namespace Madeline.Frontend.Handlers.Graph
             int active = viewport.hover.node.id;
             if (graph.nodes.TryGet(active, out Node node))
             {
-                Vector2 mouseDelta = Mouse.current.pos - cursorStart;
+                Vector2 mouseDelta = Mouse.Relative - cursorStart;
                 mouseDelta /= viewport.zoom;
                 Vector2 endPos = nodeStart + mouseDelta;
                 endPos += SnapDelta(endPos, active);

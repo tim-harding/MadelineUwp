@@ -10,7 +10,6 @@ namespace Madeline.Frontend
             None,
             Down,
             Up,
-            Held,
             Dragging,
         }
 
@@ -27,14 +26,20 @@ namespace Madeline.Frontend
             }
         }
 
-        public static State current;
-        public static State previous;
-        public static Vector2 lastDown;
+        private static State current;
+        private static State previous;
 
         public static Button Left => ButtonState(current.left, previous.left);
         public static Button Right => ButtonState(current.right, previous.right);
         public static Button Middle => ButtonState(current.middle, previous.middle);
         public static Vector2 Delta => current.pos - previous.pos;
+        public static Vector2 Relative => current.pos - Globals.pane.rect.Origin();
+
+        public static void Update(State update)
+        {
+            previous = current;
+            current = update;
+        }
 
         private Mouse() { }
 
