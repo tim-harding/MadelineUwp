@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace Madeline.Frontend.Drawing
 {
-    internal class WireCreation : IDrawer
+    internal class WireCreationDrawer : IDrawer
     {
         private Viewport viewport;
         private Mouse mouse;
@@ -14,7 +14,7 @@ namespace Madeline.Frontend.Drawing
         private Node src;
         private Node dst;
 
-        public WireCreation(Viewport viewport, Mouse mouse)
+        public WireCreationDrawer(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

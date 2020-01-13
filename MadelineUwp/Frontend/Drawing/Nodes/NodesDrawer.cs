@@ -8,13 +8,13 @@ using Windows.UI;
 
 namespace Madeline.Frontend.Drawing.Nodes
 {
-    internal class Drawing : IDrawer
+    internal class NodesDrawer : IDrawer
     {
         private Viewport viewport;
         private Mouse mouse;
         private Selection selection;
 
-        public Drawing(Viewport viewport, Mouse mouse)
+        public NodesDrawer(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

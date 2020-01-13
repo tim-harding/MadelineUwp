@@ -6,14 +6,14 @@ using Windows.UI.Xaml;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class DragSelect : IMouseHandler
+    internal class DragSelectHandler : IMouseHandler
     {
         private Viewport viewport;
         private Mouse mouse;
 
         private bool dragging = false;
 
-        public DragSelect(Viewport viewport, Mouse mouse)
+        public DragSelectHandler(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

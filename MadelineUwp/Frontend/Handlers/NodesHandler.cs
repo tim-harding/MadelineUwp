@@ -8,7 +8,7 @@ using Windows.UI.Xaml;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class Nodes : IMouseHandler, IKeypressHandler
+    internal class NodesHandler : IMouseHandler, IKeypressHandler
     {
         private Viewport viewport;
         private Mouse mouse;
@@ -18,7 +18,7 @@ namespace Madeline.Frontend.Handlers
         private int clickedNode = -1;
         private bool dragStarted;
 
-        public Nodes(Viewport viewport, Mouse mouse)
+        public NodesHandler(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

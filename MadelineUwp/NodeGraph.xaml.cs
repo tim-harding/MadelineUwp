@@ -22,10 +22,10 @@ namespace Madeline
 
         public NodeGraph()
         {
-            var dialog = new Frontend.Handlers.CreationDialog(viewport, mouse);
-            var nodes = new Frontend.Handlers.Nodes(viewport, mouse);
-            var dragSelect = new Frontend.Handlers.DragSelect(viewport, mouse);
-            var wireCreation = new Frontend.Handlers.WireCreation(viewport, mouse);
+            var dialog = new Frontend.Handlers.CreationDialogHandler(viewport, mouse);
+            var nodes = new Frontend.Handlers.NodesHandler(viewport, mouse);
+            var dragSelect = new Frontend.Handlers.DragSelectHandler(viewport, mouse);
+            var wireCreation = new Frontend.Handlers.WireCreationHandler(viewport, mouse);
 
             mouseHandlers = new IMouseHandler[]
             {
@@ -43,9 +43,9 @@ namespace Madeline
 
             drawers = new Frontend.Drawing.IDrawer[]
             {
-                new Frontend.Drawing.Nodes.Drawing(viewport, mouse),
-                new Frontend.Drawing.WireCreation(viewport, mouse),
-                new Frontend.Drawing.CreationDialog(dialog),
+                new Frontend.Drawing.Nodes.NodesDrawer(viewport, mouse),
+                new Frontend.Drawing.WireCreationDrawer(viewport, mouse),
+                new Frontend.Drawing.CreationDialogDrawer(dialog),
             };
 
             Window.Current.CoreWindow.KeyDown += HandleKeypress;

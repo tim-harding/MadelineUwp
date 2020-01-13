@@ -5,12 +5,12 @@ using System.Numerics;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class WireCreation : IMouseHandler
+    internal class WireCreationHandler : IMouseHandler
     {
         private Viewport viewport;
         private Mouse mouse;
 
-        public WireCreation(Viewport viewport, Mouse mouse)
+        public WireCreationHandler(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

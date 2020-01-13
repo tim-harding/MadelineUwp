@@ -7,7 +7,7 @@ using Windows.System;
 
 namespace Madeline.Frontend.Handlers
 {
-    internal class CreationDialog : IMouseHandler, IKeypressHandler
+    internal class CreationDialogHandler : IMouseHandler, IKeypressHandler
     {
         public const float WIDTH = 120f;
         public const float MARGIN = 10f;
@@ -25,7 +25,7 @@ namespace Madeline.Frontend.Handlers
 
         public Vector2 Line => Vector2.UnitY * LINE_HEIGHT;
 
-        public CreationDialog(Viewport viewport, Mouse mouse)
+        public CreationDialogHandler(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;

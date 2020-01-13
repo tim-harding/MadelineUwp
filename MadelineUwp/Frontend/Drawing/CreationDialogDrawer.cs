@@ -8,16 +8,16 @@ using Windows.UI;
 
 namespace Madeline.Frontend.Drawing
 {
-    internal class CreationDialog : IDrawer
+    internal class CreationDialogDrawer : IDrawer
     {
-        private Vector2 Width = Vector2.UnitX * Handlers.CreationDialog.WIDTH;
-        private Vector2 Margin = Vector2.UnitX * Handlers.CreationDialog.MARGIN;
-        private Vector2 Line = Vector2.UnitY * Handlers.CreationDialog.LINE_HEIGHT;
+        private Vector2 Width = Vector2.UnitX * Handlers.CreationDialogHandler.WIDTH;
+        private Vector2 Margin = Vector2.UnitX * Handlers.CreationDialogHandler.MARGIN;
+        private Vector2 Line = Vector2.UnitY * Handlers.CreationDialogHandler.LINE_HEIGHT;
 
-        private Handlers.CreationDialog dialog;
+        private Handlers.CreationDialogHandler dialog;
         private CanvasDrawingSession session;
 
-        public CreationDialog(Handlers.CreationDialog dialog)
+        public CreationDialogDrawer(Handlers.CreationDialogHandler dialog)
         {
             this.dialog = dialog;
         }
