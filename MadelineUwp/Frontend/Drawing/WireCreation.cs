@@ -1,4 +1,5 @@
 ﻿using Madeline.Backend;
+using Madeline.Frontend.Structure;
 using Microsoft.Graphics.Canvas;
 using System.Numerics;
 
@@ -9,79 +10,123 @@ namespace Madeline.Frontend.Drawing
         private Viewport viewport;
         private Mouse mouse;
 
+        private CanvasDrawingSession session;
+        private Node src;
+        private Node dst;
+
         public WireCreation(Viewport viewport, Mouse mouse)
         {
             this.viewport = viewport;
             this.mouse = mouse;
         }
 
+        private bool Up => viewport.rewiring.src.index > -1;
+
         public void Draw(CanvasDrawingSession session)
         {
-            Graph graph = viewport.graph;
-            if (viewport.rewiring.src.node < 0) { return; }
-            if (!graph.nodes.TryGet(viewport.rewiring.src.node, out Node srcNode)) { return; }
+            this.session = session;
+            RewiringInfo rewiring = viewport.rewiring;
+            bool isRewiring = rewiring.src.node > -1;
+            if (!isRewiring) { return; }
 
-            Vector2 srcPos = srcNode.SlotPos(viewport.rewiring.src.index, srcNode.inputs.Length);
-
-            bool up = viewport.rewiring.src.index > -1;
-            if (viewport.rewiring.bidirectional)
+            if (viewport.graph.nodes.TryGet(rewiring.src.node, out Node srcNode))
             {
-                if (viewport.graph.nodes.TryGet(viewport.rewiring.upstreamReference, out Node prevNode))
+                src = srcNode;
+                if (rewiring.bidirectional)
                 {
-                    Vector2 mousePos = viewport.From(mouse.current.pos);
-                    if (viewport.rewiring.dst.node < 0)
-                    {
-                        var first = new Wire(srcNode.InputPos(viewport.rewiring.src.index), mousePos, Wire.Kind.Up);
-                        var second = new Wire(mousePos, prevNode.OutputPos(), Wire.Kind.Down);
-                        session.DrawGeometry(first.Geo(session), Palette.Orange5);
-                        session.DrawGeometry(second.Geo(session), Palette.Orange5);
-                    }
-                    else
-                    {
-                        int dstNodeId = viewport.rewiring.dst.node;
-                        bool dstIsOutput = viewport.rewiring.dst.index < 0;
-                        int o = dstIsOutput ? dstNodeId : viewport.rewiring.upstreamReference;
-                        int i = dstIsOutput ? viewport.rewiring.src.node : dstNodeId;
-
-                        if (!graph.nodes.TryGet(o, out Node oNode)) { return; }
-                        if (!graph.nodes.TryGet(i, out Node iNode)) { return; }
-
-                        var wire = new Wire(iNode.InputPos(viewport.rewiring.src.index), oNode.OutputPos(), Wire.Kind.DoubleEnded);
-                        session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
-                    }
-                }
-            }
-            else
-            {
-                if (graph.nodes.TryGet(viewport.rewiring.dst.node, out Node dstNode))
-                {
-                    Vector2 dstPos = dstNode.SlotPos(viewport.rewiring.dst.index, dstNode.inputs.Length);
-                    if (!up)
-                    {
-                        Swap(ref srcPos, ref dstPos);
-                    }
-                    var wire = new Wire(srcPos, dstPos, Wire.Kind.DoubleEnded);
-                    session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
+                    Bidirectional();
                 }
                 else
                 {
-                    Vector2 dstPos = viewport.From(mouse.current.pos);
-                    Wire.Kind kind = up ? Wire.Kind.Up : Wire.Kind.Down;
-                    if (!up)
-                    {
-                        Swap(ref srcPos, ref dstPos);
-                    }
-                    var wire = new Wire(srcPos, dstPos, kind);
-                    session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
+                    Directed();
                 }
             }
         }
 
-        private void Swap(ref Vector2 lhs, ref Vector2 rhs)
+        private void Bidirectional()
         {
-            Vector2 tmp = lhs;
-            lhs = rhs;
-            rhs = tmp;
+            bool hasDestination = viewport.rewiring.dst.node > -1;
+            if (hasDestination)
+            {
+                BidirectionalSnapped();
+            }
+            else
+            {
+                BidirectionalDangling();
+            }
+        }
+
+        private void Directed()
+        {
+            if (viewport.graph.nodes.TryGet(viewport.rewiring.dst.node, out Node dstNode))
+            {
+                dst = dstNode;
+                DirectedSnapped();
+            }
+            else
+            {
+                DirectedDangling();
+            }
+        }
+
+        private void BidirectionalSnapped()
+        {
+            // TODO: Should remove the previous connection
+            RewiringInfo rewiring = viewport.rewiring;
+            int dstNodeId = rewiring.dst.node;
+            bool dstIsOutput = rewiring.dst.index < 0;
+            int o = dstIsOutput ? dstNodeId : rewiring.upstream;
+            int i = dstIsOutput ? rewiring.src.node : dstNodeId;
+
+            Table<Node> nodes = viewport.graph.nodes;
+            if (!nodes.TryGet(o, out Node oNode)) { return; }
+            if (!nodes.TryGet(i, out Node iNode)) { return; }
+
+            Vector2 iPos = iNode.InputPos(rewiring.src.index);
+            Vector2 oPos = oNode.OutputPos();
+            var wire = new Wire(iPos, oPos, Wire.Kind.DoubleEnded);
+            session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
+        }
+
+        private void BidirectionalDangling()
+        {
+            RewiringInfo rewiring = viewport.rewiring;
+            Vector2 mousePos = viewport.From(mouse.current.pos);
+            if (viewport.graph.nodes.TryGet(rewiring.upstream, out Node upstream))
+            {
+                Vector2 iPos = src.InputPos(rewiring.src.index);
+                Vector2 oPos = upstream.OutputPos();
+                var up = new Wire(iPos, mousePos, Wire.Kind.Up);
+                var down = new Wire(mousePos, oPos, Wire.Kind.Down);
+                session.DrawGeometry(up.Geo(session), Palette.Orange5);
+                session.DrawGeometry(down.Geo(session), Palette.Orange5);
+            }
+        }
+
+        private void DirectedSnapped()
+        {
+            RewiringInfo rewiring = viewport.rewiring;
+            Vector2 srcPos = src.SlotPos(rewiring.src.index);
+            Vector2 dstPos = dst.SlotPos(rewiring.dst.index);
+            DirectedGeneral(srcPos, dstPos);
+        }
+
+        private void DirectedDangling()
+        {
+            Vector2 srcPos = src.SlotPos(viewport.rewiring.src.index);
+            Vector2 dstPos = viewport.From(mouse.current.pos);
+            DirectedGeneral(srcPos, dstPos);
+        }
+
+        private void DirectedGeneral(Vector2 srcPos, Vector2 dstPos)
+        {
+            Wire.Kind kind = Up ? Wire.Kind.Up : Wire.Kind.Down;
+            if (!Up)
+            {
+                Utils.Swap(ref srcPos, ref dstPos);
+            }
+            var wire = new Wire(srcPos, dstPos, kind);
+            session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
         }
     }
 }

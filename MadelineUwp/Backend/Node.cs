@@ -30,7 +30,7 @@ namespace Madeline.Backend
             enabled = true;
         }
 
-        public Vector2 SlotPos(int slot, int inputs)
+        public Vector2 SlotPos(int slot)
         {
             if (slot < 0)
             {

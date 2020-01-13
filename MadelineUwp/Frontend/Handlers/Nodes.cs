@@ -189,6 +189,7 @@ namespace Madeline.Frontend.Handlers
             dragStarted |= delta.LengthSquared() > DRAG_START;
         }
 
+        // TODO: Should drag all selected nodes at once
         private void DragNode()
         {
             Graph graph = viewport.graph;

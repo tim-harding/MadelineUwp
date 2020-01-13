@@ -50,7 +50,7 @@ namespace Madeline.Frontend.Handlers
                 if (viewport.graph.nodes.TryGet(wire.node, out Node node))
                 {
                     viewport.rewiring.src = wire;
-                    viewport.rewiring.upstreamReference = node.inputs[wire.index];
+                    viewport.rewiring.upstream = node.inputs[wire.index];
                     viewport.rewiring.bidirectional = true;
                 }
             }
@@ -79,7 +79,7 @@ namespace Madeline.Frontend.Handlers
             }
             else if (rewiring.bidirectional)
             {
-                // Should also be able to hover over a node to wire through it
+                // TODO: Should also be able to hover over a node to wire through it
                 rewiring.dst = isNear ? nearest.slot : Slot.Empty;
             }
             else if (srcIsOutput)
@@ -110,7 +110,7 @@ namespace Madeline.Frontend.Handlers
             if (rewiring.bidirectional)
             {
                 bool dstIsOutput = dst.index < 0;
-                int o = dstIsOutput ? dst.node : rewiring.upstreamReference;
+                int o = dstIsOutput ? dst.node : rewiring.upstream;
                 int i = dstIsOutput ? src.node : dst.node;
                 int slot = Math.Max(src.index, dst.index);
                 viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));

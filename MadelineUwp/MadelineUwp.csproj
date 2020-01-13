@@ -161,6 +161,7 @@
     <Compile Include="Frontend\SampleData.cs" />
     <Compile Include="Frontend\Structure\Slot.cs" />
     <Compile Include="Frontend\Viewport.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
