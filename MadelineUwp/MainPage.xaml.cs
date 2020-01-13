@@ -1,5 +1,6 @@
 ﻿using Madeline.Frontend;
 using Madeline.Frontend.Layout;
+using Madeline.Frontend.Panes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System.Numerics;
 using Windows.System;
@@ -24,7 +25,12 @@ namespace Madeline
                 new Occupant(
                     new Range(1, 1),
                     new Range(0, 0),
-                    Panes.NodeGraphPane()
+                    Factory.NodeGraphPane()
+                ),
+                new Occupant(
+                    new Range(0, 1),
+                    new Range(1, 1),
+                    Factory.ControlsPane()
                 ),
             }
         );

@@ -128,48 +128,47 @@
     <Compile Include="Frontend\Layout\Range.cs" />
     <Compile Include="Frontend\Layout\Pane.cs" />
     <Compile Include="Frontend\Layout\PaneGrid.cs" />
-    <Compile Include="Frontend\Panes.cs" />
-    <Compile Include="Frontend\Structure\Aabb.cs" />
-    <Compile Include="Frontend\Structure\Components.cs" />
-    <Compile Include="Frontend\Drawing\IDrawer.cs" />
-    <Compile Include="Frontend\Drawing\Graph\Nodes\BaseGeo.cs" />
-    <Compile Include="Frontend\Drawing\Graph\Nodes\BodyGeo.cs" />
-    <Compile Include="Frontend\Drawing\Graph\Nodes\CommandList.cs" />
-    <Compile Include="Frontend\Drawing\Graph\Nodes\Context.cs" />
-    <Compile Include="Frontend\Drawing\Graph\Nodes\Selection.cs" />
+    <Compile Include="Frontend\Panes\Factory.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\Aabb.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\Components.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\Structure\BaseGeo.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\Structure\BodyGeo.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\Structure\CommandList.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\Structure\Context.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\Structure\Selection.cs" />
     <Compile Include="Frontend\HistoricEvents\Connect.cs" />
     <Compile Include="Frontend\HistoricEvents\DeleteNodes.cs" />
     <Compile Include="Frontend\HistoricEvents\Disconnect.cs" />
     <Compile Include="Frontend\HistoricEvents\InsertNode.cs" />
-    <Compile Include="Frontend\Drawing\Palette.cs" />
+    <Compile Include="Frontend\Palette.cs" />
     <Compile Include="Frontend\History.cs" />
-    <Compile Include="Frontend\Drawing\Graph\Wire.cs" />
-    <Compile Include="Frontend\Drawing\Graph\WireCreationDrawer.cs" />
-    <Compile Include="Frontend\Handlers\Graph\WireCreationHandler.cs" />
-    <Compile Include="Frontend\Structure\CreationDialogInfo.cs" />
-    <Compile Include="Frontend\Structure\HoverInfo.cs" />
-    <Compile Include="Frontend\Structure\NodeHover.cs" />
-    <Compile Include="Frontend\Structure\RewiringInfo.cs" />
-    <Compile Include="Frontend\Structure\SelectionInfo.cs" />
-    <Compile Include="Frontend\Structure\SlotProximity.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\Wire.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\WireCreationDrawer.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Behavior\WireCreationHandler.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\CreationDialogInfo.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\HoverInfo.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\NodeHover.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\RewiringInfo.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\SelectionInfo.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\SlotProximity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\NodeGraph.cs" />
     <Compile Include="Backend\Table.cs" />
     <Compile Include="Backend\TableEntry.cs" />
-    <Compile Include="Frontend\Handlers\Graph\DragSelectHandler.cs" />
-    <Compile Include="Frontend\Handlers\IInputHandler.cs" />
-    <Compile Include="Frontend\Drawing\Graph\CreationDialogDrawer.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Behavior\DragSelectHandler.cs" />
+    <Compile Include="Frontend\Interfaces.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\CreationDialogDrawer.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Backend\Node.cs" />
     <Compile Include="Backend\Plugin.cs" />
     <Compile Include="Frontend\Mouse.cs" />
-    <Compile Include="Frontend\Handlers\Graph\NodesHandler.cs" />
-    <Compile Include="Frontend\Drawing\Graph\NodesDrawer.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Behavior\NodesHandler.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Drawing\NodesDrawer.cs" />
     <Compile Include="Frontend\SampleData.cs" />
-    <Compile Include="Frontend\Structure\Slot.cs" />
-    <Compile Include="Frontend\Viewport.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\Slot.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Structure\Viewport.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -186,7 +185,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Compile Include="Frontend\Handlers\Graph\CreationDialogHandler.cs" />
+    <Compile Include="Frontend\Panes\NodeGraph\Behavior\CreationDialogHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -215,8 +214,8 @@
     <None Include="MadelineUwpKey.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Frontend\Drawing\Controls\" />
-    <Folder Include="Frontend\Handlers\Controls\" />
+    <Folder Include="Frontend\Panes\Controls\" />
+    <Folder Include="Frontend\Panes\Viewer\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

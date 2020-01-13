@@ -1,6 +1,4 @@
-﻿using Madeline.Frontend.Drawing;
-using Madeline.Frontend.Handlers;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
 

@@ -1,6 +1,4 @@
-﻿using Madeline.Frontend.Drawing;
-using Madeline.Frontend.Handlers;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Windows.Foundation;
 using Windows.System;
 

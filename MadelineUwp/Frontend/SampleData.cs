@@ -1,5 +1,4 @@
 ﻿using Madeline.Backend;
-using Madeline.Frontend.Drawing;
 using System.Numerics;
 
 namespace Madeline.Frontend
