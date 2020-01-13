@@ -4,7 +4,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 
-namespace Madeline.Frontend.Drawing
+namespace Madeline.Frontend.Drawing.Graph
 {
     internal struct Wire
     {

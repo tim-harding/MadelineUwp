@@ -1,35 +1,30 @@
 ﻿using Madeline.Backend;
+using Madeline.Frontend.Structure;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.System;
 
 namespace Madeline.Frontend.Handlers.Graph
 {
-    internal class CreationDialogHandler : IMouseHandler, IKeypressHandler
+    internal class CreationDialogHandler : IInputHandler
     {
         public const float WIDTH = 120f;
         public const float MARGIN = 10f;
         public const float LINE_HEIGHT = 38f;
 
-        public Mouse mouse;
-        public Viewport viewport;
-        public List<string> found = new List<string>();
-
-        public string query = "";
-        public int selection = 0;
-        public int failPoint;
-        public bool display;
-        public Vector2 origin;
+        private CreationDialogInfo info;
+        private Viewport viewport;
 
         public Vector2 Line => Vector2.UnitY * LINE_HEIGHT;
 
-        public CreationDialogHandler(Viewport viewport, Mouse mouse)
+        public CreationDialogHandler(Viewport viewport)
         {
+            info = viewport.creationDialog;
             this.viewport = viewport;
-            this.mouse = mouse;
         }
+
+        public bool HandleScroll(int delta) { return false; }
 
         public bool HandleKeypress(VirtualKey key)
         {
@@ -38,7 +33,7 @@ namespace Madeline.Frontend.Handlers.Graph
                 Toggle();
                 return true;
             }
-            if (display)
+            if (info.display)
             {
                 HandleKey(key);
                 return true;
@@ -48,19 +43,17 @@ namespace Madeline.Frontend.Handlers.Graph
 
         public bool HandleMouse()
         {
-            if (!display)
-            {
-                return false;
-            }
-            MouseState current = mouse.current;
-            int lines = found.Count + 1;
+            if (!info.display) { return false; }
+
+            Mouse.State current = Mouse.current;
+            int lines = info.found.Count + 1;
             var size = new Vector2(WIDTH, LINE_HEIGHT * lines);
-            var bounds = new Rect(origin.ToPoint(), size.ToSize());
+            var bounds = new Rect(info.origin.ToPoint(), size.ToSize());
             bool inBounds = bounds.Contains(current.pos.ToPoint());
             if (inBounds)
             {
-                Vector2 relative = current.pos - origin;
-                selection = (int)(relative.Y / LINE_HEIGHT) - 1;
+                Vector2 relative = current.pos - info.origin;
+                info.selection = (int)(relative.Y / LINE_HEIGHT) - 1;
             }
             else if (!inBounds && current.left)
             {
@@ -83,12 +76,12 @@ namespace Madeline.Frontend.Handlers.Graph
                     break;
 
                 case VirtualKey.Down:
-                    selection += 1;
+                    info.selection += 1;
                     UpdateSeletion();
                     break;
 
                 case VirtualKey.Up:
-                    selection -= 1;
+                    info.selection -= 1;
                     UpdateSeletion();
                     break;
 
@@ -104,7 +97,7 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private void Toggle()
         {
-            if (display)
+            if (info.display)
             {
                 Hide();
             }
@@ -116,21 +109,21 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private void Backspace()
         {
-            if (query.Length > 0)
+            if (info.query.Length > 0)
             {
-                query = query.Remove(query.Length - 1);
+                info.query = info.query.Remove(info.query.Length - 1);
                 UpdateFound();
             }
         }
 
         private void Commit()
         {
-            if (selection > -1 && selection < found.Count)
+            if (info.selection > -1 && info.selection < info.found.Count)
             {
-                Vector2 pos = viewport.From(origin);
-                string key = found[selection];
-                Plugin plugin = viewport.graph.plugins[key];
-                viewport.history.SubmitChange(new HistoricEvents.InsertNode(viewport.graph, plugin, pos));
+                Vector2 pos = viewport.From(info.origin);
+                string key = info.found[info.selection];
+                Plugin plugin = Globals.graph.plugins[key];
+                Globals.history.SubmitChange(new HistoricEvents.InsertNode(Globals.graph, plugin, pos));
             }
             Hide();
         }
@@ -146,32 +139,32 @@ namespace Madeline.Frontend.Handlers.Graph
             {
                 return;
             }
-            query += char.ToLower(ascii);
+            info.query += char.ToLower(ascii);
             UpdateFound();
         }
 
         private void UpdateFound()
         {
-            int previousCount = found.Count;
-            foreach (string name in viewport.graph.plugins.Keys)
+            int previousCount = info.found.Count;
+            foreach (string name in Globals.graph.plugins.Keys)
             {
-                bool alwaysMatch = query.Length == 0;
-                bool matchQuery = name.Contains(query);
+                bool alwaysMatch = info.query.Length == 0;
+                bool matchQuery = name.Contains(info.query);
                 if (alwaysMatch || matchQuery)
                 {
-                    found.Add(name);
+                    info.found.Add(name);
                 }
             }
 
-            bool searchFailure = found.Count == previousCount;
+            bool searchFailure = info.found.Count == previousCount;
             if (searchFailure)
             {
-                failPoint = failPoint > -1 ? failPoint : query.Length - 1;
+                info.failPoint = info.failPoint > -1 ? info.failPoint : info.query.Length - 1;
             }
             else
             {
-                found.RemoveRange(0, previousCount);
-                failPoint = -1;
+                info.found.RemoveRange(0, previousCount);
+                info.failPoint = -1;
             }
 
             UpdateSeletion();
@@ -179,22 +172,22 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private void Show()
         {
-            display = true;
-            origin = mouse.current.pos;
+            info.display = true;
+            info.origin = Mouse.current.pos;
             UpdateFound();
         }
 
         private void Hide()
         {
-            query = "";
-            selection = 0;
-            display = false;
+            info.query = "";
+            info.selection = 0;
+            info.display = false;
         }
 
         private void UpdateSeletion()
         {
-            selection = Math.Min(selection, found.Count - 1);
-            selection = found.Count > 0 && selection == -1 ? 0 : selection;
+            info.selection = Math.Min(info.selection, info.found.Count - 1);
+            info.selection = info.found.Count > 0 && info.selection == -1 ? 0 : info.selection;
         }
     }
 }

@@ -3,41 +3,47 @@ using System.Numerics;
 
 namespace Madeline.Frontend
 {
-    internal struct MouseState
-    {
-        public bool left;
-        public bool middle;
-        public bool right;
-        public Vector2 pos;
-    }
-
-    internal enum MouseButton
-    {
-        None,
-        Down,
-        Up,
-        Dragging,
-    }
-
     internal class Mouse
     {
-        public MouseState current;
-        public MouseState previous;
+        public enum Button
+        {
+            None,
+            Down,
+            Up,
+            Held,
+            Dragging,
+        }
 
-        public MouseButton Left => State(current.left, previous.left);
+        internal struct State
+        {
+            public bool left;
+            public bool middle;
+            public bool right;
+            public Vector2 pos;
 
-        public MouseButton Right => State(current.right, previous.right);
+            public bool AnyDown()
+            {
+                return left || right || middle;
+            }
+        }
 
-        public MouseButton Middle => State(current.middle, previous.middle);
+        public static State current;
+        public static State previous;
+        public static Vector2 lastDown;
 
-        public Vector2 Delta => current.pos - previous.pos;
+        public static Button Left => ButtonState(current.left, previous.left);
+        public static Button Right => ButtonState(current.right, previous.right);
+        public static Button Middle => ButtonState(current.middle, previous.middle);
+        public static Vector2 Delta => current.pos - previous.pos;
 
-        private MouseButton State(bool current, bool previous)
+        private Mouse() { }
+
+        private static Button ButtonState(bool current, bool previous)
         {
             int now = Convert.ToInt32(current);
             int then = Convert.ToInt32(previous);
             int sum = now + then * 2;
-            return (MouseButton)sum;
+            return (Button)sum;
         }
     }
 }

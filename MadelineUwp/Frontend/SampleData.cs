@@ -6,9 +6,9 @@ namespace Madeline.Frontend
 {
     internal class SampleData
     {
-        public static void Init(Viewport viewport)
+        public static void Init()
         {
-            NodeGraph graph = viewport.graph;
+            NodeGraph graph = Globals.graph;
 
             graph.plugins.Add("load", new Plugin
             {
@@ -39,7 +39,7 @@ namespace Madeline.Frontend
                 },
             });
 
-            History history = viewport.history;
+            History history = Globals.history;
             history.SubmitChange(new HistoricEvents.InsertNode(graph, graph.plugins["load"], new Vector2(200f, 200f)));
             history.SubmitChange(new HistoricEvents.InsertNode(graph, graph.plugins["load"], new Vector2(400f, 200f)));
             history.SubmitChange(new HistoricEvents.InsertNode(graph, graph.plugins["merge"], new Vector2(300f, 300f)));

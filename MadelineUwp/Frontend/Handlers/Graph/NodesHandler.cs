@@ -6,20 +6,24 @@ using Windows.System;
 
 namespace Madeline.Frontend.Handlers.Graph
 {
-    internal class NodesHandler : IMouseHandler, IKeypressHandler
+    internal class NodesHandler : IInputHandler
     {
         private Viewport viewport;
-        private Mouse mouse;
 
         private Vector2 cursorStart;
         private Vector2 nodeStart;
         private int clickedNode = -1;
         private bool dragStarted;
 
-        public NodesHandler(Viewport viewport, Mouse mouse)
+        public NodesHandler(Viewport viewport)
         {
             this.viewport = viewport;
-            this.mouse = mouse;
+        }
+
+        public bool HandleScroll(int delta)
+        {
+            viewport.ZoomAround(Mouse.current.pos, delta);
+            return true;
         }
 
         public bool HandleMouse()
@@ -53,10 +57,10 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private bool HandleMiddleButton()
         {
-            switch (mouse.Middle)
+            switch (Mouse.Middle)
             {
-                case MouseButton.Dragging:
-                    viewport.Move(mouse.Delta);
+                case Mouse.Button.Dragging:
+                    viewport.Move(Mouse.Delta);
                     return true;
             }
             return false;
@@ -64,14 +68,14 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private bool HandleRightButton()
         {
-            switch (mouse.Right)
+            switch (Mouse.Right)
             {
-                case MouseButton.Down:
-                    cursorStart = mouse.current.pos;
+                case Mouse.Button.Down:
+                    cursorStart = Mouse.current.pos;
                     return true;
 
-                case MouseButton.Dragging:
-                    int delta = (int)(mouse.Delta.X) * 3;
+                case Mouse.Button.Dragging:
+                    int delta = (int)(Mouse.Delta.X) * 3;
                     viewport.ZoomAround(cursorStart, delta);
                     return true;
             }
@@ -80,15 +84,15 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private bool HandleLeftButton()
         {
-            switch (mouse.Left)
+            switch (Mouse.Left)
             {
-                case MouseButton.Down:
+                case Mouse.Button.Down:
                     return BeginLmbInteration();
 
-                case MouseButton.Dragging:
+                case Mouse.Button.Dragging:
                     return AdvanceLmbInteration();
 
-                case MouseButton.Up:
+                case Mouse.Button.Up:
                     return CommitLmbInteration();
             }
             return false;
@@ -96,7 +100,7 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private bool BeginLmbInteration()
         {
-            cursorStart = mouse.current.pos;
+            cursorStart = Mouse.current.pos;
             clickedNode = -1;
             int hover = viewport.hover.node.id;
             bool hasHover = hover > -1;
@@ -105,7 +109,7 @@ namespace Madeline.Frontend.Handlers.Graph
                 clickedNode = hover;
                 dragStarted = false;
 
-                if (viewport.graph.nodes.TryGet(hover, out Node node))
+                if (Globals.graph.nodes.TryGet(hover, out Node node))
                 {
                     nodeStart = node.pos;
                 }
@@ -199,7 +203,7 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private void DisableNode()
         {
-            if (viewport.graph.nodes.TryGet(viewport.hover.node.id, out Node node))
+            if (Globals.graph.nodes.TryGet(viewport.hover.node.id, out Node node))
             {
                 node.enabled = !node.enabled;
             }
@@ -209,19 +213,19 @@ namespace Madeline.Frontend.Handlers.Graph
         {
             const float DRAG_START = 16f;
             viewport.hover.node.id = clickedNode;
-            Vector2 delta = mouse.current.pos - cursorStart;
+            Vector2 delta = Mouse.current.pos - cursorStart;
             dragStarted |= delta.LengthSquared() > DRAG_START;
         }
 
         // TODO: Should drag all selected nodes at once
         private void DragNode()
         {
-            NodeGraph graph = viewport.graph;
+            NodeGraph graph = Globals.graph;
             Table<Node> nodes = graph.nodes;
             int active = viewport.hover.node.id;
             if (graph.nodes.TryGet(active, out Node node))
             {
-                Vector2 mouseDelta = mouse.current.pos - cursorStart;
+                Vector2 mouseDelta = Mouse.current.pos - cursorStart;
                 mouseDelta /= viewport.zoom;
                 Vector2 endPos = nodeStart + mouseDelta;
                 endPos += SnapDelta(endPos, active);
@@ -232,7 +236,7 @@ namespace Madeline.Frontend.Handlers.Graph
         private Vector2 SnapDelta(Vector2 pos, int nodeId)
         {
             Vector2 snap = Vector2.One * float.MaxValue;
-            foreach (TableEntry<Node> node in viewport.graph.nodes)
+            foreach (TableEntry<Node> node in Globals.graph.nodes)
             {
                 if (node.id == nodeId) { continue; }
 
@@ -251,7 +255,7 @@ namespace Madeline.Frontend.Handlers.Graph
         {
             foreach (int nodeId in viewport.selection.active.nodes)
             {
-                if (viewport.graph.nodes.TryGet(nodeId, out Node node))
+                if (Globals.graph.nodes.TryGet(nodeId, out Node node))
                 {
                     node.enabled = !node.enabled;
                 }
@@ -262,7 +266,7 @@ namespace Madeline.Frontend.Handlers.Graph
         {
             bool ctrl = Utils.IsKeyDown(VirtualKey.Control);
             bool shift = Utils.IsKeyDown(VirtualKey.Shift);
-            History history = viewport.history;
+            History history = Globals.history;
             if (ctrl && shift)
             {
                 history.Redo();
@@ -284,12 +288,12 @@ namespace Madeline.Frontend.Handlers.Graph
             {
                 int id = select[i];
                 ids[i] = id;
-                if (viewport.graph.nodes.TryGet(id, out Node node))
+                if (Globals.graph.nodes.TryGet(id, out Node node))
                 {
                     nodes[i] = node;
                 }
             }
-            viewport.history.SubmitChange(new HistoricEvents.DeleteNodes(ids, nodes));
+            Globals.history.SubmitChange(new HistoricEvents.DeleteNodes(ids, nodes));
         }
     }
 }

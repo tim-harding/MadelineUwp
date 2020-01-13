@@ -4,7 +4,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System.Numerics;
 using Windows.Foundation;
 
-namespace Madeline.Frontend.Drawing.Nodes
+namespace Madeline.Frontend.Drawing.Graph.Nodes
 {
     internal struct BodyGeo
     {

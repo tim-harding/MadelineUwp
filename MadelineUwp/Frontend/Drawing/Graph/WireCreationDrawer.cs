@@ -3,33 +3,29 @@ using Madeline.Frontend.Structure;
 using Microsoft.Graphics.Canvas;
 using System.Numerics;
 
-namespace Madeline.Frontend.Drawing
+namespace Madeline.Frontend.Drawing.Graph
 {
     internal class WireCreationDrawer : IDrawer
     {
         private Viewport viewport;
-        private Mouse mouse;
 
-        private CanvasDrawingSession session;
         private Node src;
         private Node dst;
 
-        public WireCreationDrawer(Viewport viewport, Mouse mouse)
+        public WireCreationDrawer(Viewport viewport)
         {
             this.viewport = viewport;
-            this.mouse = mouse;
         }
 
         private bool Up => viewport.rewiring.src.index > -1;
 
-        public void Draw(CanvasDrawingSession session)
+        public void Draw()
         {
-            this.session = session;
             RewiringInfo rewiring = viewport.rewiring;
             bool isRewiring = rewiring.src.node > -1;
             if (!isRewiring) { return; }
 
-            if (viewport.graph.nodes.TryGet(rewiring.src.node, out Node srcNode))
+            if (Globals.graph.nodes.TryGet(rewiring.src.node, out Node srcNode))
             {
                 src = srcNode;
                 if (rewiring.bidirectional)
@@ -58,7 +54,7 @@ namespace Madeline.Frontend.Drawing
 
         private void Directed()
         {
-            if (viewport.graph.nodes.TryGet(viewport.rewiring.dst.node, out Node dstNode))
+            if (Globals.graph.nodes.TryGet(viewport.rewiring.dst.node, out Node dstNode))
             {
                 dst = dstNode;
                 DirectedSnapped();
@@ -78,28 +74,28 @@ namespace Madeline.Frontend.Drawing
             int o = dstIsOutput ? dstNodeId : rewiring.upstream;
             int i = dstIsOutput ? rewiring.src.node : dstNodeId;
 
-            Table<Node> nodes = viewport.graph.nodes;
+            Table<Node> nodes = Globals.graph.nodes;
             if (!nodes.TryGet(o, out Node oNode)) { return; }
             if (!nodes.TryGet(i, out Node iNode)) { return; }
 
             Vector2 iPos = iNode.InputPos(rewiring.src.index);
             Vector2 oPos = oNode.OutputPos();
             var wire = new Wire(iPos, oPos, Wire.Kind.DoubleEnded);
-            session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
+            Globals.session.DrawGeometry(wire.Geo(Globals.session), Palette.Indigo2);
         }
 
         private void BidirectionalDangling()
         {
             RewiringInfo rewiring = viewport.rewiring;
-            Vector2 mousePos = viewport.From(mouse.current.pos);
-            if (viewport.graph.nodes.TryGet(rewiring.upstream, out Node upstream))
+            Vector2 mousePos = viewport.From(Mouse.current.pos);
+            if (Globals.graph.nodes.TryGet(rewiring.upstream, out Node upstream))
             {
                 Vector2 iPos = src.InputPos(rewiring.src.index);
                 Vector2 oPos = upstream.OutputPos();
                 var up = new Wire(iPos, mousePos, Wire.Kind.Up);
                 var down = new Wire(mousePos, oPos, Wire.Kind.Down);
-                session.DrawGeometry(up.Geo(session), Palette.Orange5);
-                session.DrawGeometry(down.Geo(session), Palette.Orange5);
+                Globals.session.DrawGeometry(up.Geo(Globals.session), Palette.Orange5);
+                Globals.session.DrawGeometry(down.Geo(Globals.session), Palette.Orange5);
             }
         }
 
@@ -114,7 +110,7 @@ namespace Madeline.Frontend.Drawing
         private void DirectedDangling()
         {
             Vector2 srcPos = src.SlotPos(viewport.rewiring.src.index);
-            Vector2 dstPos = viewport.From(mouse.current.pos);
+            Vector2 dstPos = viewport.From(Mouse.current.pos);
             DirectedGeneral(srcPos, dstPos);
         }
 
@@ -126,7 +122,7 @@ namespace Madeline.Frontend.Drawing
                 Utils.Swap(ref srcPos, ref dstPos);
             }
             var wire = new Wire(srcPos, dstPos, kind);
-            session.DrawGeometry(wire.Geo(session), Palette.Indigo2);
+            Globals.session.DrawGeometry(wire.Geo(Globals.session), Palette.Indigo2);
         }
     }
 }

@@ -122,9 +122,16 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Backend\Control.cs" />
+    <Compile Include="Frontend\Globals.cs" />
+    <Compile Include="Frontend\Layout\Grid.cs" />
+    <Compile Include="Frontend\Layout\Occupant.cs" />
+    <Compile Include="Frontend\Layout\Range.cs" />
+    <Compile Include="Frontend\Layout\Pane.cs" />
+    <Compile Include="Frontend\Layout\PaneGrid.cs" />
+    <Compile Include="Frontend\Panes.cs" />
     <Compile Include="Frontend\Structure\Aabb.cs" />
     <Compile Include="Frontend\Structure\Components.cs" />
-    <Compile Include="Frontend\Drawing\Graph\IDrawer.cs" />
+    <Compile Include="Frontend\Drawing\IDrawer.cs" />
     <Compile Include="Frontend\Drawing\Graph\Nodes\BaseGeo.cs" />
     <Compile Include="Frontend\Drawing\Graph\Nodes\BodyGeo.cs" />
     <Compile Include="Frontend\Drawing\Graph\Nodes\CommandList.cs" />
@@ -134,11 +141,12 @@
     <Compile Include="Frontend\HistoricEvents\DeleteNodes.cs" />
     <Compile Include="Frontend\HistoricEvents\Disconnect.cs" />
     <Compile Include="Frontend\HistoricEvents\InsertNode.cs" />
-    <Compile Include="Frontend\Drawing\Graph\Palette.cs" />
+    <Compile Include="Frontend\Drawing\Palette.cs" />
     <Compile Include="Frontend\History.cs" />
     <Compile Include="Frontend\Drawing\Graph\Wire.cs" />
     <Compile Include="Frontend\Drawing\Graph\WireCreationDrawer.cs" />
     <Compile Include="Frontend\Handlers\Graph\WireCreationHandler.cs" />
+    <Compile Include="Frontend\Structure\CreationDialogInfo.cs" />
     <Compile Include="Frontend\Structure\HoverInfo.cs" />
     <Compile Include="Frontend\Structure\NodeHover.cs" />
     <Compile Include="Frontend\Structure\RewiringInfo.cs" />
@@ -149,7 +157,7 @@
     <Compile Include="Backend\Table.cs" />
     <Compile Include="Backend\TableEntry.cs" />
     <Compile Include="Frontend\Handlers\Graph\DragSelectHandler.cs" />
-    <Compile Include="Frontend\Handlers\HandlerInterfaces.cs" />
+    <Compile Include="Frontend\Handlers\IInputHandler.cs" />
     <Compile Include="Frontend\Drawing\Graph\CreationDialogDrawer.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

@@ -4,30 +4,32 @@ using Windows.System;
 
 namespace Madeline.Frontend.Handlers.Graph
 {
-    internal class DragSelectHandler : IMouseHandler
+    internal class DragSelectHandler : IInputHandler
     {
         private Viewport viewport;
-        private Mouse mouse;
 
         private bool dragging = false;
 
-        public DragSelectHandler(Viewport viewport, Mouse mouse)
+        public DragSelectHandler(Viewport viewport)
         {
             this.viewport = viewport;
-            this.mouse = mouse;
         }
+
+        public bool HandleKeypress(VirtualKey key) { return false; }
+
+        public bool HandleScroll(int delta) { return false; }
 
         public bool HandleMouse()
         {
-            switch (mouse.Left)
+            switch (Mouse.Left)
             {
-                case MouseButton.Down:
+                case Mouse.Button.Down:
                     return BeginSelect();
 
-                case MouseButton.Dragging:
+                case Mouse.Button.Dragging:
                     return AdvanceSelect();
 
-                case MouseButton.Up:
+                case Mouse.Button.Up:
                     return CommitSelect();
             }
             return false;
@@ -36,8 +38,8 @@ namespace Madeline.Frontend.Handlers.Graph
         private bool BeginSelect()
         {
             SelectionInfo select = viewport.selection;
-            select.box.start = viewport.From(mouse.current.pos);
-            select.box.end = viewport.From(mouse.current.pos);
+            select.box.start = viewport.From(Mouse.current.pos);
+            select.box.end = viewport.From(Mouse.current.pos);
             dragging = true;
             return true;
         }
@@ -47,7 +49,7 @@ namespace Madeline.Frontend.Handlers.Graph
             if (dragging)
             {
                 SelectionInfo select = viewport.selection;
-                select.box.end = viewport.From(mouse.current.pos);
+                select.box.end = viewport.From(Mouse.current.pos);
             }
             return dragging;
         }

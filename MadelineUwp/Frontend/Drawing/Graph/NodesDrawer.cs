@@ -1,36 +1,33 @@
 ﻿using Madeline.Backend;
-using Madeline.Frontend.Drawing.Nodes;
+using Madeline.Frontend.Drawing.Graph.Nodes;
 using Madeline.Frontend.Structure;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using System.Numerics;
 using Windows.UI;
 
-namespace Madeline.Frontend.Drawing
+namespace Madeline.Frontend.Drawing.Graph
 {
     internal class NodesDrawer : IDrawer
     {
         private Viewport viewport;
-        private Mouse mouse;
         private Selection selection;
 
-        public NodesDrawer(Viewport viewport, Mouse mouse)
+        public NodesDrawer(Viewport viewport)
         {
             this.viewport = viewport;
-            this.mouse = mouse;
-            selection = new Selection(viewport, mouse);
+            selection = new Selection(viewport);
         }
 
-        public void Draw(CanvasDrawingSession session)
+        public void Draw()
         {
-            var ctx = new Context(session, viewport);
-            session.Transform = viewport.Into();
+            var ctx = new Context(Globals.session, viewport);
+            Globals.session.Transform = viewport.Into();
 
             viewport.hover.Clear();
             viewport.selection.candidates.Clear();
 
-            NodeGraph graph = viewport.graph;
+            NodeGraph graph = Globals.graph;
             foreach (TableEntry<Node> node in graph.nodes)
             {
                 DrawNodeBody(node, ctx);
@@ -48,9 +45,9 @@ namespace Madeline.Frontend.Drawing
                 DrawNodeLabel(ctx, node.value);
             }
 
-            session.DrawImage(ctx.wires.list);
-            session.DrawImage(ctx.nodes.list);
-            session.DrawImage(ctx.texts.list);
+            Globals.session.DrawImage(ctx.wires.list);
+            Globals.session.DrawImage(ctx.nodes.list);
+            Globals.session.DrawImage(ctx.texts.list);
 
             DrawSelectBox(ctx);
         }

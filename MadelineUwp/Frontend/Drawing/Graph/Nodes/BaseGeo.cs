@@ -3,7 +3,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System.Numerics;
 
-namespace Madeline.Frontend.Drawing.Nodes
+namespace Madeline.Frontend.Drawing.Graph.Nodes
 {
     internal struct BaseGeo
     {

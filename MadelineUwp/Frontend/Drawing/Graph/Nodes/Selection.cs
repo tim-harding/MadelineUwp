@@ -2,16 +2,14 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System.Numerics;
 
-namespace Madeline.Frontend.Drawing.Nodes
+namespace Madeline.Frontend.Drawing.Graph.Nodes
 {
     internal class Selection
     {
         private Viewport viewport;
-        private Mouse mouse;
 
-        public Selection(Viewport viewport, Mouse mouse)
+        public Selection(Viewport viewport)
         {
-            this.mouse = mouse;
             this.viewport = viewport;
         }
 
@@ -20,7 +18,7 @@ namespace Madeline.Frontend.Drawing.Nodes
             bool hoverAlreadyFound = viewport.hover.wire.node > -1;
             if (hoverAlreadyFound) { return false; }
 
-            Vector2 cursorLocal = viewport.From(mouse.current.pos);
+            Vector2 cursorLocal = viewport.From(Mouse.current.pos);
             bool wireHasHover = geo.StrokeContainsPoint(cursorLocal, 16f);
             if (wireHasHover)
             {
@@ -43,7 +41,7 @@ namespace Madeline.Frontend.Drawing.Nodes
 
         public bool StoreIOHover(Vector2 center, Slot slot)
         {
-            Vector2 mouseLocal = viewport.From(mouse.current.pos);
+            Vector2 mouseLocal = viewport.From(Mouse.current.pos);
             float distance = Vector2.DistanceSquared(center, mouseLocal);
             SlotProximity cmp = viewport.hover.slot;
             bool takeHover = distance < cmp.distance && !cmp.IsHover;
@@ -59,7 +57,7 @@ namespace Madeline.Frontend.Drawing.Nodes
             bool hoverAlreadyFound = viewport.hover.node.id > -1;
             if (hoverAlreadyFound) { return false; }
 
-            Vector2 cursorLocal = viewport.From(mouse.current.pos);
+            Vector2 cursorLocal = viewport.From(Mouse.current.pos);
             bool nodeHasHover = body.clipper.FillContainsPoint(cursorLocal);
             if (!nodeHasHover) { return false; }
 

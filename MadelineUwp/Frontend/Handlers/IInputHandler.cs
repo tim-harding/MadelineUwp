@@ -2,13 +2,10 @@
 
 namespace Madeline.Frontend.Handlers
 {
-    internal interface IMouseHandler
+    internal interface IInputHandler
     {
         bool HandleMouse();
-    }
-
-    internal interface IKeypressHandler
-    {
         bool HandleKeypress(VirtualKey key);
+        bool HandleScroll(int delta);
     }
 }

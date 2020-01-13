@@ -1,31 +1,34 @@
 ﻿using Madeline.Backend;
 using Madeline.Frontend.Structure;
 using System;
+using Windows.System;
 
 namespace Madeline.Frontend.Handlers.Graph
 {
-    internal class WireCreationHandler : IMouseHandler
+    internal class WireCreationHandler : IInputHandler
     {
         private Viewport viewport;
-        private Mouse mouse;
 
-        public WireCreationHandler(Viewport viewport, Mouse mouse)
+        public WireCreationHandler(Viewport viewport)
         {
             this.viewport = viewport;
-            this.mouse = mouse;
         }
+
+        public bool HandleKeypress(VirtualKey key) { return false; }
+
+        public bool HandleScroll(int delta) { return false; }
 
         public bool HandleMouse()
         {
-            switch (mouse.Left)
+            switch (Mouse.Left)
             {
-                case MouseButton.Down:
+                case Mouse.Button.Down:
                     return BeginPull();
 
-                case MouseButton.Dragging:
+                case Mouse.Button.Dragging:
                     return AdvancePull();
 
-                case MouseButton.Up:
+                case Mouse.Button.Up:
                     return CommitPull();
             }
             return false;
@@ -44,7 +47,7 @@ namespace Madeline.Frontend.Handlers.Graph
                 viewport.rewiring.src = proximity.slot;
                 viewport.rewiring.bidirectional = false;
             }
-            else if (isWireHover && viewport.graph.nodes.TryGet(wire.node, out Node node))
+            else if (isWireHover && Globals.graph.nodes.TryGet(wire.node, out Node node))
             {
                 viewport.rewiring.src = wire;
                 viewport.rewiring.upstream = node.inputs[wire.index];
@@ -58,7 +61,7 @@ namespace Madeline.Frontend.Handlers.Graph
 
         private bool AdvancePull()
         {
-            NodeGraph graph = viewport.graph;
+            NodeGraph graph = Globals.graph;
             Slot src = viewport.rewiring.src;
             if (!graph.nodes.TryGet(src.node, out Node srcNode)) { return false; }
 
@@ -102,7 +105,7 @@ namespace Madeline.Frontend.Handlers.Graph
             {
                 (int i, int o) = RewiringIO();
                 int slot = Math.Max(src.index, dst.index);
-                viewport.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
+                Globals.history.SubmitChange(new HistoricEvents.Connect(o, i, slot));
             }
             rewiring.src = new Slot(-1, -1);
             return complete;

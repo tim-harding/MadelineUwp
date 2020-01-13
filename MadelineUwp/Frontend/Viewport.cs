@@ -1,5 +1,4 @@
-﻿using Madeline.Backend;
-using Madeline.Frontend.Structure;
+﻿using Madeline.Frontend.Structure;
 using System;
 using System.Numerics;
 
@@ -7,7 +6,6 @@ namespace Madeline.Frontend
 {
     internal class Viewport
     {
-        public NodeGraph graph = new NodeGraph();
         public Vector2 translate;
         public float zoom = 1f;
         public int viewing = -1;
@@ -16,12 +14,7 @@ namespace Madeline.Frontend
         public HoverInfo hover = new HoverInfo();
         public SelectionInfo selection = new SelectionInfo();
         public RewiringInfo rewiring = new RewiringInfo();
-        public History history;
-
-        public Viewport()
-        {
-            history = new History(graph);
-        }
+        public CreationDialogInfo creationDialog = new CreationDialogInfo();
 
         public void ZoomAround(Vector2 pos, int delta)
         {
