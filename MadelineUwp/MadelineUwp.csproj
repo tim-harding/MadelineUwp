@@ -145,8 +145,10 @@
     <Compile Include="Frontend\Panes\NodeGraph\Structure\RewiringInfo.cs" />
     <Compile Include="Frontend\Panes\NodeGraph\Structure\SelectionInfo.cs" />
     <Compile Include="Frontend\Panes\NodeGraph\Structure\SlotProximity.cs" />
-    <Compile Include="NodeGraphControl.xaml.cs">
-      <DependentUpon>NodeGraphControl.xaml</DependentUpon>
+    <Compile Include="Frontend\Panes\Viewer\ViewerDrawer.cs" />
+    <Compile Include="Frontend\Panes\Viewer\ViewerHandler.cs" />
+    <Compile Include="CanvasUserControl.xaml.cs">
+      <DependentUpon>CanvasUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\NodeGraph.cs" />
@@ -206,7 +208,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="NodeGraphControl.xaml">
+    <Page Include="CanvasUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,9 +216,7 @@
   <ItemGroup>
     <None Include="MadelineUwpKey.snk" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Frontend\Panes\Viewer\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

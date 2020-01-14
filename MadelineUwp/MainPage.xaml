@@ -5,6 +5,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:local="using:Madeline"
       mc:Ignorable="d"
+      Loaded="PageLoaded"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
@@ -17,8 +18,11 @@
             <ColumnDefinition Width="250" />
         </Grid.ColumnDefinitions>
 
-        <local:NodeGraphControl Grid.Row="1"
-                                Grid.Column="0" />
+        <local:CanvasUserControl x:Name="view"
+                                 Grid.Row="0" />
+
+        <local:CanvasUserControl x:Name="nodeGraph"
+                                 Grid.Row="1" />
 
         <StackPanel Grid.RowSpan="2"
                     Grid.Column="1">

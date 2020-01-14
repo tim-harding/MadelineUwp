@@ -21,6 +21,7 @@ namespace Madeline.Frontend.Panes.NodeGraph.Drawing
 
         public void Draw()
         {
+            Globals.session.Clear(Palette.Tone3);
             var ctx = new Context(Globals.session, viewport);
             Globals.session.Transform = viewport.Into();
 

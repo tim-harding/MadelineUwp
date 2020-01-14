@@ -1,7 +1,4 @@
 ﻿using Madeline.Frontend;
-using Madeline.Frontend.Panes.NodeGraph.Behavior;
-using Madeline.Frontend.Panes.NodeGraph.Drawing;
-using Madeline.Frontend.Panes.NodeGraph.Structure;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System.Numerics;
 using Windows.System;
@@ -13,36 +10,17 @@ using Windows.UI.Xaml.Input;
 
 namespace Madeline
 {
-    public sealed partial class NodeGraphControl : UserControl
+    public sealed partial class CanvasUserControl : UserControl
     {
-        private IInputHandler[] handlers;
-        private IDrawer[] drawers;
+        internal IInputHandler[] handlers;
+        internal IDrawer[] drawers;
 
         private delegate bool ProcessInput(IInputHandler handler);
 
-        public NodeGraphControl()
+        public CanvasUserControl()
         {
-            var viewport = new Viewport();
-
-            handlers = new IInputHandler[]
-            {
-                new CreationDialogHandler(viewport),
-                new NodesHandler(viewport),
-                new WireCreationHandler(viewport),
-                new DragSelectHandler(viewport),
-            };
-
-            drawers = new IDrawer[]
-            {
-                new NodesDrawer(viewport),
-                new WireCreationDrawer(viewport),
-                new CreationDialogDrawer(viewport),
-            };
-
             Window.Current.CoreWindow.KeyDown += HandleKeypress;
             Window.Current.CoreWindow.KeyUp += HandleKeypress;
-            Globals.Init();
-            SampleData.Init();
             InitializeComponent();
         }
 
