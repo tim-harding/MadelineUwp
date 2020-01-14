@@ -31,10 +31,10 @@ namespace Madeline.Frontend
                 inputs = 1,
                 colors = new Plugin.ColorScheme(Palette.Indigo3, Palette.Indigo2),
                 controls = new Control[] {
-                    new IntControl("r", 0),
-                    new IntControl("g", 1),
-                    new IntControl("b", 2),
-                    new IntControl("a", 3),
+                    new IntegerControl("r", 0),
+                    new IntegerControl("g", 1),
+                    new IntegerControl("b", 2),
+                    new IntegerControl("a", 3),
                 },
             });
 

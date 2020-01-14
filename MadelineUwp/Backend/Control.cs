@@ -21,13 +21,13 @@
         public TextControl(string name, string initial) : base(name, initial) { }
     }
 
-    internal class FloatControl : GenericControl<float>
+    internal class RealControl : GenericControl<float>
     {
-        public FloatControl(string name, float initial) : base(name, initial) { }
+        public RealControl(string name, float initial) : base(name, initial) { }
     }
 
-    internal class IntControl : GenericControl<int>
+    internal class IntegerControl : GenericControl<int>
     {
-        public IntControl(string name, int initial) : base(name, initial) { }
+        public IntegerControl(string name, int initial) : base(name, initial) { }
     }
 }

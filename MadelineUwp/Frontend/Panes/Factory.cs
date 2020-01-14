@@ -1,4 +1,5 @@
 ﻿using Madeline.Frontend.Layout;
+using Madeline.Frontend.Panes.Controls.Drawing;
 using Madeline.Frontend.Panes.NodeGraph.Behavior;
 using Madeline.Frontend.Panes.NodeGraph.Drawing;
 using Madeline.Frontend.Panes.NodeGraph.Structure;
@@ -38,7 +39,7 @@ namespace Madeline.Frontend.Panes
 
             var drawers = new IDrawer[]
             {
-
+                new ControlsDrawer(),
             };
 
             return new Pane(handlers, drawers);
