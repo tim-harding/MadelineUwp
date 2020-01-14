@@ -3,18 +3,33 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+      xmlns:local="using:Madeline"
       mc:Ignorable="d"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-      Unloaded="Unload">
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <canvas:CanvasControl Name="canvas"
-                              Draw="Draw"
-                              PointerMoved="HandleMouse"
-                              PointerPressed="HandleMouse"
-                              PointerReleased="HandleMouse"
-                              PointerWheelChanged="HandleScroll"
-                              PointerExited="HandleMouse" />
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="250" />
+        </Grid.ColumnDefinitions>
+
+        <local:NodeGraphControl Grid.Row="1"
+                                Grid.Column="0" />
+
+        <StackPanel Grid.RowSpan="2"
+                    Grid.Column="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>Filename</TextBlock>
+                <TextBox />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>Number</TextBlock>
+                <Slider></Slider>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Page>

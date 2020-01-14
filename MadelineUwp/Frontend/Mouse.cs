@@ -33,7 +33,7 @@ namespace Madeline.Frontend
         public static Button Right => ButtonState(current.right, previous.right);
         public static Button Middle => ButtonState(current.middle, previous.middle);
         public static Vector2 Delta => current.pos - previous.pos;
-        public static Vector2 Relative => current.pos - Globals.pane.rect.Origin();
+        public static Vector2 Relative => current.pos;
 
         public static void Update(State update)
         {
